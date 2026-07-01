@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -34,6 +35,11 @@ android {
 }
 
 dependencies {
+    // Firebase BoM: allinea automaticamente le versioni di tutte le librerie Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
