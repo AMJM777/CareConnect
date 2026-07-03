@@ -8,6 +8,7 @@
 
     <!-- Placeholder: la vera home dell'Anziano arriva in Fase 4 -->
     <TextView
+        android:id="@+id/titoloText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Home Anziano (placeholder)"
@@ -16,5 +17,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Bottone temporaneo solo per test: sarà sostituito dalla vera UI
+         della home (BottomNavigation), prossimo task della Fase 4. -->
+    <Button
+        android:id="@+id/nuovaRichiestaButtonTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height"
+        android:text="Nuova richiesta (test)"
+        app:layout_constraintTop_toBottomOf="@id/titoloText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_large" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

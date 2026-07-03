@@ -1,15 +1,22 @@
 package com.careconnect.ui.anziano
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.careconnect.R
 
 /**
- * Placeholder per la home dell'Anziano. Contenuto vero in Fase 4.
- * Esiste già ora solo per avere una destinazione valida nel NavGraph
- * e poter testare il flusso di navigazione post-login.
+ * Home dell'Anziano. Contenuto ancora minimo: il bottone di test verrà
+ * sostituito dalla BottomNavigation nel prossimo task della Fase 4.
  */
-class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano)
+class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        view.findViewById<View>(R.id.nuovaRichiestaButtonTemp).setOnClickListener {
+            findNavController().navigate(R.id.action_homeAnziano_to_nuovaRichiesta)
+        }
+    }
+}
