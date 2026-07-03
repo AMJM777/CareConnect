@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/care_background">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/screen_padding">
+
+            <!-- Titolo schermata -->
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register_title"
+                android:textSize="@dimen/text_size_title"
+                android:textColor="@color/care_on_surface"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="@dimen/spacing_large" />
+
+            <!-- Campo nome -->
+            <EditText
+                android:id="@+id/nomeInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/touch_target_min"
+                android:hint="@string/register_nome_hint"
+                android:inputType="textPersonName"
+                android:textSize="@dimen/text_size_body"
+                android:autofillHints="name"
+                app:layout_constraintTop_toBottomOf="@id/titleText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/spacing_large" />
+
+            <!-- Campo email -->
+            <EditText
+                android:id="@+id/emailInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/touch_target_min"
+                android:hint="@string/login_email_hint"
+                android:inputType="textEmailAddress"
+                android:textSize="@dimen/text_size_body"
+                android:autofillHints="emailAddress"
+                app:layout_constraintTop_toBottomOf="@id/nomeInput"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/spacing_medium" />
+
+            <!-- Campo password -->
+            <EditText
+                android:id="@+id/passwordInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/touch_target_min"
+                android:hint="@string/login_password_hint"
+                android:inputType="textPassword"
+                android:textSize="@dimen/text_size_body"
+                android:autofillHints="newPassword"
+                app:layout_constraintTop_toBottomOf="@id/emailInput"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/spacing_medium" />
+
+            <!-- Conferma password: previene errori di battitura in fase di registrazione -->
+            <EditText
+                android:id="@+id/confermaPasswordInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/touch_target_min"
+                android:hint="@string/register_conferma_password_hint"
+                android:inputType="textPassword"
+                android:textSize="@dimen/text_size_body"
+                app:layout_constraintTop_toBottomOf="@id/passwordInput"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/spacing_medium" />
+
+            <!-- Scelta ruolo: RadioGroup con opzioni grandi, coerente con
+                 le scelte di accessibilità già fatte per il resto della UI -->
+            <TextView
+                android:id="@+id/ruoloLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register_ruolo_label"
+                android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_on_surface"
+                app:layout_constraintTop_toBottomOf="@id/confermaPasswordInput"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="@dimen/spacing_large" />
+
+            <RadioGroup
+                android:id="@+id/ruoloRadioGroup"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/ruoloLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/spacing_small">
+
+                <RadioButton
+                    android:id="@+id/ruoloAnzianoRadio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:text="@string/register_ruolo_anziano"
+                    android:textSize="@dimen/text_size_body" />
+
+                <RadioButton
+                    android:id="@+id/ruoloVolontarioRadio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:text="@string/register_ruolo_volontario"
+                    android:textSize="@dimen/text_size_body" />
+
+                <RadioButton
+                    android:id="@+id/ruoloFamiliareRadio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:text="@string/register_ruolo_familiare"
+                    android:textSize="@dimen/text_size_body" />
+
+            </RadioGroup>
+
+            <!-- Messaggio di errore: usato sia per errori di validazione locale
+                 (es. password diverse) sia per errori Firebase (via AuthUiState) -->
+            <TextView
+                android:id="@+id/errorText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/care_error"
+                android:textSize="@dimen/text_size_body"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/ruoloRadioGroup"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/spacing_medium"
+                tools:text="Le password non coincidono"
+                tools:visibility="visible" />
+
+            <Button
+                android:id="@+id/registratiButton"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_height"
+                android:text="@string/register_button"
+                android:textSize="@dimen/text_size_button"
+                android:backgroundTint="@color/care_primary"
+                android:textColor="@color/care_on_primary"
+                app:layout_constraintTop_toBottomOf="@id/errorText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/spacing_medium" />
+
+            <TextView
+                android:id="@+id/goToLoginText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register_go_to_login"
+                android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_primary_dark"
+                android:padding="@dimen/spacing_small"
+                app:layout_constraintTop_toBottomOf="@id/registratiButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:layout_marginBottom="@dimen/spacing_large" />
+
+            <ProgressBar
+                android:id="@+id/loadingIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

@@ -1,0 +1,17 @@
+package com.careconnect.repository
+
+import com.careconnect.model.SosAlert
+import com.careconnect.model.SosStatus
+import kotlinx.coroutines.flow.Flow
+
+interface SosRepository {
+
+    /** Crea un nuovo alert SOS. familiareId deve essere già risolto dal chiamante. */
+    suspend fun creaAlert(alert: SosAlert): Result<String>
+
+    /** Aggiorna lo stato di un alert (es. VISTO dal familiare, poi CHIUSO). */
+    suspend fun aggiornaStato(alertId: String, nuovoStato: SosStatus): Result<Unit>
+
+    /** Stream in tempo reale degli alert per un familiare (per la notifica immediata). */
+    fun osservaAlertPerFamiliare(familiareId: String): Flow<List<SosAlert>>
+}

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/care_background"
+        android:padding="@dimen/screen_padding">
+
+        <!-- Titolo schermata -->
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_title"
+            android:textSize="@dimen/text_size_title"
+            android:textColor="@color/care_on_surface"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="@dimen/spacing_large" />
+
+        <!-- Campo email -->
+        <EditText
+            android:id="@+id/emailInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target_min"
+            android:hint="@string/login_email_hint"
+            android:inputType="textEmailAddress"
+            android:textSize="@dimen/text_size_body"
+            android:autofillHints="emailAddress"
+            app:layout_constraintTop_toBottomOf="@id/titleText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/spacing_large" />
+
+        <!-- Campo password -->
+        <EditText
+            android:id="@+id/passwordInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target_min"
+            android:hint="@string/login_password_hint"
+            android:inputType="textPassword"
+            android:textSize="@dimen/text_size_body"
+            android:autofillHints="password"
+            app:layout_constraintTop_toBottomOf="@id/emailInput"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/spacing_medium" />
+
+        <!-- Messaggio di errore, nascosto di default: visibilità gestita dal Fragment -->
+        <TextView
+            android:id="@+id/errorText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/care_error"
+            android:textSize="@dimen/text_size_body"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/passwordInput"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/spacing_small"
+            tools:text="Credenziali non valide"
+            tools:visibility="visible" />
+
+        <!-- Bottone login email/password -->
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/login_button"
+            android:textSize="@dimen/text_size_button"
+            android:backgroundTint="@color/care_primary"
+            android:textColor="@color/care_on_primary"
+            app:layout_constraintTop_toBottomOf="@id/errorText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/spacing_medium" />
+
+        <!-- Bottone Google Sign-In: l'handler vero (Credential Manager) arriva
+             come step separato, qui c'è solo il collegamento del click -->
+        <Button
+            android:id="@+id/googleSignInButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/login_google_button"
+            android:textSize="@dimen/text_size_button"
+            app:layout_constraintTop_toBottomOf="@id/loginButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/spacing_medium" />
+
+        <!-- Link verso la registrazione -->
+        <TextView
+            android:id="@+id/goToRegisterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_go_to_register"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_primary_dark"
+            android:padding="@dimen/spacing_small"
+            app:layout_constraintTop_toBottomOf="@id/googleSignInButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/spacing_medium" />
+
+        <!-- Indicatore di caricamento, mostrato solo durante le chiamate a Firebase -->
+        <ProgressBar
+            android:id="@+id/loadingIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

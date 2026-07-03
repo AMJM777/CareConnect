@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ACCESSIBILITA ANZIANI -->
+    <!-- Testo -->
+    <dimen name="text_size_body">18sp</dimen>
+    <dimen name="text_size_title">24sp</dimen>
+    <dimen name="text_size_button">18sp</dimen>
+
+    <!-- Touch target: più grande del minimo Material (48dp) per ridurre errori di tocco -->
+    <dimen name="touch_target_min">56dp</dimen>
+    <dimen name="button_height">56dp</dimen>
+
+    <!-- Spaziature standard, riutilizzate in tutti i layout -->
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+    <dimen name="screen_padding">24dp</dimen>
+</resources>

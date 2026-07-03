@@ -1,3 +1,28 @@
 <resources>
     <string name="app_name">CareConnect</string>
+    <string name="login_title">Accedi</string>
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_button">Accedi</string>
+    <string name="login_google_button">Accedi con Google</string>
+    <string name="login_go_to_register">Non hai un account? Registrati</string>
+    <string name="login_generic_error">Si è verificato un errore. Riprova.</string>
+    <string name="register_title">Crea un account</string>
+    <string name="register_nome_hint">Nome</string>
+    <string name="register_conferma_password_hint">Conferma password</string>
+    <string name="register_ruolo_label">Sei un…</string>
+    <string name="register_ruolo_anziano">Anziano</string>
+    <string name="register_ruolo_volontario">Volontario</string>
+    <string name="register_ruolo_familiare">Familiare / Garante</string>
+    <string name="register_button">Registrati</string>
+    <string name="register_go_to_login">Hai già un account? Accedi</string>
+    <string name="register_error_campi_vuoti">Compila tutti i campi</string>
+    <string name="register_error_password_diverse">Le password non coincidono</string>
+    <string name="register_error_ruolo_mancante">Seleziona un ruolo</string>
+    <!-- Web Client ID generato da Firebase quando abiliti Google Sign-In
+     (Authentication → Sign-in method → Google → Web client ID) -->
+    <string name="default_web_client_id" translatable="false">699036182754-4or8v7vllcr6jo3i7tvc1aaa90ll57nk.apps.googleusercontent.com</string>
+    <string name="completa_profilo_title">Ultimo passo</string>
+    <string name="completa_profilo_subtitle">Conferma il tuo nome e indica il tuo ruolo per completare la registrazione.</string>
+    <string name="completa_profilo_button">Completa registrazione</string>
 </resources>

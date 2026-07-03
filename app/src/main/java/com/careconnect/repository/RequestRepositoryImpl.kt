@@ -1,0 +1,111 @@
+package com.careconnect.repository
+
+import com.careconnect.model.Request
+import com.careconnect.model.RequestStatus
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.ktx.toObject
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
+
+class RequestRepositoryImpl(
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+) : RequestRepository {
+
+    private val collection = firestore.collection("requests")
+
+    override suspend fun creaRichiesta(request: Request): Result<String> = runCatching {
+        val docRef = collection.document()
+        val requestConId = request.copy(id = docRef.id)
+        docRef.set(requestConId.toFirestoreMap()).await()
+        docRef.id
+    }
+
+    override suspend fun getRichiesta(requestId: String): Result<Request> = runCatching {
+        val snapshot = collection.document(requestId).get().await()
+        snapshot.toRequest()
+            ?: throw NoSuchElementException("Richiesta non trovata: $requestId")
+    }
+
+    override suspend fun aggiornaStato(
+        requestId: String,
+        nuovoStato: RequestStatus,
+        nuovoVolontarioId: String?
+    ): Result<Unit> = runCatching {
+        val docRef = collection.document(requestId)
+        val attuale = docRef.get().await().toRequest()
+            ?: throw NoSuchElementException("Richiesta non trovata: $requestId")
+
+        if (!attuale.stato.canTransitionTo(nuovoStato)) {
+            throw IllegalStateException(
+                "Transizione non ammessa: ${attuale.stato} -> $nuovoStato"
+            )
+        }
+
+        val aggiornamenti = mutableMapOf<String, Any?>("stato" to nuovoStato.firestoreValue)
+        if (nuovoVolontarioId != null || nuovoStato == RequestStatus.APERTA) {
+            // APERTA senza volontarioId esplicito => rilascio, azzera il campo
+            aggiornamenti["volontarioId"] = nuovoVolontarioId
+        }
+
+        docRef.update(aggiornamenti).await()
+    }
+
+    override fun osservaRichiesteAperte(): Flow<List<Request>> = callbackFlow {
+        val listener = collection
+            .whereEqualTo("stato", RequestStatus.APERTA.firestoreValue)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                val richieste = snapshot?.documents?.mapNotNull { it.toRequest() } ?: emptyList()
+                trySend(richieste)
+            }
+        awaitClose { listener.remove() }
+    }
+
+    override fun osservaRichiestePerAnziano(anzianoId: String): Flow<List<Request>> = callbackFlow {
+        val listener = collection
+            .whereEqualTo("autoreId", anzianoId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                val richieste = snapshot?.documents?.mapNotNull { it.toRequest() } ?: emptyList()
+                trySend(richieste)
+            }
+        awaitClose { listener.remove() }
+    }
+
+    // Mapping firestore <-> modello di dominio
+
+    private fun DocumentSnapshot.toRequest(): Request? {
+        if (!exists()) return null
+        val statoRaw = getString("stato") ?: return null
+        return Request(
+            id = id,
+            autoreId = getString("autoreId") ?: "",
+            tipo = getString("tipo") ?: "",
+            descrizione = getString("descrizione") ?: "",
+            stato = RequestStatus.fromFirestoreValue(statoRaw),
+            volontarioId = getString("volontarioId"),
+            timestampCreazione = getTimestamp("timestampCreazione") ?: com.google.firebase.Timestamp.now(),
+            posizione = getGeoPoint("posizione")
+        )
+    }
+
+    private fun Request.toFirestoreMap(): Map<String, Any?> = mapOf(
+        "autoreId" to autoreId,
+        "tipo" to tipo,
+        "descrizione" to descrizione,
+        "stato" to stato.firestoreValue,
+        "volontarioId" to volontarioId,
+        "timestampCreazione" to timestampCreazione,
+        "posizione" to posizione
+    )
+}
