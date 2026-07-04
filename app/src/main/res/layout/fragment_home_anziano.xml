@@ -3,31 +3,32 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/care_background">
+    android:layout_height="match_parent">
 
-    <!-- Placeholder: la vera home dell'Anziano arriva in Fase 4 -->
-    <TextView
-        android:id="@+id/titoloText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Home Anziano (placeholder)"
-        android:textSize="@dimen/text_size_title"
+    <!-- NavHostFragment annidato: ospita dashboardAnzianoFragment,
+         nuovaRichiestaFragment e mieRichiesteFragment. Niente
+         app:defaultNavHost="true" qui: solo il NavHostFragment principale
+         (in activity_main.xml) può intercettare il tasto Indietro di
+         sistema, per questo la gestione la facciamo a mano in
+         HomeAnzianoFragment.kt. -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/anzianoNavHostFragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:navGraph="@navigation/nav_graph_anziano"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/anzianoBottomNav" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/anzianoBottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_nav_anziano"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Bottone temporaneo solo per test: sarà sostituito dalla vera UI
-         della home (BottomNavigation), prossimo task della Fase 4. -->
-    <Button
-        android:id="@+id/nuovaRichiestaButtonTemp"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/button_height"
-        android:text="Nuova richiesta (test)"
-        app:layout_constraintTop_toBottomOf="@id/titoloText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/spacing_large" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

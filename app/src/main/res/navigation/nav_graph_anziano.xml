@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Grafo annidato, valido solo dentro la sezione Anziano. Contiene tutte
+     le destinazioni raggiungibili dalla bottom navigation di quel ruolo.
+     Isolato da nav_graph_main: nessun'altra parte dell'app lo referenzia. -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_anziano"
+    app:startDestination="@id/dashboardAnzianoFragment">
+
+    <fragment
+        android:id="@+id/dashboardAnzianoFragment"
+        android:name="com.careconnect.ui.anziano.DashboardAnzianoFragment"
+        android:label="Home Anziano" />
+
+    <fragment
+        android:id="@+id/nuovaRichiestaFragment"
+        android:name="com.careconnect.ui.anziano.NuovaRichiestaFragment"
+        android:label="Nuova richiesta" />
+
+    <fragment
+        android:id="@+id/mieRichiesteFragment"
+        android:name="com.careconnect.ui.anziano.MieRichiesteFragment"
+        android:label="Le mie richieste" />
+
+</navigation>

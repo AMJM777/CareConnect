@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gli id devono coincidere ESATTAMENTE con gli id delle destinazioni in
+     nav_graph_anziano.xml: NavigationUI.setupWithNavController() li collega
+     automaticamente in base a questa corrispondenza. -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/dashboardAnzianoFragment"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="Home" />
+
+    <item
+        android:id="@+id/nuovaRichiestaFragment"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="Nuova richiesta" />
+
+    <item
+        android:id="@+id/mieRichiesteFragment"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="Le mie richieste" />
+
+</menu>

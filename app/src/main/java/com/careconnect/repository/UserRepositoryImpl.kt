@@ -12,6 +12,11 @@ class UserRepositoryImpl(
 
     private val collection = firestore.collection("users")
 
+    // ATTENZIONE: questo è un .set() completo, non un update parziale.
+    // Chi chiama questo metodo per modificare UN SOLO campo (es. solo la bio)
+    // deve comunque passare l'intero oggetto User aggiornato (letto prima con
+    // getUtente() e poi copiato con .copy()), altrimenti i campi non inclusi
+    // nella chiamata verrebbero cancellati su Firestore.
     override suspend fun salvaUtente(user: User): Result<Unit> = runCatching {
         collection.document(user.uid).set(user.toFirestoreMap()).await()
     }
@@ -33,7 +38,8 @@ class UserRepositoryImpl(
             ruolo = UserRole.fromFirestoreValue(ruoloRaw),
             familiareCollegatoId = getString("familiareCollegatoId"),
             anzianoCollegatoId = getString("anzianoCollegatoId"),
-            ratingMedio = getDouble("ratingMedio")
+            ratingMedio = getDouble("ratingMedio"),
+            bio = getString("bio")
         )
     }
 
@@ -42,6 +48,7 @@ class UserRepositoryImpl(
         "ruolo" to ruolo.firestoreValue,
         "familiareCollegatoId" to familiareCollegatoId,
         "anzianoCollegatoId" to anzianoCollegatoId,
-        "ratingMedio" to ratingMedio
+        "ratingMedio" to ratingMedio,
+        "bio" to bio
     )
 }

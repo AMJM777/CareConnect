@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/care_surface"
+        android:padding="@dimen/spacing_medium"
+        android:layout_marginBottom="@dimen/spacing_small">
+
+        <TextView
+            android:id="@+id/tipoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_body"
+            android:textStyle="bold"
+            android:textColor="@color/care_on_surface"
+            tools:text="Spesa" />
+
+        <TextView
+            android:id="@+id/descrizioneText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
+
+        <TextView
+            android:id="@+id/statoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_primary_dark"
+            tools:text="Aperta" />
+
+        <TextView
+            android:id="@+id/dataText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            tools:text="03/07/2026 14:30" />
+
+        <!-- Riga di azioni: visibile solo se lo stato lo permette (gestito
+             nell'Adapter). "Modifica" solo se APERTA, "Annulla" se APERTA
+             o PRESA_IN_CARICO. -->
+        <LinearLayout
+            android:id="@+id/azioniContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/spacing_medium">
+
+            <Button
+                android:id="@+id/modificaButton"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Modifica"
+                android:textColor="@color/care_primary_dark" />
+
+            <Button
+                android:id="@+id/annullaButton"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Annulla"
+                android:textColor="@color/care_error" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

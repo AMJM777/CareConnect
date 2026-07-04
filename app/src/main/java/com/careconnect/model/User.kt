@@ -6,5 +6,6 @@ data class User(
     val ruolo: UserRole = UserRole.ANZIANO,
     val familiareCollegatoId: String? = null,   // valorizzato solo per ruolo ANZIANO
     val anzianoCollegatoId: String? = null,      // valorizzato solo per ruolo FAMILIARE
-    val ratingMedio: Double? = null              // valorizzato solo per ruolo VOLONTARIO
+    val ratingMedio: Double? = null,             // valorizzato solo per ruolo VOLONTARIO
+    val bio: String? = null                      // descrizione facoltativa, per ruolo VOLONTARIO
 )

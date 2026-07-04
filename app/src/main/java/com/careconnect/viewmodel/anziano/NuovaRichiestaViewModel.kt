@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
- * Stato della schermata "Nuova richiesta": dice al Fragment cosa mostrare
- * (form pronto, caricamento, successo con id creato, o errore).
+ * Stato condiviso sia per "creazione" sia per "modifica" di una richiesta:
+ * sono la stessa interazione con dati diversi, quindi un unico stato basta.
  */
 sealed class NuovaRichiestaUiState {
     object Idle : NuovaRichiestaUiState()
@@ -22,10 +22,9 @@ sealed class NuovaRichiestaUiState {
 }
 
 /**
- * ViewModel della schermata "Nuova richiesta". Riceve dal Fragment i dati
- * già validati (tipo e descrizione non vuoti) e li scrive su Firestore
- * tramite RequestRepository, che si occupa già di generare id e stato
- * iniziale (RequestStatus.APERTA di default, vedi Request.kt).
+ * ViewModel della schermata "Nuova richiesta" / "Modifica richiesta"
+ * (stesso Fragment, stesso ViewModel: creaRichiesta() per il primo caso,
+ * modificaRichiesta() per il secondo, entrambe scrivono su RequestRepository).
  */
 class NuovaRichiestaViewModel(
     private val requestRepository: RequestRepository
@@ -34,18 +33,10 @@ class NuovaRichiestaViewModel(
     private val _uiState = MutableStateFlow<NuovaRichiestaUiState>(NuovaRichiestaUiState.Idle)
     val uiState: StateFlow<NuovaRichiestaUiState> = _uiState.asStateFlow()
 
-    /**
-     * Crea la richiesta. autoreId è l'uid dell'anziano loggato (passato dal
-     * Fragment, che lo legge da AuthRepository: questo ViewModel non deve
-     * sapere nulla di autenticazione, solo di richieste).
-     */
     fun creaRichiesta(autoreId: String, tipo: String, descrizione: String) {
         viewModelScope.launch {
             _uiState.value = NuovaRichiestaUiState.Loading
 
-            // stato e timestampCreazione usano i default già definiti in
-            // Request.kt (RequestStatus.APERTA, Timestamp.now()): non li
-            // impostiamo qui per non duplicare quella logica.
             val nuovaRichiesta = Request(
                 autoreId = autoreId,
                 tipo = tipo,
@@ -58,12 +49,20 @@ class NuovaRichiestaViewModel(
             )
         }
     }
+
+    /** Modalità modifica: aggiorna una richiesta esistente invece di crearne una nuova. */
+    fun modificaRichiesta(requestId: String, tipo: String, descrizione: String) {
+        viewModelScope.launch {
+            _uiState.value = NuovaRichiestaUiState.Loading
+
+            requestRepository.modificaRichiesta(requestId, tipo, descrizione).fold(
+                onSuccess = { _uiState.value = NuovaRichiestaUiState.Successo(requestId) },
+                onFailure = { errore -> _uiState.value = NuovaRichiestaUiState.Errore(errore) }
+            )
+        }
+    }
 }
 
-/**
- * Factory manuale, stesso pattern già usato per AuthViewModelFactory
- * e SplashViewModelFactory: nessun framework DI (Hilt) nel progetto.
- */
 class NuovaRichiestaViewModelFactory(
     private val requestRepository: RequestRepository
 ) : ViewModelProvider.Factory {

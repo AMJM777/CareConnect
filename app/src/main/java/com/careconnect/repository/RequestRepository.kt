@@ -24,9 +24,31 @@ interface RequestRepository {
         nuovoVolontarioId: String? = null
     ): Result<Unit>
 
+    /**
+     * Modifica tipo e descrizione di una richiesta esistente.
+     * Permesso SOLO se la richiesta è ancora APERTA: se un volontario l'ha
+     * già presa in carico, cambiarne il contenuto lo lascerebbe con
+     * informazioni superate senza saperlo.
+     */
+    suspend fun modificaRichiesta(
+        requestId: String,
+        nuovoTipo: String,
+        nuovaDescrizione: String
+    ): Result<Unit>
+
     /** Stream in tempo reale delle richieste con stato APERTA (per il volontario). */
     fun osservaRichiesteAperte(): Flow<List<Request>>
 
     /** Stream in tempo reale delle richieste create da un anziano (storico). */
     fun osservaRichiestePerAnziano(anzianoId: String): Flow<List<Request>>
+
+    /**
+     * Stream in tempo reale delle richieste "attive" di un volontario, cioè
+     * quelle che ha preso in carico e non sono ancora arrivate a uno stato
+     * terminale dal suo punto di vista: PRESA_IN_CARICO (sta lavorandoci) o
+     * COMPLETATA_DAL_VOLONTARIO (ha finito, in attesa di conferma del garante).
+     * Non include CONFERMATA/ANNULLATA: quelle non richiedono più nessuna
+     * azione da parte del volontario, quindi non hanno senso in questa lista.
+     */
+    fun osservaRichiestePerVolontario(volontarioId: String): Flow<List<Request>>
 }

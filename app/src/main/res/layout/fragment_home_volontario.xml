@@ -3,16 +3,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/care_background">
+    android:layout_height="match_parent">
 
-    <!-- Placeholder: la vera home del Volontario arriva in Fase 5 -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Home Volontario (placeholder)"
-        android:textSize="@dimen/text_size_title"
+    <!-- NavHostFragment annidato: ospita le 3 destinazioni del Volontario.
+         Niente app:defaultNavHost="true" qui: solo il NavHostFragment
+         principale (activity_main.xml) intercetta il tasto Indietro di
+         sistema; la gestione qui la facciamo a mano in HomeVolontarioFragment.kt,
+         stesso schema già usato per l'Anziano. -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/volontarioNavHostFragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:navGraph="@navigation/nav_graph_volontario"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/volontarioBottomNav" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/volontarioBottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_nav_volontario"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

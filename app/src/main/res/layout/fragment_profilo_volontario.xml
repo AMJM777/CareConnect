@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/care_background"
+        android:padding="@dimen/screen_padding">
+
+        <TextView
+            android:id="@+id/titoloText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profilo"
+            android:textSize="@dimen/text_size_title"
+            android:textColor="@color/care_on_surface"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/nomeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:textSize="@dimen/text_size_body"
+            android:textStyle="bold"
+            android:textColor="@color/care_on_surface"
+            tools:text="Mario Rossi"
+            app:layout_constraintTop_toBottomOf="@id/titoloText"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/emailText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            tools:text="mario.rossi@email.com"
+            app:layout_constraintTop_toBottomOf="@id/nomeText"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/ruoloText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:text="Ruolo: Volontario"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            app:layout_constraintTop_toBottomOf="@id/emailText"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/ratingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:text="Valutazione: non ancora valutato"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            app:layout_constraintTop_toBottomOf="@id/ruoloText"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Sezione "immagine profilo": rimandata come possibile estensione
+             per la tesi (vedi Visione_e_Requisiti.md, backlog). Per ora la
+             schermata resta così, senza spazio riservato per non lasciare
+             un buco visivo per una feature non ancora decisa nei dettagli. -->
+
+        <TextView
+            android:id="@+id/bioLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:text="Descrizione (facoltativa)"
+            android:textSize="@dimen/text_size_body"
+            android:textStyle="bold"
+            android:textColor="@color/care_on_surface"
+            app:layout_constraintTop_toBottomOf="@id/ratingText"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/bioEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:minLines="3"
+            android:gravity="top|start"
+            android:inputType="textMultiLine"
+            android:hint="Racconta qualcosa di te a chi riceverà il tuo aiuto"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            android:background="@color/care_surface"
+            android:padding="@dimen/spacing_small"
+            app:layout_constraintTop_toBottomOf="@id/bioLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/salvaBioButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:text="Salva descrizione"
+            android:textColor="@color/care_primary_dark"
+            app:layout_constraintTop_toBottomOf="@id/bioEditText"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:text="Esci"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:backgroundTint="@color/care_error"
+            android:textColor="@color/care_on_error"
+            app:layout_constraintTop_toBottomOf="@id/salvaBioButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

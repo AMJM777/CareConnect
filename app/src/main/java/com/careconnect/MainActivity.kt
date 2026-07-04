@@ -44,6 +44,8 @@ class MainActivity : AppCompatActivity() {
             .setupWithNavController(navController, appBarConfiguration)
     }
 
+
+
     // Permette alla freccia "indietro" della Toolbar di funzionare come
     // il tasto Indietro di sistema, delegando a Navigation Component.
     override fun onSupportNavigateUp(): Boolean {

@@ -15,21 +15,11 @@
 
     <include app:graph="@navigation/nav_graph_auth" />
 
+
     <fragment
         android:id="@+id/homeAnzianoFragment"
         android:name="com.careconnect.ui.anziano.HomeAnzianoFragment"
-        android:label="Home Anziano">
-
-        <action
-            android:id="@+id/action_homeAnziano_to_nuovaRichiesta"
-            app:destination="@id/nuovaRichiestaFragment" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/nuovaRichiestaFragment"
-        android:name="com.careconnect.ui.anziano.NuovaRichiestaFragment"
-        android:label="Nuova richiesta" />
+        android:label="Home Anziano" />
 
     <fragment
         android:id="@+id/homeVolontarioFragment"

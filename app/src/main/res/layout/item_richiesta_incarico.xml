@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/care_surface"
+        android:padding="@dimen/spacing_medium"
+        android:layout_marginBottom="@dimen/spacing_small">
+
+        <TextView
+            android:id="@+id/tipoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_body"
+            android:textStyle="bold"
+            android:textColor="@color/care_on_surface"
+            tools:text="Spesa" />
+
+        <TextView
+            android:id="@+id/descrizioneText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
+
+        <TextView
+            android:id="@+id/statoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_primary_dark"
+            tools:text="Presa in carico" />
+
+        <TextView
+            android:id="@+id/dataText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            tools:text="04/07/2026 10:15" />
+
+        <!-- Entrambi i bottoni visibili solo se PRESA_IN_CARICO (gestito
+             nell'Adapter): una volta COMPLETATA_DAL_VOLONTARIO, il volontario
+             non ha più azioni da fare, aspetta la conferma del garante. -->
+        <LinearLayout
+            android:id="@+id/azioniContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/spacing_medium">
+
+            <Button
+                android:id="@+id/completaButton"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Segna come completata"
+                android:textColor="@color/care_primary_dark" />
+
+            <Button
+                android:id="@+id/rilasciaButton"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rilascia"
+                android:textColor="@color/care_error" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
