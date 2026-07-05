@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Gli id devono coincidere ESATTAMENTE con gli id delle destinazioni in
-     nav_graph_anziano.xml: NavigationUI.setupWithNavController() li collega
-     automaticamente in base a questa corrispondenza. -->
+<!-- FASE 8: "Nuova richiesta" non è più un tab (si raggiunge con un
+     bottone dalla Home, Step 2). Nuovo tab "Profilo". -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
@@ -10,13 +9,13 @@
         android:title="Home" />
 
     <item
-        android:id="@+id/nuovaRichiestaFragment"
-        android:icon="@android:drawable/ic_menu_add"
-        android:title="Nuova richiesta" />
-
-    <item
         android:id="@+id/mieRichiesteFragment"
         android:icon="@android:drawable/ic_menu_agenda"
         android:title="Le mie richieste" />
+
+    <item
+        android:id="@+id/profiloAnzianoFragment"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="Profilo" />
 
 </menu>

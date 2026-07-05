@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Grafo annidato, valido solo dentro la sezione Anziano. Contiene tutte
-     le destinazioni raggiungibili dalla bottom navigation di quel ruolo.
-     Isolato da nav_graph_main: nessun'altra parte dell'app lo referenzia. -->
+<!-- Grafo annidato, valido solo dentro la sezione Anziano.
+     FASE 8: nuova destinazione profiloAnzianoFragment. nuovaRichiestaFragment
+     resta nel grafo (serve ancora) ma non è più raggiunta dalla bottom nav,
+     solo con un bottone dal tab Home (vedi Step 2). -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_anziano"
@@ -21,5 +22,10 @@
         android:id="@+id/mieRichiesteFragment"
         android:name="com.careconnect.ui.anziano.MieRichiesteFragment"
         android:label="Le mie richieste" />
+
+    <fragment
+        android:id="@+id/profiloAnzianoFragment"
+        android:name="com.careconnect.ui.anziano.ProfiloAnzianoFragment"
+        android:label="Profilo" />
 
 </navigation>

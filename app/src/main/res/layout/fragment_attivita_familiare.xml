@@ -8,17 +8,52 @@
         android:background="@color/care_background"
         android:padding="@dimen/screen_padding">
 
+        <!-- FASE 8: banner SOS, visibile solo se c'è un allarme ATTIVO.
+             care_sos: colore riservato al bottone SOS dell'Anziano e a
+             questo banner, mai usato altrove nell'app. -->
+        <LinearLayout
+            android:id="@+id/sosBanner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/care_sos"
+            android:padding="@dimen/spacing_medium"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/sosText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Il tuo assistito ha lanciato un allarme SOS"
+                android:textSize="@dimen/text_size_body"
+                android:textStyle="bold"
+                android:textColor="@color/care_on_primary" />
+
+            <Button
+                android:id="@+id/chiudiSosButton"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:text="Ho visto, chiudi"
+                android:textColor="@color/care_on_primary" />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/titoloText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
             android:text="Attività"
             android:textSize="@dimen/text_size_title"
             android:textColor="@color/care_on_surface"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sosBanner"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Mostrato solo quando l'anziano non ha ancora nessuna richiesta (gestito nel Fragment). -->
         <TextView
             android:id="@+id/emptyStateText"
             android:layout_width="wrap_content"
@@ -27,7 +62,7 @@
             android:textSize="@dimen/text_size_body"
             android:textColor="@color/care_on_surface"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titoloText"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

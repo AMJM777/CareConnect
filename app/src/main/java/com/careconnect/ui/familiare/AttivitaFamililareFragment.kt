@@ -21,18 +21,13 @@ import com.careconnect.model.Request
 import com.careconnect.repository.AuthRepositoryImpl
 import com.careconnect.repository.RatingRepositoryImpl
 import com.careconnect.repository.RequestRepositoryImpl
+import com.careconnect.repository.SosRepositoryImpl
 import com.careconnect.repository.UserRepositoryImpl
+import com.careconnect.ui.common.mostraProfiloVolontario
 import com.careconnect.viewmodel.familiare.AttivitaFamiliareViewModel
 import com.careconnect.viewmodel.familiare.AttivitaFamiliareViewModelFactory
 import kotlinx.coroutines.launch
-import com.careconnect.ui.common.mostraProfiloVolontario
 
-/**
- * Schermata "Attività" del Familiare: lista in tempo reale di tutte le
- * richieste dell'anziano collegato (stato attuale + storico), con l'unica
- * azione consentita: confermare il completamento e valutare il volontario,
- * quando la richiesta è COMPLETATA_DAL_VOLONTARIO.
- */
 class AttivitaFamiliareFragment : Fragment() {
 
     private var _binding: FragmentAttivitaFamiliareBinding? = null
@@ -42,11 +37,15 @@ class AttivitaFamiliareFragment : Fragment() {
         AttivitaFamiliareViewModelFactory(
             RequestRepositoryImpl(),
             RatingRepositoryImpl(),
+            SosRepositoryImpl(),
             UserRepositoryImpl(),
             AuthRepositoryImpl()
         )
     }
 
+    // FASE 7: onVolontarioClick apre il profilo di sola lettura del
+    // volontario (dialog condiviso in ui/common/). Mancava in questo file
+    // dopo l'ultima modifica per il banner SOS — corretto qui.
     private val adapter = AttivitaFamiliareAdapter(
         onConfermaClick = { richiesta -> mostraDialogValutazione(richiesta) },
         onVolontarioClick = { volontarioId -> mostraProfiloVolontario(volontarioId) }
@@ -69,13 +68,22 @@ class AttivitaFamiliareFragment : Fragment() {
 
         osservaRichieste()
         osservaErrori()
+        osservaSos()
     }
 
-    /**
-     * Il bottone positivo non usa il listener "comodo" di AlertDialog.Builder
-     * (chiuderebbe sempre il dialog, anche con 0 stelle). Lo sovrascriviamo
-     * dopo show() per bloccare la chiusura finché non c'è almeno 1 stella.
-     */
+    private fun osservaSos() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sosAttivo.collect { alert ->
+                    binding.sosBanner.visibility = if (alert != null) View.VISIBLE else View.GONE
+                    binding.chiudiSosButton.setOnClickListener {
+                        alert?.let { viewModel.chiudiSos(it.id) }
+                    }
+                }
+            }
+        }
+    }
+
     private fun mostraDialogValutazione(richiesta: Request) {
         val vistaDialog = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_conferma_valutazione, null)

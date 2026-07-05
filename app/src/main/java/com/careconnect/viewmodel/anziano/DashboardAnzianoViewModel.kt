@@ -3,8 +3,9 @@ package com.careconnect.viewmodel.anziano
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.careconnect.model.User
+import com.careconnect.model.SosAlert
 import com.careconnect.repository.AuthRepository
+import com.careconnect.repository.SosRepository
 import com.careconnect.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,81 +13,59 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
- * ViewModel della Dashboard Anziano.
- * Si occupa di: codice invito (FASE 6) e indirizzo (FASE 7, serve al
- * Volontario per sapere dove andare quando accetta una richiesta).
+ * ViewModel della Home Anziano (FASE 8, ridisegnata).
+ * Codice invito/indirizzo/logout sono stati spostati nel nuovo
+ * ProfiloAnzianoViewModel (Step 1); "Nuova richiesta" naviga direttamente
+ * al Fragment esistente, non serve logica qui. Resta solo l'invio SOS.
  */
 class DashboardAnzianoViewModel(
+    private val sosRepository: SosRepository,
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _utente = MutableStateFlow<User?>(null)
-    val utente: StateFlow<User?> = _utente.asStateFlow()
-
-    private val _codiceInvito = MutableStateFlow<String?>(null)
-    val codiceInvito: StateFlow<String?> = _codiceInvito.asStateFlow()
+    private val _sosInviato = MutableStateFlow(false)
+    val sosInviato: StateFlow<Boolean> = _sosInviato.asStateFlow()
 
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
-    private val _indirizzoSalvato = MutableStateFlow(false)
-    val indirizzoSalvato: StateFlow<Boolean> = _indirizzoSalvato.asStateFlow()
-
-    init {
-        caricaProfilo()
-        caricaCodiceInvito()
-    }
-
-    private fun caricaProfilo() {
-        val uid = authRepository.utenteCorrente()?.uid
-        if (uid == null) {
+    /**
+     * Scrive un SosAlert per OGNI familiare collegato, non uno solo:
+     * SosAlert.familiareId è singolare (risale alla Fase 1), ma dalla
+     * Fase 6 un anziano può avere più familiari collegati — vedi Roadmap
+     * Fase 8. Riusiamo SosRepository.creaAlert() così com'è, chiamandolo
+     * una volta per familiare, invece di cambiare lo schema del modello.
+     */
+    fun inviaSos() {
+        val anzianoId = authRepository.utenteCorrente()?.uid
+        if (anzianoId == null) {
             _errore.value = "Sessione non valida"
             return
         }
-        viewModelScope.launch {
-            userRepository.getUtente(uid).fold(
-                onSuccess = { utenteCaricato -> _utente.value = utenteCaricato },
-                onFailure = { errore -> _errore.value = errore.message ?: "Impossibile caricare il profilo" }
-            )
-        }
-    }
-
-    private fun caricaCodiceInvito() {
-        val uid = authRepository.utenteCorrente()?.uid
-        if (uid == null) return
-        viewModelScope.launch {
-            userRepository.ottieniOCreaCodiceInvito(uid).fold(
-                onSuccess = { codice -> _codiceInvito.value = codice },
-                onFailure = { errore ->
-                    _errore.value = errore.message ?: "Impossibile generare il codice invito"
-                }
-            )
-        }
-    }
-
-    fun salvaIndirizzo(nuovoIndirizzo: String) {
-        val utenteAttuale = _utente.value
-        if (utenteAttuale == null) {
-            _errore.value = "Profilo non ancora caricato"
-            return
-        }
-        if (nuovoIndirizzo.isBlank()) {
-            _errore.value = "Inserisci un indirizzo valido"
-            return
-        }
-        val utenteAggiornato = utenteAttuale.copy(indirizzo = nuovoIndirizzo.trim())
 
         viewModelScope.launch {
-            userRepository.salvaUtente(utenteAggiornato).fold(
-                onSuccess = {
-                    _utente.value = utenteAggiornato
-                    _indirizzoSalvato.value = true
-                },
-                onFailure = { errore ->
-                    _errore.value = errore.message ?: "Impossibile salvare l'indirizzo"
-                }
-            )
+            val anziano = userRepository.getUtente(anzianoId).getOrElse {
+                _errore.value = it.message ?: "Impossibile inviare l'allarme"
+                return@launch
+            }
+
+            if (anziano.familiariCollegatiIds.isEmpty()) {
+                _errore.value = "Nessun familiare collegato: condividi il tuo codice invito prima di usare SOS"
+                return@launch
+            }
+
+            var almenoUnoRiuscito = false
+            for (familiareId in anziano.familiariCollegatiIds) {
+                val alert = SosAlert(anzianoId = anzianoId, familiareId = familiareId)
+                sosRepository.creaAlert(alert).onSuccess { almenoUnoRiuscito = true }
+            }
+
+            if (almenoUnoRiuscito) {
+                _sosInviato.value = true
+            } else {
+                _errore.value = "Impossibile avvisare i familiari, riprova"
+            }
         }
     }
 
@@ -94,19 +73,20 @@ class DashboardAnzianoViewModel(
         _errore.value = null
     }
 
-    fun indirizzoSalvatoMostrato() {
-        _indirizzoSalvato.value = false
+    fun sosInviatoMostrato() {
+        _sosInviato.value = false
     }
 }
 
 class DashboardAnzianoViewModelFactory(
+    private val sosRepository: SosRepository,
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DashboardAnzianoViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return DashboardAnzianoViewModel(userRepository, authRepository) as T
+            return DashboardAnzianoViewModel(sosRepository, userRepository, authRepository) as T
         }
         throw IllegalArgumentException("ViewModel sconosciuto: ${modelClass.name}")
     }
