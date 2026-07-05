@@ -1,13 +1,21 @@
 package com.careconnect.ui.anziano
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.careconnect.R
@@ -15,28 +23,27 @@ import com.careconnect.databinding.FragmentDashboardAnzianoBinding
 import com.careconnect.repository.AuthRepositoryImpl
 import com.careconnect.repository.UserRepositoryImpl
 import com.careconnect.util.SessionCache
+import com.careconnect.viewmodel.anziano.DashboardAnzianoViewModel
+import com.careconnect.viewmodel.anziano.DashboardAnzianoViewModelFactory
 import com.careconnect.viewmodel.auth.AuthViewModel
 import com.careconnect.viewmodel.auth.AuthViewModelFactory
+import kotlinx.coroutines.launch
 
-/**
- * Vera "home" dell'Anziano, dentro il grafo annidato. Per ora mostra solo
- * il benvenuto e il bottone di logout: il resto (SOS, riepilogo richieste)
- * arriva in un passaggio successivo.
- */
 class DashboardAnzianoFragment : Fragment() {
 
     private var _binding: FragmentDashboardAnzianoBinding? = null
     private val binding get() = _binding!!
 
-    // Stesso AuthViewModel condiviso da Login/Registrazione: activityViewModels
-    // lo scopa all'Activity, quindi qui otteniamo la stessa istanza (o ne
-    // viene creata una nuova con gli stessi repository, se non esisteva già).
     private val authViewModel: AuthViewModel by activityViewModels {
         AuthViewModelFactory(
             AuthRepositoryImpl(),
             UserRepositoryImpl(),
             SessionCache(requireContext())
         )
+    }
+
+    private val dashboardViewModel: DashboardAnzianoViewModel by viewModels {
+        DashboardAnzianoViewModelFactory(UserRepositoryImpl(), AuthRepositoryImpl())
     }
 
     override fun onCreateView(
@@ -54,9 +61,75 @@ class DashboardAnzianoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.logoutButton.setOnClickListener { mostraConfermaLogout() }
+        binding.copiaCodiceButton.setOnClickListener { copiaCodiceNegliAppunti() }
+        binding.salvaIndirizzoButton.setOnClickListener {
+            dashboardViewModel.salvaIndirizzo(binding.indirizzoEditText.text.toString())
+        }
+
+        osservaProfilo()
+        osservaCodiceInvito()
+        osservaErrori()
+        osservaIndirizzoSalvato()
     }
 
-    /** Conferma prima di uscire: un tocco accidentale non deve disconnettere l'utente. */
+    /** Precompila il campo indirizzo con quello già salvato, se esiste. */
+    private fun osservaProfilo() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                dashboardViewModel.utente.collect { utente ->
+                    if (utente != null && binding.indirizzoEditText.text.isNullOrBlank()) {
+                        binding.indirizzoEditText.setText(utente.indirizzo ?: "")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun osservaCodiceInvito() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                dashboardViewModel.codiceInvito.collect { codice ->
+                    binding.codiceInvitoText.text = codice ?: "..."
+                    binding.copiaCodiceButton.isEnabled = codice != null
+                }
+            }
+        }
+    }
+
+    private fun osservaErrori() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                dashboardViewModel.errore.collect { errore ->
+                    if (errore != null) {
+                        Toast.makeText(requireContext(), errore, Toast.LENGTH_SHORT).show()
+                        dashboardViewModel.erroreMostrato()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun osservaIndirizzoSalvato() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                dashboardViewModel.indirizzoSalvato.collect { salvato ->
+                    if (salvato) {
+                        Toast.makeText(requireContext(), "Indirizzo salvato", Toast.LENGTH_SHORT).show()
+                        dashboardViewModel.indirizzoSalvatoMostrato()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun copiaCodiceNegliAppunti() {
+        val codice = dashboardViewModel.codiceInvito.value ?: return
+        val clipboardManager =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboardManager.setPrimaryClip(ClipData.newPlainText("Codice invito CareConnect", codice))
+        Toast.makeText(requireContext(), "Codice copiato", Toast.LENGTH_SHORT).show()
+    }
+
     private fun mostraConfermaLogout() {
         AlertDialog.Builder(requireContext())
             .setTitle("Vuoi uscire?")
@@ -69,18 +142,12 @@ class DashboardAnzianoFragment : Fragment() {
     private fun eseguiLogout() {
         authViewModel.logout()
 
-        // Serve il NavController PRINCIPALE (quello di activity_main.xml,
-        // scoped a nav_graph_main), non quello annidato dell'Anziano: solo
-        // lui conosce sia homeAnzianoFragment sia nav_graph_auth, per poter
-        // ripulire l'intero back stack della sezione Anziano.
-        // Stesso pattern già usato in SplashFragment per lo stesso scenario
-        // (nessuna sessione -> vai al login).
         val navHostFragmentPrincipale = requireActivity().supportFragmentManager
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navControllerPrincipale = navHostFragmentPrincipale.navController
 
         val opzioni = navOptions {
-            popUpTo(R.id.homeAnzianoFragment) { inclusive = true }
+            popUpTo(0) { inclusive = true }
         }
         navControllerPrincipale.navigate(R.id.nav_graph_auth, null, opzioni)
     }

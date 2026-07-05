@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -18,13 +19,22 @@ import com.careconnect.R
 import com.careconnect.databinding.FragmentProfiloVolontarioBinding
 import com.careconnect.repository.AuthRepositoryImpl
 import com.careconnect.repository.UserRepositoryImpl
+import com.careconnect.util.SessionCache
+import com.careconnect.viewmodel.auth.AuthViewModel
+import com.careconnect.viewmodel.auth.AuthViewModelFactory
 import com.careconnect.viewmodel.volontario.ProfiloVolontarioViewModel
 import com.careconnect.viewmodel.volontario.ProfiloVolontarioViewModelFactory
 import kotlinx.coroutines.launch
 
 /**
- * Schermata Profilo del Volontario: nome, email, ruolo, valutazione
- * (placeholder fino alla Fase 7), descrizione modificabile, e logout.
+ * Schermata Profilo del Volontario: nome, email, ruolo, valutazione,
+ * descrizione modificabile, e logout.
+ *
+ * FIX: il logout ora passa dal condiviso AuthViewModel (stesso schema di
+ * Anziano/Familiare), non più da un logout() locale di
+ * ProfiloVolontarioViewModel — quest'ultimo disconnetteva Firebase ma non
+ * resettava lo stato di AuthViewModel, causando un rimbalzo immediato
+ * indietro alla Home Volontario appena si arrivava al login.
  */
 class ProfiloVolontarioFragment : Fragment() {
 
@@ -35,10 +45,18 @@ class ProfiloVolontarioFragment : Fragment() {
         ProfiloVolontarioViewModelFactory(UserRepositoryImpl(), AuthRepositoryImpl())
     }
 
-    // Tiene traccia se l'EditText della bio è già stato riempito una volta
-    // con il valore caricato da Firestore: senza questo flag, ogni nuova
-    // emissione del Flow "utente" (es. dopo il salvataggio) sovrascriverebbe
-    // quello che l'utente sta scrivendo in quel momento.
+    // Stesso AuthViewModel condiviso usato da Login/Registrazione e dagli
+    // altri due ruoli: activityViewModels() garantisce che sia la STESSA
+    // istanza, quindi il logout() qui resetta lo stato che LoginFragment
+    // osserva davvero.
+    private val authViewModel: AuthViewModel by activityViewModels {
+        AuthViewModelFactory(
+            AuthRepositoryImpl(),
+            UserRepositoryImpl(),
+            SessionCache(requireContext())
+        )
+    }
+
     private var bioGiaPrecompilata = false
 
     override fun onCreateView(
@@ -76,10 +94,6 @@ class ProfiloVolontarioFragment : Fragment() {
                             "Valutazione: %.1f / 5".format(media)
                         } ?: "Valutazione: non ancora valutato"
 
-                        // Precompila l'EditText solo la prima volta: dopo un
-                        // salvataggio riuscito, _utente si aggiorna di nuovo,
-                        // ma non vogliamo "resettare" il campo se l'utente
-                        // sta già continuando a scrivere qualcos'altro.
                         if (!bioGiaPrecompilata) {
                             binding.bioEditText.setText(utente.bio ?: "")
                             bioGiaPrecompilata = true
@@ -126,14 +140,16 @@ class ProfiloVolontarioFragment : Fragment() {
     }
 
     private fun eseguiLogout() {
-        viewModel.logout()
+        // FIX: era viewModel.logout() (locale, incompleto) — ora usa il
+        // logout condiviso, che resetta anche sessionCache e AuthUiState.
+        authViewModel.logout()
 
         val navHostFragmentPrincipale = requireActivity().supportFragmentManager
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navControllerPrincipale = navHostFragmentPrincipale.navController
 
         val opzioni = navOptions {
-            popUpTo(R.id.homeVolontarioFragment) { inclusive = true }
+            popUpTo(0) { inclusive = true }
         }
         navControllerPrincipale.navigate(R.id.nav_graph_auth, null, opzioni)
     }

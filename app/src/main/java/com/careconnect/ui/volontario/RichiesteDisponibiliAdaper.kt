@@ -9,12 +9,11 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 /**
- * Adapter della lista "Richieste disponibili". Stesso schema di
- * RichiesteAdapter (Anziano): RecyclerView.Adapter classico + ViewHolder con
- * Data Binding, notifyDataSetChanged() invece di ListAdapter/DiffUtil.
- *
- * Un solo tipo di azione possibile qui ("Prendi in carico"), passata come
- * lambda dal Fragment: l'Adapter non parla mai con ViewModel/Repository.
+ * Adapter della lista "Richieste disponibili": SOLO tipo/descrizione/data
+ * e il bottone "Prendi in carico". Niente autoreNome/autoreIndirizzo qui
+ * di proposito (FASE 7): queste richieste sono visibili a TUTTI i
+ * volontari prima che qualcuno le accetti, mostrare nome e indirizzo di
+ * un anziano a chiunque stia solo guardando sarebbe un problema di privacy.
  */
 class RichiesteDisponibiliAdapter(
     private val onPrendiInCaricoClick: (Request) -> Unit

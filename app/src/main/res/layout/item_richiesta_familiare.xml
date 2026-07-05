@@ -35,11 +35,9 @@
             android:layout_marginTop="@dimen/spacing_small"
             android:textSize="@dimen/text_size_body"
             android:textColor="@color/care_primary_dark"
-            tools:text="Aperta" />
+            tools:text="Completata, in attesa di conferma" />
 
-        <!-- FASE 7: visibile solo quando un volontario ha accettato
-             (gestito nell'Adapter). Cliccabile: apre il profilo di sola
-             lettura del volontario. -->
+        <!-- FASE 7: stessa logica del corrispettivo Anziano. -->
         <TextView
             android:id="@+id/volontarioNomeText"
             android:layout_width="wrap_content"
@@ -59,32 +57,16 @@
             android:layout_marginTop="@dimen/spacing_small"
             android:textSize="@dimen/text_size_body"
             android:textColor="@color/care_on_surface"
-            tools:text="03/07/2026 14:30" />
+            tools:text="04/07/2026 10:15" />
 
-        <LinearLayout
-            android:id="@+id/azioniContainer"
+        <Button
+            android:id="@+id/confermaButton"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/spacing_medium">
-
-            <Button
-                android:id="@+id/modificaButton"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Modifica"
-                android:textColor="@color/care_primary_dark" />
-
-            <Button
-                android:id="@+id/annullaButton"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Annulla"
-                android:textColor="@color/care_error" />
-
-        </LinearLayout>
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:text="Conferma e valuta"
+            android:textColor="@color/care_primary_dark" />
 
     </LinearLayout>
 </layout>

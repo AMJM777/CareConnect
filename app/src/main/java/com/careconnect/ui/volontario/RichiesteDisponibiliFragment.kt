@@ -19,6 +19,7 @@ import com.careconnect.repository.RequestRepositoryImpl
 import com.careconnect.viewmodel.volontario.RichiesteDisponibiliViewModel
 import com.careconnect.viewmodel.volontario.RichiesteDisponibiliViewModelFactory
 import kotlinx.coroutines.launch
+import com.careconnect.repository.UserRepositoryImpl
 
 /**
  * Schermata "Richieste disponibili": lista in tempo reale di tutte le
@@ -30,9 +31,8 @@ class RichiesteDisponibiliFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: RichiesteDisponibiliViewModel by viewModels {
-        RichiesteDisponibiliViewModelFactory(RequestRepositoryImpl(), AuthRepositoryImpl())
+        RichiesteDisponibiliViewModelFactory(RequestRepositoryImpl(), UserRepositoryImpl(), AuthRepositoryImpl())
     }
-
     private val adapter = RichiesteDisponibiliAdapter(
         onPrendiInCaricoClick = { richiesta ->
             viewModel.prendiInCarico(richiesta.id)

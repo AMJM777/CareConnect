@@ -16,27 +16,21 @@ import com.careconnect.R
 import com.careconnect.databinding.FragmentNuovaRichiestaBinding
 import com.careconnect.repository.AuthRepositoryImpl
 import com.careconnect.repository.RequestRepositoryImpl
+import com.careconnect.repository.UserRepositoryImpl
 import com.careconnect.viewmodel.anziano.NuovaRichiestaUiState
 import com.careconnect.viewmodel.anziano.NuovaRichiestaViewModel
 import com.careconnect.viewmodel.anziano.NuovaRichiestaViewModelFactory
 import kotlinx.coroutines.launch
 
-/**
- * Form per creare O modificare una richiesta (stesso Fragment per entrambi
- * i casi). Se arriva un "requestId" negli argomenti, siamo in modalità
- * modifica: il form si pre-compila e "Invia" diventa "Salva modifiche".
- * Senza argomenti, è la normale creazione di una nuova richiesta.
- */
 class NuovaRichiestaFragment : Fragment() {
 
     private var _binding: FragmentNuovaRichiestaBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: NuovaRichiestaViewModel by viewModels {
-        NuovaRichiestaViewModelFactory(RequestRepositoryImpl())
+        NuovaRichiestaViewModelFactory(RequestRepositoryImpl(), UserRepositoryImpl())
     }
 
-    // Se non null, siamo in modalità modifica di QUESTA richiesta.
     private var requestIdInModifica: String? = null
 
     override fun onCreateView(
@@ -56,24 +50,33 @@ class NuovaRichiestaFragment : Fragment() {
         binding.tipoRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             binding.altroInput.visibility =
                 if (checkedId == R.id.tipoAltroRadio) View.VISIBLE else View.GONE
+            aggiornaHintDescrizione(checkedId)
         }
 
         binding.inviaButton.setOnClickListener { onInviaClick() }
 
-        // Legge gli argomenti PRIMA di osservare lo stato: se siamo in
-        // modifica, il form deve già mostrare i dati esistenti al primo
-        // frame utile, non dopo un lampo di form vuoto.
         leggiArgomentiModalita()
-
         osservaStato()
     }
 
     /**
-     * Controlla se siamo stati aperti in modalità modifica (arriva un
-     * "requestId" negli argomenti) o creazione (nessun argomento).
-     * Se modifica, pre-compila RadioGroup/descrizione e cambia il testo
-     * del bottone, così l'utente capisce subito cosa sta facendo.
+     * FASE 7: hint diverso per tipo, con un esempio concreto di cosa
+     * scrivere — soluzione leggera per far sì che l'Anziano sia più
+     * preciso, invece di costruire una vera chat con il Volontario.
      */
+    private fun aggiornaHintDescrizione(checkedId: Int) {
+        binding.descrizioneInput.hint = when (checkedId) {
+            R.id.tipoSpesaRadio ->
+                "Es: 2kg di pasta, latte, pane. Lascia la spesa in cucina, busso al citofono."
+            R.id.tipoBollettaRadio ->
+                "Es: bolletta luce Enel, scadenza 15/07, importo 45€. Da pagare in posta."
+            R.id.tipoAssistenzaDigitaleRadio ->
+                "Es: aiutami a fare una videochiamata su WhatsApp, ho il telefono nuovo."
+            else ->
+                "Descrivi cosa ti serve con più dettagli possibili: aiuta il volontario a organizzarsi."
+        }
+    }
+
     private fun leggiArgomentiModalita() {
         val requestId = arguments?.getString(ARG_REQUEST_ID) ?: return
         val tipoEsistente = arguments?.getString(ARG_TIPO) ?: ""
@@ -83,10 +86,6 @@ class NuovaRichiestaFragment : Fragment() {
         binding.titoloText.text = "Modifica richiesta"
         binding.inviaButton.text = "Salva modifiche"
 
-        // Se il tipo esistente corrisponde a una delle 3 opzioni fisse,
-        // seleziona quel radio. Altrimenti era "Altro" (con o senza testo
-        // libero): selezioniamo "Altro" e, se il valore non è letteralmente
-        // "altro", lo mostriamo nel campo di testo libero.
         when (tipoEsistente) {
             "spesa" -> binding.tipoSpesaRadio.isChecked = true
             "bolletta" -> binding.tipoBollettaRadio.isChecked = true
@@ -119,10 +118,8 @@ class NuovaRichiestaFragment : Fragment() {
 
         val idInModifica = requestIdInModifica
         if (idInModifica != null) {
-            // Modalità modifica: aggiorna la richiesta esistente.
             viewModel.modificaRichiesta(idInModifica, tipo!!, descrizione)
         } else {
-            // Modalità creazione: come prima, serve l'uid dell'utente loggato.
             val autoreId = AuthRepositoryImpl().utenteCorrente()?.uid
             if (autoreId == null) {
                 mostraErroreLocale("Sessione scaduta, effettua di nuovo il login")
@@ -177,9 +174,6 @@ class NuovaRichiestaFragment : Fragment() {
     }
 
     companion object {
-        // Chiavi degli argomenti passati via Bundle per la modalità modifica.
-        // Nessun Safe Args nel progetto: usiamo chiavi stringa semplici,
-        // coerenti con lo stile già visto altrove.
         const val ARG_REQUEST_ID = "requestId"
         const val ARG_TIPO = "tipo"
         const val ARG_DESCRIZIONE = "descrizione"

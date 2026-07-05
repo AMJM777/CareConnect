@@ -5,7 +5,6 @@ import com.careconnect.model.RequestStatus
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
-import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -33,23 +32,16 @@ class RequestRepositoryImpl(
     override suspend fun aggiornaStato(
         requestId: String,
         nuovoStato: RequestStatus,
-        nuovoVolontarioId: String?
+        nuovoVolontarioId: String?,
+        nuovoVolontarioNome: String?
     ): Result<Unit> = runCatching {
         val docRef = collection.document(requestId)
 
-        // FASE 5: prima qui c'era un get() + update() separati. Con più
-        // volontari che possono premere "Prendi in carico" sulla stessa
-        // richiesta nello stesso momento, quel pattern permetteva una race
-        // condition (entrambi leggono "APERTA" prima che l'altro scriva).
-        //
-        // Con una Transaction, Firestore garantisce che lettura e scrittura
-        // avvengano come un'unica operazione atomica: se due transazioni si
-        // scontrano sullo stesso documento, una delle due viene rieseguita
-        // automaticamente dall'SDK con i dati aggiornati. Al secondo
-        // tentativo, "attuale.stato" non è più APERTA, quindi
-        // "canTransitionTo" fallisce e la transazione lancia un errore
-        // gestito normalmente come Result.failure (es. Toast "richiesta già
-        // presa in carico da un altro volontario").
+        // FASE 5: Transaction già presente per evitare che due volontari
+        // "vincano" la stessa richiesta nello stesso istante (vedi commento
+        // storico più sotto). FASE 7: aggiungo solo la scrittura di
+        // volontarioNome nella stessa transazione, nessun cambiamento alla
+        // logica di validazione già esistente.
         firestore.runTransaction { transaction ->
             val attuale = transaction.get(docRef).toRequest()
                 ?: throw NoSuchElementException("Richiesta non trovata: $requestId")
@@ -62,8 +54,9 @@ class RequestRepositoryImpl(
 
             val aggiornamenti = mutableMapOf<String, Any?>("stato" to nuovoStato.firestoreValue)
             if (nuovoVolontarioId != null || nuovoStato == RequestStatus.APERTA) {
-                // APERTA senza volontarioId esplicito => rilascio, azzera il campo
+                // APERTA senza volontarioId esplicito => rilascio, azzera i campi del volontario
                 aggiornamenti["volontarioId"] = nuovoVolontarioId
+                aggiornamenti["volontarioNome"] = if (nuovoVolontarioId != null) nuovoVolontarioNome else null
             }
 
             transaction.update(docRef, aggiornamenti)
@@ -79,10 +72,6 @@ class RequestRepositoryImpl(
         val attuale = docRef.get().await().toRequest()
             ?: throw NoSuchElementException("Richiesta non trovata: $requestId")
 
-        // Controllo di sicurezza lato server (oltre a quello già fatto in UI,
-        // che nasconde il bottone "Modifica" se non APERTA): protegge dal
-        // caso raro ma reale in cui un volontario prende in carico la
-        // richiesta proprio mentre l'anziano sta ancora compilando il form.
         if (attuale.stato != RequestStatus.APERTA) {
             throw IllegalStateException(
                 "Impossibile modificare: la richiesta non è più APERTA (stato attuale: ${attuale.stato})"
@@ -126,9 +115,6 @@ class RequestRepositoryImpl(
     }
 
     override fun osservaRichiestePerVolontario(volontarioId: String): Flow<List<Request>> = callbackFlow {
-        // "Attive" = presa in carico oppure completata dal volontario ma non
-        // ancora confermata dal garante. CONFERMATA/ANNULLATA non compaiono
-        // qui: sono uno stato terminale, il volontario non deve più agire.
         val statiAttivi = listOf(
             RequestStatus.PRESA_IN_CARICO.firestoreValue,
             RequestStatus.COMPLETATA_DAL_VOLONTARIO.firestoreValue
@@ -155,10 +141,13 @@ class RequestRepositoryImpl(
         return Request(
             id = id,
             autoreId = getString("autoreId") ?: "",
+            autoreNome = getString("autoreNome") ?: "",
+            autoreIndirizzo = getString("autoreIndirizzo") ?: "",
             tipo = getString("tipo") ?: "",
             descrizione = getString("descrizione") ?: "",
             stato = RequestStatus.fromFirestoreValue(statoRaw),
             volontarioId = getString("volontarioId"),
+            volontarioNome = getString("volontarioNome"),
             timestampCreazione = getTimestamp("timestampCreazione") ?: com.google.firebase.Timestamp.now(),
             posizione = getGeoPoint("posizione")
         )
@@ -166,10 +155,13 @@ class RequestRepositoryImpl(
 
     private fun Request.toFirestoreMap(): Map<String, Any?> = mapOf(
         "autoreId" to autoreId,
+        "autoreNome" to autoreNome,
+        "autoreIndirizzo" to autoreIndirizzo,
         "tipo" to tipo,
         "descrizione" to descrizione,
         "stato" to stato.firestoreValue,
         "volontarioId" to volontarioId,
+        "volontarioNome" to volontarioNome,
         "timestampCreazione" to timestampCreazione,
         "posizione" to posizione
     )

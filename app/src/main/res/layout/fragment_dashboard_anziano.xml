@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -8,8 +9,6 @@
         android:background="@color/care_background"
         android:padding="@dimen/screen_padding">
 
-        <!-- Vera dashboard (SOS, riepilogo richieste attive, ecc.) arriva
-             più avanti: per ora solo il messaggio di benvenuto e il logout. -->
         <TextView
             android:id="@+id/benvenutoText"
             android:layout_width="wrap_content"
@@ -18,10 +17,84 @@
             android:textSize="@dimen/text_size_title"
             android:textColor="@color/care_on_surface"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/logoutButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/codiceInvitoLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:text="Codice per i tuoi familiari"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            app:layout_constraintTop_toBottomOf="@id/benvenutoText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/codiceInvitoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_title"
+            android:textStyle="bold"
+            android:textColor="@color/care_primary_dark"
+            android:letterSpacing="0.2"
+            tools:text="A7K9P2"
+            app:layout_constraintTop_toBottomOf="@id/codiceInvitoLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/copiaCodiceButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:text="Copia codice"
+            android:textColor="@color/care_primary_dark"
+            app:layout_constraintTop_toBottomOf="@id/codiceInvitoText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- FASE 7: indirizzo dell'anziano, serve al Volontario per sapere
+             dove andare quando accetta una richiesta. -->
+        <TextView
+            android:id="@+id/indirizzoLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:text="Il tuo indirizzo"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            app:layout_constraintTop_toBottomOf="@id/copiaCodiceButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <EditText
+            android:id="@+id/indirizzoEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:hint="Es: Via Roma 12, Milano"
+            android:inputType="textPostalAddress"
+            android:maxLines="2"
+            app:layout_constraintTop_toBottomOf="@id/indirizzoLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/salvaIndirizzoButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:text="Salva indirizzo"
+            android:textColor="@color/care_primary_dark"
+            app:layout_constraintTop_toBottomOf="@id/indirizzoEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/logoutButton"
@@ -31,10 +104,11 @@
             android:layout_marginTop="@dimen/spacing_large"
             android:backgroundTint="@color/care_error"
             android:textColor="@color/care_on_error"
-            app:layout_constraintTop_toBottomOf="@id/benvenutoText"
+            app:layout_constraintTop_toBottomOf="@id/salvaIndirizzoButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

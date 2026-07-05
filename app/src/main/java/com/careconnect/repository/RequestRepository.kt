@@ -15,13 +15,20 @@ interface RequestRepository {
     /**
      * Aggiorna lo stato di una richiesta, validando che la transizione
      * da stato attuale al nuovo stato sia ammessa da "RequestStatus.canTransitionTo"
-     * Se "Nuovo volontario Id" è fornito, aggiorna anche quel campo nella stessa scrittura
+     * Se "nuovoVolontarioId" è fornito, aggiorna anche quel campo nella stessa scrittura
      * (usato per presa in carico e rilascio).
+     *
+     * FASE 7: "nuovoVolontarioNome" viene scritto solo se "nuovoVolontarioId"
+     * è fornito (caso "prendi in carico"): il chiamante (ViewModel) lo
+     * recupera con UserRepository.getUtente() PRIMA di questa chiamata,
+     * così il repository resta "puro" e legge/scrive solo la collezione
+     * "requests", senza sconfinare su "users".
      */
     suspend fun aggiornaStato(
         requestId: String,
         nuovoStato: RequestStatus,
-        nuovoVolontarioId: String? = null
+        nuovoVolontarioId: String? = null,
+        nuovoVolontarioNome: String? = null
     ): Result<Unit>
 
     /**

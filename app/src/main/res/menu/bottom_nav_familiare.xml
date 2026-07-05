@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gli id devono coincidere ESATTAMENTE con quelli in nav_graph_familiare.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/attivitaFamiliareFragment"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="Attività" />
+
+    <item
+        android:id="@+id/profiloFamiliareFragment"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="Profilo" />
+
+</menu>

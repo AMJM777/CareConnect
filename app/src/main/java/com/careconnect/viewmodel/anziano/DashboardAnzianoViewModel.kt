@@ -1,4 +1,4 @@
-package com.careconnect.viewmodel.volontario
+package com.careconnect.viewmodel.anziano
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -12,10 +12,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
- * ViewModel del Profilo Volontario. Carica il profilo una sola volta
- * all'apertura (non è realtime) e gestisce logout + modifica della bio.
+ * ViewModel della Dashboard Anziano.
+ * Si occupa di: codice invito (FASE 6) e indirizzo (FASE 7, serve al
+ * Volontario per sapere dove andare quando accetta una richiesta).
  */
-class ProfiloVolontarioViewModel(
+class DashboardAnzianoViewModel(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
@@ -23,18 +24,18 @@ class ProfiloVolontarioViewModel(
     private val _utente = MutableStateFlow<User?>(null)
     val utente: StateFlow<User?> = _utente.asStateFlow()
 
+    private val _codiceInvito = MutableStateFlow<String?>(null)
+    val codiceInvito: StateFlow<String?> = _codiceInvito.asStateFlow()
+
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
-    // Messaggio di conferma separato dall'errore: "bio salvata" non è un
-    // errore, ma merita comunque un feedback visivo (Toast) all'utente.
-    private val _bioSalvata = MutableStateFlow(false)
-    val bioSalvata: StateFlow<Boolean> = _bioSalvata.asStateFlow()
-
-    val email: String? = authRepository.utenteCorrente()?.email
+    private val _indirizzoSalvato = MutableStateFlow(false)
+    val indirizzoSalvato: StateFlow<Boolean> = _indirizzoSalvato.asStateFlow()
 
     init {
         caricaProfilo()
+        caricaCodiceInvito()
     }
 
     private fun caricaProfilo() {
@@ -51,27 +52,39 @@ class ProfiloVolontarioViewModel(
         }
     }
 
-    /**
-     * Salva la nuova bio. Parte dall'utente già caricato in memoria e lo
-     * copia con il nuovo testo: salvaUtente() fa un .set() completo, quindi
-     * serve sempre l'oggetto User intero, non solo il campo cambiato.
-     */
-    fun salvaBio(nuovaBio: String) {
+    private fun caricaCodiceInvito() {
+        val uid = authRepository.utenteCorrente()?.uid
+        if (uid == null) return
+        viewModelScope.launch {
+            userRepository.ottieniOCreaCodiceInvito(uid).fold(
+                onSuccess = { codice -> _codiceInvito.value = codice },
+                onFailure = { errore ->
+                    _errore.value = errore.message ?: "Impossibile generare il codice invito"
+                }
+            )
+        }
+    }
+
+    fun salvaIndirizzo(nuovoIndirizzo: String) {
         val utenteAttuale = _utente.value
         if (utenteAttuale == null) {
             _errore.value = "Profilo non ancora caricato"
             return
         }
-        val utenteAggiornato = utenteAttuale.copy(bio = nuovaBio.ifBlank { null })
+        if (nuovoIndirizzo.isBlank()) {
+            _errore.value = "Inserisci un indirizzo valido"
+            return
+        }
+        val utenteAggiornato = utenteAttuale.copy(indirizzo = nuovoIndirizzo.trim())
 
         viewModelScope.launch {
             userRepository.salvaUtente(utenteAggiornato).fold(
                 onSuccess = {
                     _utente.value = utenteAggiornato
-                    _bioSalvata.value = true
+                    _indirizzoSalvato.value = true
                 },
                 onFailure = { errore ->
-                    _errore.value = errore.message ?: "Impossibile salvare la descrizione"
+                    _errore.value = errore.message ?: "Impossibile salvare l'indirizzo"
                 }
             )
         }
@@ -81,19 +94,19 @@ class ProfiloVolontarioViewModel(
         _errore.value = null
     }
 
-    fun bioSalvataMostrata() {
-        _bioSalvata.value = false
+    fun indirizzoSalvatoMostrato() {
+        _indirizzoSalvato.value = false
     }
 }
 
-class ProfiloVolontarioViewModelFactory(
+class DashboardAnzianoViewModelFactory(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ProfiloVolontarioViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(DashboardAnzianoViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ProfiloVolontarioViewModel(userRepository, authRepository) as T
+            return DashboardAnzianoViewModel(userRepository, authRepository) as T
         }
         throw IllegalArgumentException("ViewModel sconosciuto: ${modelClass.name}")
     }

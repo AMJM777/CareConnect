@@ -37,6 +37,8 @@ class RichiestePreseInCaricoAdapter(
 
         holder.binding.tipoText.text = richiesta.tipo.replaceFirstChar { it.uppercase() }
         holder.binding.descrizioneText.text = richiesta.descrizione
+        holder.binding.autoreNomeText.text = "Da: ${richiesta.autoreNome}"
+        holder.binding.autoreIndirizzoText.text = richiesta.autoreIndirizzo
         holder.binding.statoText.text = etichettaStato(richiesta.stato)
         holder.binding.dataText.text = formattaData(richiesta.timestampCreazione.toDate())
 

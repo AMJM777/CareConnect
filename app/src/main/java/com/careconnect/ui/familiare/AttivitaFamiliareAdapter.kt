@@ -1,28 +1,27 @@
-package com.careconnect.ui.anziano
+package com.careconnect.ui.familiare
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.careconnect.databinding.ItemRichiestaBinding
+import com.careconnect.databinding.ItemRichiestaFamiliareBinding
 import com.careconnect.model.Request
 import com.careconnect.model.RequestStatus
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class RichiesteAdapter(
-    private val onModificaClick: (Request) -> Unit,
-    private val onAnnullaClick: (Request) -> Unit,
+class AttivitaFamiliareAdapter(
+    private val onConfermaClick: (Request) -> Unit,
     private val onVolontarioClick: (String) -> Unit
-) : RecyclerView.Adapter<RichiesteAdapter.RichiestaViewHolder>() {
+) : RecyclerView.Adapter<AttivitaFamiliareAdapter.RichiestaViewHolder>() {
 
     private var richieste: List<Request> = emptyList()
 
-    inner class RichiestaViewHolder(val binding: ItemRichiestaBinding) :
+    inner class RichiestaViewHolder(val binding: ItemRichiestaFamiliareBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RichiestaViewHolder {
-        val binding = ItemRichiestaBinding.inflate(
+        val binding = ItemRichiestaFamiliareBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
         return RichiestaViewHolder(binding)
@@ -36,8 +35,6 @@ class RichiesteAdapter(
         holder.binding.statoText.text = etichettaStato(richiesta.stato)
         holder.binding.dataText.text = formattaData(richiesta.timestampCreazione.toDate())
 
-        // FASE 7: nome del volontario, solo se presente (richiesta già
-        // accettata). Cliccabile: apre il profilo di sola lettura.
         val nomeVolontario = richiesta.volontarioNome
         if (nomeVolontario != null) {
             holder.binding.volontarioNomeText.visibility = View.VISIBLE
@@ -49,15 +46,9 @@ class RichiesteAdapter(
             holder.binding.volontarioNomeText.visibility = View.GONE
         }
 
-        holder.binding.modificaButton.visibility =
-            if (richiesta.stato == RequestStatus.APERTA) View.VISIBLE else View.GONE
-
-        val puoAnnullare = richiesta.stato.canTransitionTo(RequestStatus.ANNULLATA)
-        holder.binding.annullaButton.visibility =
-            if (puoAnnullare) View.VISIBLE else View.GONE
-
-        holder.binding.modificaButton.setOnClickListener { onModificaClick(richiesta) }
-        holder.binding.annullaButton.setOnClickListener { onAnnullaClick(richiesta) }
+        val daConfermare = richiesta.stato == RequestStatus.COMPLETATA_DAL_VOLONTARIO
+        holder.binding.confermaButton.visibility = if (daConfermare) View.VISIBLE else View.GONE
+        holder.binding.confermaButton.setOnClickListener { onConfermaClick(richiesta) }
     }
 
     override fun getItemCount(): Int = richieste.size

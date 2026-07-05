@@ -28,6 +28,27 @@
             android:textColor="@color/care_on_surface"
             tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
 
+        <!-- FASE 7: visibile SOLO qui (dopo l'accettazione), non nella lista
+             "Richieste disponibili" — vedi commento in RichiesteDisponibiliAdapter. -->
+        <TextView
+            android:id="@+id/autoreNomeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_body"
+            android:textStyle="bold"
+            android:textColor="@color/care_primary_dark"
+            tools:text="Da: Maria Rossi" />
+
+        <TextView
+            android:id="@+id/autoreIndirizzoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            tools:text="Via Roma 12, Milano" />
+
         <TextView
             android:id="@+id/statoText"
             android:layout_width="wrap_content"
@@ -46,9 +67,6 @@
             android:textColor="@color/care_on_surface"
             tools:text="04/07/2026 10:15" />
 
-        <!-- Entrambi i bottoni visibili solo se PRESA_IN_CARICO (gestito
-             nell'Adapter): una volta COMPLETATA_DAL_VOLONTARIO, il volontario
-             non ha più azioni da fare, aspetta la conferma del garante. -->
         <LinearLayout
             android:id="@+id/azioniContainer"
             android:layout_width="wrap_content"

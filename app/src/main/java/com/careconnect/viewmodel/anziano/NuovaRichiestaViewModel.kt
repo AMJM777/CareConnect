@@ -5,15 +5,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.careconnect.model.Request
 import com.careconnect.repository.RequestRepository
+import com.careconnect.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/**
- * Stato condiviso sia per "creazione" sia per "modifica" di una richiesta:
- * sono la stessa interazione con dati diversi, quindi un unico stato basta.
- */
 sealed class NuovaRichiestaUiState {
     object Idle : NuovaRichiestaUiState()
     object Loading : NuovaRichiestaUiState()
@@ -22,12 +19,14 @@ sealed class NuovaRichiestaUiState {
 }
 
 /**
- * ViewModel della schermata "Nuova richiesta" / "Modifica richiesta"
- * (stesso Fragment, stesso ViewModel: creaRichiesta() per il primo caso,
- * modificaRichiesta() per il secondo, entrambe scrivono su RequestRepository).
+ * ViewModel della schermata "Nuova richiesta" / "Modifica richiesta".
+ * FASE 7: creaRichiesta() ora legge anche il profilo dell'Anziano per
+ * denormalizzare nome e indirizzo sulla Request — il Volontario ne avrà
+ * bisogno per sapere chi cercare e dove andare quando accetta.
  */
 class NuovaRichiestaViewModel(
-    private val requestRepository: RequestRepository
+    private val requestRepository: RequestRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<NuovaRichiestaUiState>(NuovaRichiestaUiState.Idle)
@@ -37,8 +36,28 @@ class NuovaRichiestaViewModel(
         viewModelScope.launch {
             _uiState.value = NuovaRichiestaUiState.Loading
 
+            val autore = userRepository.getUtente(autoreId).getOrElse {
+                _uiState.value = NuovaRichiestaUiState.Errore(it)
+                return@launch
+            }
+
+            // Blocco qui, non dopo: senza indirizzo il volontario che accetta
+            // non saprebbe dove andare. Meglio impedire la richiesta che
+            // crearla incompleta.
+            val indirizzo = autore.indirizzo
+            if (indirizzo.isNullOrBlank()) {
+                _uiState.value = NuovaRichiestaUiState.Errore(
+                    IllegalStateException(
+                        "Imposta prima il tuo indirizzo dalla Home: serve al volontario per sapere dove venire"
+                    )
+                )
+                return@launch
+            }
+
             val nuovaRichiesta = Request(
                 autoreId = autoreId,
+                autoreNome = autore.nome,
+                autoreIndirizzo = indirizzo,
                 tipo = tipo,
                 descrizione = descrizione
             )
@@ -50,7 +69,7 @@ class NuovaRichiestaViewModel(
         }
     }
 
-    /** Modalità modifica: aggiorna una richiesta esistente invece di crearne una nuova. */
+    /** Modalità modifica: tipo/descrizione possono cambiare, autore e indirizzo no. */
     fun modificaRichiesta(requestId: String, tipo: String, descrizione: String) {
         viewModelScope.launch {
             _uiState.value = NuovaRichiestaUiState.Loading
@@ -64,12 +83,13 @@ class NuovaRichiestaViewModel(
 }
 
 class NuovaRichiestaViewModelFactory(
-    private val requestRepository: RequestRepository
+    private val requestRepository: RequestRepository,
+    private val userRepository: UserRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NuovaRichiestaViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return NuovaRichiestaViewModel(requestRepository) as T
+            return NuovaRichiestaViewModel(requestRepository, userRepository) as T
         }
         throw IllegalArgumentException("ViewModel sconosciuto: ${modelClass.name}")
     }

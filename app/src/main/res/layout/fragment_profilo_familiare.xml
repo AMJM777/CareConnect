@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/care_background"
+        android:padding="@dimen/screen_padding">
+
+        <TextView
+            android:id="@+id/titoloText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Il tuo profilo"
+            android:textSize="@dimen/text_size_title"
+            android:textColor="@color/care_on_surface"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/nomeFamiliareText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            tools:text="Sei collegato/a come: Marco"
+            app:layout_constraintTop_toBottomOf="@id/titoloText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            xmlns:tools="http://schemas.android.com/tools" />
+
+        <TextView
+            android:id="@+id/nomeAnzianoText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:textSize="@dimen/text_size_body"
+            android:textStyle="bold"
+            android:textColor="@color/care_primary_dark"
+            tools:text="Stai seguendo: Maria"
+            app:layout_constraintTop_toBottomOf="@id/nomeFamiliareText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            xmlns:tools="http://schemas.android.com/tools" />
+
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/button_height"
+            android:text="Esci"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:backgroundTint="@color/care_error"
+            android:textColor="@color/care_on_error"
+            app:layout_constraintTop_toBottomOf="@id/nomeAnzianoText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

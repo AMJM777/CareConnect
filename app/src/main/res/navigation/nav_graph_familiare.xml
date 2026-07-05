@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Grafo annidato della sezione Familiare. A differenza di
+     nav_graph_anziano/nav_graph_volontario, NON è agganciato staticamente
+     a un FragmentContainerView in XML: lo aggancia a runtime
+     HomeFamiliareFragment, solo quando l'utente risulta già collegato
+     a un anziano (vedi commento in HomeFamiliareFragment.kt). -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_familiare"
+    app:startDestination="@id/attivitaFamiliareFragment">
+
+    <fragment
+        android:id="@+id/attivitaFamiliareFragment"
+        android:name="com.careconnect.ui.familiare.AttivitaFamiliareFragment"
+        android:label="Attività" />
+
+    <fragment
+        android:id="@+id/profiloFamiliareFragment"
+        android:name="com.careconnect.ui.familiare.ProfiloFamiliareFragment"
+        android:label="Profilo" />
+
+</navigation>

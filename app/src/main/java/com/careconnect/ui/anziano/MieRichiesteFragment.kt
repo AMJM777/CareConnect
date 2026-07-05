@@ -20,6 +20,7 @@ import com.careconnect.viewmodel.anziano.MieRichiesteViewModel
 import com.careconnect.viewmodel.anziano.MieRichiesteViewModelFactory
 import kotlinx.coroutines.launch
 import androidx.navigation.fragment.findNavController
+import com.careconnect.ui.common.mostraProfiloVolontario
 
 /**
  * Schermata "Le mie richieste": lista in tempo reale + azioni "Modifica"
@@ -38,11 +39,9 @@ class MieRichiesteFragment : Fragment() {
     // "Modifica" o "Annulla" su una riga. Per ora "Modifica" mostra solo
     // un Toast placeholder: la vera navigazione verso il form di modifica
     // arriva nel prossimo passaggio (serve ancora una decisione, vedi chat).
+
     private val adapter = RichiesteAdapter(
         onModificaClick = { richiesta ->
-            // Navighiamo direttamente per id (come fa già la bottom nav),
-            // passando i dati esistenti via Bundle: NuovaRichiestaFragment
-            // li legge e si mette in "modalità modifica" da solo.
             val argomenti = androidx.core.os.bundleOf(
                 NuovaRichiestaFragment.ARG_REQUEST_ID to richiesta.id,
                 NuovaRichiestaFragment.ARG_TIPO to richiesta.tipo,
@@ -52,9 +51,9 @@ class MieRichiesteFragment : Fragment() {
         },
         onAnnullaClick = { richiesta ->
             mostraConfermaAnnullamento(richiesta.id)
-        }
+        },
+        onVolontarioClick = { volontarioId -> mostraProfiloVolontario(volontarioId) }
     )
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
