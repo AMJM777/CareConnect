@@ -32,4 +32,17 @@ interface UserRepository {
      * già collegato a un altro anziano (un familiare segue un solo assistito).
      */
     suspend fun collegaFamiliareAdAnziano(anzianoId: String, familiareId: String): Result<Unit>
+
+    /**
+     * FASE 9 — ricalcola la media aritmetica delle stelle di TUTTE le
+     * valutazioni ricevute dal volontario indicato, e aggiorna il campo
+     * ratingMedio sul suo profilo.
+     *
+     * Va chiamato DOPO che un nuovo Rating è stato creato con successo
+     * (vedi RatingRepository.creaRatingEConfermaRichiesta). Non è incluso
+     * in quella Transaction: qui serve una query su tutta la collezione
+     * "ratings", e le Transaction di Firestore supportano solo letture
+     * puntuali di documenti, non query — per questo è un passo separato.
+     */
+    suspend fun aggiornaRatingMedio(volontarioId: String): Result<Unit>
 }

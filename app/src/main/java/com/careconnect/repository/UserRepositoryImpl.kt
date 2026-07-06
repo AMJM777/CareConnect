@@ -12,6 +12,9 @@ class UserRepositoryImpl(
 ) : UserRepository {
 
     private val collection = firestore.collection("users")
+    // FASE 9: serve per leggere tutte le valutazioni di un volontario
+    // quando ricalcoliamo la media (vedi aggiornaRatingMedio sotto).
+    private val ratingsCollection = firestore.collection("ratings")
 
     // ATTENZIONE: questo è un .set() completo, non un update parziale.
     // Chi chiama questo metodo per modificare UN SOLO campo deve comunque
@@ -113,6 +116,39 @@ class UserRepositoryImpl(
             .update(familiareDocRef, "anzianoCollegatoId", anzianoId)
             .commit()
             .await()
+    }
+
+    /**
+     * FASE 9 — legge TUTTE le valutazioni ("ratings") di un volontario,
+     * calcola la media aritmetica delle stelle e aggiorna solo il campo
+     * ratingMedio sul suo documento (update parziale, come per codiceInvito).
+     *
+     * Nota per l'orale: non è dentro una Transaction insieme alla creazione
+     * del Rating perché richiede una QUERY su collezione (whereEqualTo),
+     * e le Transaction di Firestore supportano solo letture puntuali di
+     * documenti singoli, non query. È quindi un secondo passo, chiamato
+     * dal ViewModel subito dopo il successo di creaRatingEConfermaRichiesta.
+     * Rischio accettato: se questo secondo passo fallisse, il Rating resta
+     * comunque salvato correttamente, e la media si autocorregge al
+     * prossimo rating ricevuto (nessun dato perso, solo temporaneamente
+     * non aggiornato).
+     */
+    override suspend fun aggiornaRatingMedio(volontarioId: String): Result<Unit> = runCatching {
+        val valutazioni = ratingsCollection
+            .whereEqualTo("volontarioId", volontarioId)
+            .get()
+            .await()
+
+        // getLong (non getInt): Firestore memorizza i numeri interi come Long.
+        val stelle = valutazioni.documents.mapNotNull { it.getLong("stelle")?.toInt() }
+
+        // Difensivo: non dovrebbe mai succedere (questo metodo è chiamato
+        // solo dopo aver appena creato un Rating), ma se per qualche motivo
+        // la lista risultasse vuota non scriviamo una media senza senso.
+        if (stelle.isEmpty()) return@runCatching
+
+        val media = stelle.average()
+        collection.document(volontarioId).update("ratingMedio", media).await()
     }
 
     /** Alfabeto senza 0/O/1/I: caratteri facili da confondere se il codice viene letto ad alta voce o scritto a mano. */

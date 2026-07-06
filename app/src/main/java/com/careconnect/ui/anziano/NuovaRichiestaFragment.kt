@@ -154,8 +154,15 @@ class NuovaRichiestaFragment : Fragment() {
     }
 
     private fun aggiornaUi(stato: NuovaRichiestaUiState) {
-        binding.loadingIndicator.visibility =
-            if (stato is NuovaRichiestaUiState.Loading) View.VISIBLE else View.GONE
+        // Mostra la rotella solo durante il caricamento.
+        val inCaricamento = stato is NuovaRichiestaUiState.Loading
+        binding.loadingIndicator.visibility = if (inCaricamento) View.VISIBLE else View.GONE
+
+        // Durante il caricamento disabilitiamo il bottone "Invia": su reti
+        // lente l'utente vedrebbe la rotella girare e potrebbe premere di
+        // nuovo, creando richieste duplicate. Bloccando il bottone finché
+        // l'operazione non finisce, evitiamo invii doppi.
+        binding.inviaButton.isEnabled = !inCaricamento
 
         if (stato is NuovaRichiestaUiState.Errore) {
             mostraErroreLocale(stato.eccezione.message ?: "Errore, riprova")

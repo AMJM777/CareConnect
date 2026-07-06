@@ -104,7 +104,15 @@ class AttivitaFamiliareViewModel(
                 valutatoreId = valutatoreId
             )
             ratingRepository.creaRatingEConfermaRichiesta(rating).fold(
-                onSuccess = { /* la UI si aggiorna da sola: Flow realtime */ },
+                onSuccess = {
+                    // Rating creato e richiesta confermata: ora ricalcoliamo
+                    // la media del volontario. Se questo secondo passo
+                    // fallisse non mostriamo errore bloccante: il rating è
+                    // già salvato correttamente, non vogliamo confondere
+                    // l'utente facendogli credere che l'operazione sia fallita
+                    // quando in realtà è già andata a buon fine.
+                    userRepository.aggiornaRatingMedio(volontarioId)
+                },
                 onFailure = { errore ->
                     _errore.value = errore.message ?: "Impossibile confermare la richiesta"
                 }
