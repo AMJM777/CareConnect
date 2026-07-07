@@ -3,27 +3,43 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Primario: usato per bottoni standard, header, elementi ricorrenti -->
-    <color name="care_primary">#C05249B4</color>
-    <color name="care_primary_dark">#111820</color>
-    <color name="care_on_primary">#FFFFFF</color>
+    <!-- ============ PRIMARIO (viola indaco della palette) ============ -->
+    <!-- FIX: prima #C05249B4 = viola al 75% di opacità (il C0 è l'alpha),
+         per questo le Toolbar sembravano slavate. Ora pienamente opaco. -->
+    <color name="care_primary">#6D5AD8</color>
+    <!-- Variante scura: pressioni, accenti forti -->
+    <color name="care_primary_variant">#41399B</color>
+    <!-- Tinta chiara (lavanda): sfondi evidenziati, stato selezionato,
+         accenti delle card (come i riempimenti lavanda del riferimento) -->
+    <color name="care_primary_container">#FFE7E4FB</color>
+    <color name="care_on_primary">#FFFFFFFF</color>
 
-    <!-- Accento secondario: evidenziare elementi non critici (badge, highlight) -->
-    <color name="care_accent">#D35400</color>
-    <color name="care_on_accent">#FFFFFF</color>
+    <!-- ============ ACCENTO (arancione) ============ -->
+    <!-- Prima #D35400 (spento) e mai usato. Reso più vivo per bottom bar
+         e highlight, in linea con l'immagine di riferimento. -->
+    <color name="care_accent">#FFF26522</color>
+    <color name="care_accent_variant">#FFC2410C</color>
+    <color name="care_on_accent">#FFFFFFFF</color>
 
-    <!-- Riservato ESCLUSIVAMENTE al bottone SOS: mai riusato altrove,
-         per rimanere immediatamente riconoscibile come azione di emergenza -->
-    <color name="care_sos">#D32F2F</color>
-    <color name="care_on_sos">#FFFFFF</color>
+    <!-- SOS: riservato ESCLUSIVAMENTE al bottone di emergenza. Mai riusato. -->
+    <color name="care_sos">#FFD32F2F</color>
+    <color name="care_on_sos">#FFFFFFFF</color>
 
-    <color name="care_background">#F8F9FA</color>
-    <color name="care_surface">#FFFFFF</color>
+    <!-- ============ SFONDI E TESTO ============ -->
+    <color name="care_background">#FFF5F6FA</color>
+    <color name="care_surface">#FFFFFFFF</color>
+    <color name="care_on_surface">#FF2D3436</color>
+    <!-- Testo secondario/attenuato: sottotitoli, etichette minori -->
+    <color name="care_on_surface_variant">#FF6B7280</color>
+    <!-- Bordi/divisori leggeri: contorno delle card per distinguere le richieste -->
+    <color name="care_outline">#FFE5E7EB</color>
 
-    <color name="care_on_surface">#2D3436</color>
+    <!-- ATTENZIONE: care_primary_dark NON è una variante del primario:
+         nel progetto è il COLORE DEL TESTO principale. Lasciato invariato
+         per non alterare il testo di tutte le schermate. -->
+    <color name="care_primary_dark">#FF111820</color>
 
-    <!-- Errore form (email non valida, password errata): volutamente diverso
-         sia da care_accent che da care_sos, per non creare ambiguità -->
-    <color name="care_error">#B00020</color>
-    <color name="care_on_error">#FFFFFF</color>
+    <!-- Errore form: distinto sia da accent che da SOS. -->
+    <color name="care_error">#FFB00020</color>
+    <color name="care_on_error">#FFFFFFFF</color>
 </resources>

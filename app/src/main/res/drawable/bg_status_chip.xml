@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sfondo a "pillola" per l'etichetta di stato. Il colore vero lo dà il
+     tint dell'etichetta (android:backgroundTint), così potremo cambiarlo
+     per stato senza creare un drawable diverso per ognuno. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="100dp" />
+    <solid android:color="@android:color/white" />
+</shape>

@@ -1,8 +1,25 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Base.Theme.CareConnect" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Colleghiamo la palette agli attributi Material: bottoni, campi e
+             componenti usano i NOSTRI colori invece del viola di default di
+             Material3 (quello che vedevi nel Login). -->
+        <item name="colorPrimary">@color/care_primary</item>
+        <item name="colorOnPrimary">@color/care_on_primary</item>
+        <item name="colorPrimaryContainer">@color/care_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/care_primary_dark</item>
+
+        <item name="colorSecondary">@color/care_accent</item>
+        <item name="colorOnSecondary">@color/care_on_accent</item>
+
+        <item name="colorError">@color/care_error</item>
+        <item name="colorOnError">@color/care_on_error</item>
+
+        <item name="android:colorBackground">@color/care_background</item>
+        <item name="colorSurface">@color/care_surface</item>
+        <item name="colorOnSurface">@color/care_on_surface</item>
+        <item name="colorOnSurfaceVariant">@color/care_on_surface_variant</item>
+        <item name="colorOutline">@color/care_outline</item>
     </style>
 
     <style name="Theme.CareConnect" parent="Base.Theme.CareConnect" />

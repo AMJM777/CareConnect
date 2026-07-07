@@ -31,6 +31,12 @@
         android:id="@+id/volontarioBottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/care_primary"
+        app:elevation="8dp"
+        app:labelVisibilityMode="labeled"
+        app:itemIconTint="@color/bottom_nav_item_tint"
+        app:itemTextColor="@color/bottom_nav_item_tint"
+        app:itemActiveIndicatorStyle="@style/CareConnect.BottomNav.ActiveIndicator"
         app:menu="@menu/bottom_nav_volontario" />
 
 </LinearLayout>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Pillola dietro la voce selezionata della bottom bar (Step B). -->
+    <style name="CareConnect.BottomNav.ActiveIndicator"
+        parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">#33FFFFFF</item>
+    </style>
+
+    <!-- Card riutilizzabile per le richieste: angoli arrotondati, ombra
+         leggera, bordo tenue, padding interno. Usata da tutti gli item_richiesta*. -->
+    <style name="CareConnect.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardBackgroundColor">@color/care_surface</item>
+        <item name="strokeColor">@color/care_outline</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="contentPadding">@dimen/spacing_medium</item>
+    </style>
+
+    <!-- Etichetta di stato "a pillola". Di default lavanda; il colore per
+         stato lo imposteremo dall'Adapter nello step successivo. -->
+    <style name="CareConnect.StatusChip" parent="">
+        <item name="android:background">@drawable/bg_status_chip</item>
+        <item name="android:backgroundTint">@color/care_primary_container</item>
+        <item name="android:textColor">@color/care_primary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+</resources>
