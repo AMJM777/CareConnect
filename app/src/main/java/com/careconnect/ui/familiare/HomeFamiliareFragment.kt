@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,6 +17,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import com.careconnect.R
 import com.careconnect.databinding.FragmentHomeFamiliareBinding
 import com.careconnect.repository.AuthRepositoryImpl
@@ -26,14 +31,16 @@ import kotlinx.coroutines.launch
 /**
  * Home del Familiare (FASE 6).
  * Se l'utente non è ancora collegato a un anziano, mostra il form per il
- * codice invito. Una volta collegato, aggancia (a runtime, vedi
- * agganciaNavGraphAnnidato) la BottomNavigation con le 2 destinazioni
- * Attività/Profilo.
+ * codice invito (senza alcuna barra in alto). Una volta collegato, aggancia
+ * a runtime il NavHost annidato (Attività/Profilo), la Toolbar del ruolo e
+ * la BottomNavigation.
  */
 class HomeFamiliareFragment : Fragment() {
 
     private var _binding: FragmentHomeFamiliareBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     private val homeViewModel: HomeFamiliareViewModel by viewModels {
         HomeFamiliareViewModelFactory(UserRepositoryImpl(), AuthRepositoryImpl())
@@ -84,11 +91,9 @@ class HomeFamiliareFragment : Fragment() {
 
     /**
      * Crea e collega il NavHostFragment annidato SOLO ora che sappiamo per
-     * certo che l'utente è collegato a un anziano. Diverso dal pattern
-     * statico (app:navGraph in XML) usato per Anziano/Volontario apposta:
-     * qui esiste uno stato "non collegato" che loro non hanno, e non
-     * vogliamo che le schermate annidate partano a caricare dati prima
-     * che il collegamento sia confermato.
+     * certo che l'utente è collegato a un anziano. Qui agganciamo anche la
+     * Toolbar del ruolo, la BottomNavigation e il tasto Indietro: prima di
+     * questo momento il NavHost non esiste ancora.
      */
     private fun agganciaNavGraphAnnidato() {
         if (navGraphAnnidatoAgganciato) return
@@ -100,17 +105,39 @@ class HomeFamiliareFragment : Fragment() {
             .setPrimaryNavigationFragment(navHostFragment)
             .commitNow()
 
+        collegaToolbar(navHostFragment.navController)
         collegaBottomNav(navHostFragment.navController)
         gestisciTastoIndietro(navHostFragment.navController)
+    }
+
+    // Collega la Toolbar del ruolo al grafo annidato del Familiare.
+    private fun collegaToolbar(navController: NavController) {
+        val toolbar = binding.familiareToolbar
+
+        // L'app disegna edge-to-edge: spingo la Toolbar sotto la barra di stato,
+        // così titolo e freccia non finiscono sotto orologio/batteria.
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
+            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            v.setPadding(v.paddingLeft, statusBar.top, v.paddingRight, v.paddingBottom)
+            insets
+        }
+
+        // Solo Attività è "di primo livello": lì la freccia NON compare.
+        // Su Profilo la freccia compare e riporta ad Attività.
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.attivitaFamiliareFragment))
+        toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 
     private fun collegaBottomNav(navController: NavController) {
         val bottomNav = binding.familiareBottomNav
 
         bottomNav.setOnItemSelectedListener { item ->
+            // Se tocco il tab su cui sono già, non faccio nulla.
             if (item.itemId == navController.currentDestination?.id) {
                 return@setOnItemSelectedListener true
             }
+            // popUpTo(start) senza inclusive: lo stack resta [Attività, tab scelto],
+            // così l'Indietro da Profilo riporta sempre ad Attività.
             val opzioni = navOptions {
                 popUpTo(navController.graph.startDestinationId)
                 launchSingleTop = true
@@ -119,20 +146,25 @@ class HomeFamiliareFragment : Fragment() {
             true
         }
 
+        // Tiene evidenziato il tab giusto anche quando la navigazione avviene
+        // per altre vie (es. tasto Indietro). Non gestisce il tasto stesso.
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomNav.menu.findItem(destination.id)?.isChecked = true
         }
     }
 
-    /** Stesso schema manuale già usato per Anziano e Volontario. */
+    // Tasto Indietro di sistema, gestito in modo esplicito e prevedibile.
     private fun gestisciTastoIndietro(navController: NavController) {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            if (navController.currentDestination?.id != R.id.attivitaFamiliareFragment) {
-                navController.popBackStack()
-            } else {
+            // Provo a tornare indietro nello stack del ruolo (Profilo -> Attività).
+            // popBackStack() restituisce false se non c'è più nulla da togliere,
+            // cioè se siamo già su Attività (la home del ruolo).
+            val tornatoIndietro = navController.popBackStack()
+            if (!tornatoIndietro) {
+                // Siamo sulla home: disabilito questo callback e lascio agire il
+                // sistema. Non essendoci altro nello stack, l'app si chiude.
                 isEnabled = false
                 requireActivity().onBackPressedDispatcher.onBackPressed()
-                isEnabled = true
             }
         }
     }

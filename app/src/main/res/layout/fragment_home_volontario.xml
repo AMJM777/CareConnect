@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Contenitore della sezione Volontario. Stesso schema dell'Anziano:
+     Toolbar del ruolo in alto (strada B), NavHost annidato al centro,
+     BottomNavigationView in fondo. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <!-- NavHostFragment annidato: ospita le 3 destinazioni del Volontario.
-         Niente app:defaultNavHost="true" qui: solo il NavHostFragment
-         principale (activity_main.xml) intercetta il tasto Indietro di
-         sistema; la gestione qui la facciamo a mano in HomeVolontarioFragment.kt,
-         stesso schema già usato per l'Anziano. -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/volontarioToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:background="@color/care_primary"
+        android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
+        app:titleTextColor="@color/care_on_primary" />
+
+    <!-- NavHost annidato. Niente app:defaultNavHost: il tasto Indietro di
+         questa sezione lo gestiamo con un callback esplicito nel fragment. -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/volontarioNavHostFragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:navGraph="@navigation/nav_graph_volontario"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/volontarioBottomNav" />
+        android:layout_weight="1"
+        app:navGraph="@navigation/nav_graph_volontario" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/volontarioBottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:menu="@menu/bottom_nav_volontario"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:menu="@menu/bottom_nav_volontario" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

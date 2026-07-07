@@ -140,19 +140,25 @@ class ProfiloVolontarioFragment : Fragment() {
     }
 
     private fun eseguiLogout() {
-        // FIX: era viewModel.logout() (locale, incompleto) — ora usa il
-        // logout condiviso, che resetta anche sessionCache e AuthUiState.
+        // FIX: il logout ora passa dal condiviso AuthViewModel (resetta anche
+        // sessionCache e AuthUiState).
         authViewModel.logout()
 
         val navHostFragmentPrincipale = requireActivity().supportFragmentManager
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navControllerPrincipale = navHostFragmentPrincipale.navController
 
+        // Svuota TUTTO lo stack principale fino alla radice del grafo (inclusa)
+        // e riparte dal login. In modo deterministico, non con il trucco
+        // popUpTo(0): così il logout riporta sempre al login (mai fuori
+        // dall'app) e da lì il tasto Indietro esce dall'app, senza residui
+        // della sessione precedente.
         val opzioni = navOptions {
-            popUpTo(0) { inclusive = true }
+            popUpTo(navControllerPrincipale.graph.id) { inclusive = true }
         }
         navControllerPrincipale.navigate(R.id.nav_graph_auth, null, opzioni)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

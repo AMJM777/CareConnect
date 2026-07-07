@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Contenitore della sezione Anziano. In alto la Toolbar del ruolo (strada B:
+     ogni sezione ha la sua app bar, collegata al proprio grafo), al centro il
+     NavHost annidato con le schermate, in fondo la BottomNavigationView. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <!-- NavHostFragment annidato: ospita dashboardAnzianoFragment,
-         nuovaRichiestaFragment e mieRichiesteFragment. Niente
-         app:defaultNavHost="true" qui: solo il NavHostFragment principale
-         (in activity_main.xml) può intercettare il tasto Indietro di
-         sistema, per questo la gestione la facciamo a mano in
-         HomeAnzianoFragment.kt. -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/anzianoToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:background="@color/care_primary"
+        android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
+        app:titleTextColor="@color/care_on_primary" />
+
+    <!-- NavHost annidato. Niente app:defaultNavHost qui: il tasto Indietro di
+         questa sezione lo gestiamo con un callback esplicito nel fragment,
+         più prevedibile del comportamento automatico dei NavHost annidati. -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/anzianoNavHostFragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:navGraph="@navigation/nav_graph_anziano"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/anzianoBottomNav" />
+        android:layout_weight="1"
+        app:navGraph="@navigation/nav_graph_anziano" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/anzianoBottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:menu="@menu/bottom_nav_anziano"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:menu="@menu/bottom_nav_anziano" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

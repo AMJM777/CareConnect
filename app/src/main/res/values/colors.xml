@@ -4,22 +4,23 @@
     <color name="white">#FFFFFFFF</color>
 
     <!-- Primario: usato per bottoni standard, header, elementi ricorrenti -->
-    <color name="care_primary">#00BFA5</color>
-    <color name="care_primary_dark">#00897B</color>
+    <color name="care_primary">#C05249B4</color>
+    <color name="care_primary_dark">#111820</color>
     <color name="care_on_primary">#FFFFFF</color>
 
     <!-- Accento secondario: evidenziare elementi non critici (badge, highlight) -->
-    <color name="care_accent">#FF7043</color>
+    <color name="care_accent">#D35400</color>
     <color name="care_on_accent">#FFFFFF</color>
 
     <!-- Riservato ESCLUSIVAMENTE al bottone SOS: mai riusato altrove,
          per rimanere immediatamente riconoscibile come azione di emergenza -->
-    <color name="care_sos">#8B3A00</color>
+    <color name="care_sos">#D32F2F</color>
     <color name="care_on_sos">#FFFFFF</color>
 
-    <color name="care_background">#FAFAFA</color>
+    <color name="care_background">#F8F9FA</color>
     <color name="care_surface">#FFFFFF</color>
-    <color name="care_on_surface">#1A1A1A</color>
+
+    <color name="care_on_surface">#2D3436</color>
 
     <!-- Errore form (email non valida, password errata): volutamente diverso
          sia da care_accent che da care_sos, per non creare ambiguità -->
