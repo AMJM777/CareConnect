@@ -32,4 +32,12 @@
         <item name="android:paddingBottom">4dp</item>
     </style>
 
+    <!-- Bottone di azione secondaria dentro le card (Copia codice, Salva…):
+         arancione tenue con testo scuro, coerente con la palette accento. -->
+    <style name="CareConnect.Button.Accent" parent="Widget.Material3.Button.TonalButton">
+        <item name="backgroundTint">@color/care_accent_container</item>
+        <item name="android:textColor">@color/care_accent</item>
+        <item name="iconTint">@color/care_accent</item>
+    </style>
+
 </resources>

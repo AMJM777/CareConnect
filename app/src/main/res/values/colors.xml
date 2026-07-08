@@ -3,22 +3,16 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- ============ PRIMARIO (viola indaco della palette) ============ -->
-    <!-- FIX: prima #C05249B4 = viola al 75% di opacità (il C0 è l'alpha),
-         per questo le Toolbar sembravano slavate. Ora pienamente opaco. -->
-    <color name="care_primary">#6D5AD8</color>
-    <!-- Variante scura: pressioni, accenti forti -->
-    <color name="care_primary_variant">#41399B</color>
-    <!-- Tinta chiara (lavanda): sfondi evidenziati, stato selezionato,
-         accenti delle card (come i riempimenti lavanda del riferimento) -->
-    <color name="care_primary_container">#FFE7E4FB</color>
+    <!-- ============ PRIMARIO (blu indaco con punta di viola) ============ -->
+    <color name="care_primary">#122171</color>
+    <color name="care_primary_variant">#FF3340B5</color>
+    <color name="care_primary_container">#FFE4E7FB</color>
     <color name="care_on_primary">#FFFFFFFF</color>
 
     <!-- ============ ACCENTO (arancione) ============ -->
-    <!-- Prima #D35400 (spento) e mai usato. Reso più vivo per bottom bar
-         e highlight, in linea con l'immagine di riferimento. -->
     <color name="care_accent">#FFF26522</color>
     <color name="care_accent_variant">#FFC2410C</color>
+    <color name="care_accent_container">#FFFCE3D4</color>
     <color name="care_on_accent">#FFFFFFFF</color>
 
     <!-- SOS: riservato ESCLUSIVAMENTE al bottone di emergenza. Mai riusato. -->
@@ -29,17 +23,30 @@
     <color name="care_background">#FFF5F6FA</color>
     <color name="care_surface">#FFFFFFFF</color>
     <color name="care_on_surface">#FF2D3436</color>
-    <!-- Testo secondario/attenuato: sottotitoli, etichette minori -->
     <color name="care_on_surface_variant">#FF6B7280</color>
-    <!-- Bordi/divisori leggeri: contorno delle card per distinguere le richieste -->
     <color name="care_outline">#FFE5E7EB</color>
 
-    <!-- ATTENZIONE: care_primary_dark NON è una variante del primario:
-         nel progetto è il COLORE DEL TESTO principale. Lasciato invariato
-         per non alterare il testo di tutte le schermate. -->
+    <!-- care_primary_dark = COLORE DEL TESTO principale (non variante del primario). -->
     <color name="care_primary_dark">#FF111820</color>
 
-    <!-- Errore form: distinto sia da accent che da SOS. -->
+    <!-- Errore form: distinto da accent e da SOS. -->
     <color name="care_error">#FFB00020</color>
     <color name="care_on_error">#FFFFFFFF</color>
+
+    <!-- ===== COLORI DI STATO delle richieste (sfondo tenue + testo intenso) =====
+         Colori "funzionali" (tipo semaforo), distinti dal brand. -->
+    <color name="stato_aperta_bg">#FFE4E7FB</color>
+    <color name="stato_aperta_fg">#FF3340B5</color>
+
+    <color name="stato_incarico_bg">#FFFCE3D4</color>
+    <color name="stato_incarico_fg">#FFC2410C</color>
+
+    <color name="stato_attesa_bg">#FFFCEFC7</color>
+    <color name="stato_attesa_fg">#FF8A6A00</color>
+
+    <color name="stato_confermata_bg">#FFD7EFDA</color>
+    <color name="stato_confermata_fg">#FF1E7A34</color>
+
+    <color name="stato_annullata_bg">#FFEBEDF0</color>
+    <color name="stato_annullata_fg">#FF6B7280</color>
 </resources>

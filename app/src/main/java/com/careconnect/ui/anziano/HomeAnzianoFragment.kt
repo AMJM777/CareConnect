@@ -39,16 +39,17 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
     private fun collegaToolbar(view: View, navController: NavController) {
         val toolbar = view.findViewById<Toolbar>(R.id.anzianoToolbar)
 
-        // L'app disegna edge-to-edge: spingo la Toolbar sotto la barra di stato,
-        // così titolo e freccia non finiscono sotto orologio/batteria.
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
-            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            v.setPadding(v.paddingLeft, statusBar.top, v.paddingRight, v.paddingBottom)
+        // Riserva lo spazio della status bar SEMPRE e in modo identico su ogni
+        // scheda: ascolto sul contenitore (che è sempre presente) e applico il
+        // padding alla Toolbar. Così non dipende da quale schermata è aperta e
+        // la barra ha la stessa altezza ovunque (Home, Le mie richieste, Profilo).
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            toolbar.setPadding(toolbar.paddingLeft, top, toolbar.paddingRight, toolbar.paddingBottom)
             insets
         }
 
         // Solo la Home (dashboard) è "di primo livello": lì la freccia NON compare.
-        // In tutte le altre schermate del ruolo la freccia compare e torna indietro.
         appBarConfiguration = AppBarConfiguration(setOf(R.id.dashboardAnzianoFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
     }

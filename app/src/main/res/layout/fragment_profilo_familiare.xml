@@ -1,63 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/care_background"
-        android:padding="@dimen/screen_padding">
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/titoloText"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Il tuo profilo"
-            android:textSize="@dimen/text_size_title"
-            android:textColor="@color/care_on_surface"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
 
-        <TextView
-            android:id="@+id/nomeFamiliareText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_large"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_on_surface"
-            tools:text="Sei collegato/a come: Marco"
-            app:layout_constraintTop_toBottomOf="@id/titoloText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            xmlns:tools="http://schemas.android.com/tools" />
+            <!-- ===== INTESTAZIONE: avatar + ruolo ===== -->
+            <ImageView
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:background="@drawable/bg_avatar_circle"
+                android:src="@drawable/ic_person"
+                android:scaleType="fitCenter"
+                android:padding="22dp"
+                android:contentDescription="@null" />
 
-        <TextView
-            android:id="@+id/nomeAnzianoText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_medium"
-            android:textSize="@dimen/text_size_body"
-            android:textStyle="bold"
-            android:textColor="@color/care_primary_dark"
-            tools:text="Stai seguendo: Maria"
-            app:layout_constraintTop_toBottomOf="@id/nomeFamiliareText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            xmlns:tools="http://schemas.android.com/tools" />
+            <TextView
+                android:id="@+id/nomeFamiliareText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:gravity="center"
+                android:textSize="@dimen/text_size_title"
+                android:textStyle="bold"
+                android:textColor="@color/care_on_surface"
+                tools:text="Sei collegato/a come: Marco" />
 
-        <Button
-            android:id="@+id/logoutButton"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/button_height"
-            android:text="Esci"
-            android:layout_marginTop="@dimen/spacing_large"
-            android:backgroundTint="@color/care_error"
-            android:textColor="@color/care_on_error"
-            app:layout_constraintTop_toBottomOf="@id/nomeAnzianoText"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            <TextView
+                style="@style/CareConnect.StatusChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:text="Familiare" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- ===== CARD: collegamento all'anziano ===== -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/CareConnect.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Il tuo collegamento"
+                        android:textSize="@dimen/text_size_body"
+                        android:textStyle="bold"
+                        android:textColor="@color/care_on_surface" />
+
+                    <TextView
+                        android:id="@+id/nomeAnzianoText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:textSize="@dimen/text_size_body"
+                        android:textStyle="bold"
+                        android:textColor="@color/care_primary"
+                        tools:text="Stai seguendo: Maria" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== ESCI ===== -->
+            <Button
+                android:id="@+id/logoutButton"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:text="Esci"
+                android:backgroundTint="@color/care_error"
+                android:textColor="@color/care_on_error" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 </layout>

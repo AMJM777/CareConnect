@@ -2,71 +2,79 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <!-- Card della richiesta vista dal Familiare. -->
+    <com.google.android.material.card.MaterialCardView
+        style="@style/CareConnect.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/care_surface"
-        android:padding="@dimen/spacing_medium"
-        android:layout_marginBottom="@dimen/spacing_small">
+        android:layout_marginStart="@dimen/spacing_small"
+        android:layout_marginEnd="@dimen/spacing_small"
+        android:layout_marginTop="@dimen/spacing_small">
 
-        <TextView
-            android:id="@+id/tipoText"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_body"
-            android:textStyle="bold"
-            android:textColor="@color/care_on_surface"
-            tools:text="Spesa" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/descrizioneText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_on_surface"
-            tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
+            <TextView
+                android:id="@+id/tipoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_body"
+                android:textStyle="bold"
+                android:textColor="@color/care_on_surface"
+                tools:text="Spesa" />
 
-        <TextView
-            android:id="@+id/statoText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_primary_dark"
-            tools:text="Completata, in attesa di conferma" />
+            <TextView
+                android:id="@+id/descrizioneText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_on_surface"
+                tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
 
-        <!-- FASE 7: stessa logica del corrispettivo Anziano. -->
-        <TextView
-            android:id="@+id/volontarioNomeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:textSize="@dimen/text_size_body"
-            android:textStyle="bold"
-            android:textColor="@color/care_primary_dark"
-            android:visibility="gone"
-            tools:text="Volontario: Mario Rossi"
-            tools:visibility="visible" />
+            <!-- Stato "a pillola". Colore per stato: nel prossimo step. -->
+            <TextView
+                android:id="@+id/statoText"
+                style="@style/CareConnect.StatusChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                tools:text="Completata, in attesa di conferma" />
 
-        <TextView
-            android:id="@+id/dataText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_on_surface"
-            tools:text="04/07/2026 10:15" />
+            <!-- Stessa logica del corrispettivo Anziano. -->
+            <TextView
+                android:id="@+id/volontarioNomeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:textSize="@dimen/text_size_body"
+                android:textStyle="bold"
+                android:textColor="@color/care_primary_dark"
+                android:visibility="gone"
+                tools:text="Volontario: Mario Rossi"
+                tools:visibility="visible" />
 
-        <Button
-            android:id="@+id/confermaButton"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_medium"
-            android:text="Conferma e valuta"
-            android:textColor="@color/care_primary_dark" />
+            <TextView
+                android:id="@+id/dataText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_on_surface_variant"
+                tools:text="04/07/2026 10:15" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/confermaButton"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:text="Conferma e valuta"
+                android:textColor="@color/care_primary_dark" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 </layout>

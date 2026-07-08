@@ -11,7 +11,7 @@
     <fragment
         android:id="@+id/dashboardAnzianoFragment"
         android:name="com.careconnect.ui.anziano.DashboardAnzianoFragment"
-        android:label="Home Anziano" />
+        android:label="Home" />
 
     <fragment
         android:id="@+id/nuovaRichiestaFragment"

@@ -2,95 +2,102 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <!-- Card della richiesta presa in carico (Volontario). -->
+    <com.google.android.material.card.MaterialCardView
+        style="@style/CareConnect.Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/care_surface"
-        android:padding="@dimen/spacing_medium"
-        android:layout_marginBottom="@dimen/spacing_small">
-
-        <TextView
-            android:id="@+id/tipoText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_body"
-            android:textStyle="bold"
-            android:textColor="@color/care_on_surface"
-            tools:text="Spesa" />
-
-        <TextView
-            android:id="@+id/descrizioneText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_on_surface"
-            tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
-
-        <!-- FASE 7: visibile SOLO qui (dopo l'accettazione), non nella lista
-             "Richieste disponibili" — vedi commento in RichiesteDisponibiliAdapter. -->
-        <TextView
-            android:id="@+id/autoreNomeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:textSize="@dimen/text_size_body"
-            android:textStyle="bold"
-            android:textColor="@color/care_primary_dark"
-            tools:text="Da: Maria Rossi" />
-
-        <TextView
-            android:id="@+id/autoreIndirizzoText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_on_surface"
-            tools:text="Via Roma 12, Milano" />
-
-        <TextView
-            android:id="@+id/statoText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_primary_dark"
-            tools:text="Presa in carico" />
-
-        <TextView
-            android:id="@+id/dataText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_on_surface"
-            tools:text="04/07/2026 10:15" />
+        android:layout_marginStart="@dimen/spacing_small"
+        android:layout_marginEnd="@dimen/spacing_small"
+        android:layout_marginTop="@dimen/spacing_small">
 
         <LinearLayout
-            android:id="@+id/azioniContainer"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/spacing_medium">
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/completaButton"
-                style="@style/Widget.Material3.Button.TextButton"
+            <TextView
+                android:id="@+id/tipoText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Segna come completata"
-                android:textColor="@color/care_primary_dark" />
+                android:textSize="@dimen/text_size_body"
+                android:textStyle="bold"
+                android:textColor="@color/care_on_surface"
+                tools:text="Spesa" />
 
-            <Button
-                android:id="@+id/rilasciaButton"
-                style="@style/Widget.Material3.Button.TextButton"
+            <TextView
+                android:id="@+id/descrizioneText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rilascia"
-                android:textColor="@color/care_error" />
+                android:layout_marginTop="@dimen/spacing_small"
+                android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_on_surface"
+                tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
+
+            <!-- Visibile solo qui (dopo l'accettazione), non nelle disponibili. -->
+            <TextView
+                android:id="@+id/autoreNomeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:textSize="@dimen/text_size_body"
+                android:textStyle="bold"
+                android:textColor="@color/care_primary_dark"
+                tools:text="Da: Maria Rossi" />
+
+            <TextView
+                android:id="@+id/autoreIndirizzoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_on_surface"
+                tools:text="Via Roma 12, Milano" />
+
+            <!-- Stato "a pillola". Colore per stato: nel prossimo step. -->
+            <TextView
+                android:id="@+id/statoText"
+                style="@style/CareConnect.StatusChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                tools:text="Presa in carico" />
+
+            <TextView
+                android:id="@+id/dataText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_on_surface_variant"
+                tools:text="04/07/2026 10:15" />
+
+            <LinearLayout
+                android:id="@+id/azioniContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/spacing_small">
+
+                <Button
+                    android:id="@+id/completaButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Segna come completata"
+                    android:textColor="@color/care_primary_dark" />
+
+                <Button
+                    android:id="@+id/rilasciaButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rilascia"
+                    android:textColor="@color/care_error" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

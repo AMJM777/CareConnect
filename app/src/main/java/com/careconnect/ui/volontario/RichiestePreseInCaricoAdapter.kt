@@ -9,6 +9,8 @@ import com.careconnect.model.Request
 import com.careconnect.model.RequestStatus
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.core.content.ContextCompat
+import com.careconnect.ui.common.StatoRichiestaColori
 
 /**
  * Adapter della lista "Le mie richieste prese in carico". Due azioni per
@@ -40,6 +42,12 @@ class RichiestePreseInCaricoAdapter(
         holder.binding.autoreNomeText.text = "Da: ${richiesta.autoreNome}"
         holder.binding.autoreIndirizzoText.text = richiesta.autoreIndirizzo
         holder.binding.statoText.text = etichettaStato(richiesta.stato)
+        // Colora la pillola in base allo stato (sfondo tenue + testo intenso).
+        val ctxStato = holder.binding.statoText.context
+        holder.binding.statoText.backgroundTintList =
+            ContextCompat.getColorStateList(ctxStato, StatoRichiestaColori.sfondo(richiesta.stato))
+        holder.binding.statoText.setTextColor(
+            ContextCompat.getColor(ctxStato, StatoRichiestaColori.testo(richiesta.stato)))
         holder.binding.dataText.text = formattaData(richiesta.timestampCreazione.toDate())
 
         // Entrambi i bottoni hanno senso solo mentre la richiesta è ancora

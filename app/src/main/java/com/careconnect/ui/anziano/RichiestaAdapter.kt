@@ -9,6 +9,8 @@ import com.careconnect.model.Request
 import com.careconnect.model.RequestStatus
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.core.content.ContextCompat
+import com.careconnect.ui.common.StatoRichiestaColori
 
 class RichiesteAdapter(
     private val onModificaClick: (Request) -> Unit,
@@ -34,6 +36,12 @@ class RichiesteAdapter(
         holder.binding.tipoText.text = richiesta.tipo.replaceFirstChar { it.uppercase() }
         holder.binding.descrizioneText.text = richiesta.descrizione
         holder.binding.statoText.text = etichettaStato(richiesta.stato)
+        // Colora la pillola in base allo stato (sfondo tenue + testo intenso).
+        val ctxStato = holder.binding.statoText.context
+        holder.binding.statoText.backgroundTintList =
+            ContextCompat.getColorStateList(ctxStato, StatoRichiestaColori.sfondo(richiesta.stato))
+        holder.binding.statoText.setTextColor(
+            ContextCompat.getColor(ctxStato, StatoRichiestaColori.testo(richiesta.stato)))
         holder.binding.dataText.text = formattaData(richiesta.timestampCreazione.toDate())
 
         // FASE 7: nome del volontario, solo se presente (richiesta già

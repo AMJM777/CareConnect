@@ -3,123 +3,152 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/care_background"
-        android:padding="@dimen/screen_padding">
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/titoloText"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Profilo"
-            android:textSize="@dimen/text_size_title"
-            android:textColor="@color/care_on_surface"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
 
-        <TextView
-            android:id="@+id/nomeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_large"
-            android:textSize="@dimen/text_size_body"
-            android:textStyle="bold"
-            android:textColor="@color/care_on_surface"
-            tools:text="Mario Rossi"
-            app:layout_constraintTop_toBottomOf="@id/titoloText"
-            app:layout_constraintStart_toStartOf="parent" />
+            <!-- ===== INTESTAZIONE: avatar + nome + ruolo + email ===== -->
+            <ImageView
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:background="@drawable/bg_avatar_circle"
+                android:src="@drawable/ic_person"
+                android:scaleType="fitCenter"
+                android:padding="22dp"
+                android:contentDescription="@null" />
 
-        <TextView
-            android:id="@+id/emailText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_on_surface"
-            tools:text="mario.rossi@email.com"
-            app:layout_constraintTop_toBottomOf="@id/nomeText"
-            app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/nomeText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:gravity="center"
+                android:textSize="@dimen/text_size_title"
+                android:textStyle="bold"
+                android:textColor="@color/care_on_surface"
+                tools:text="Mario Rossi" />
 
-        <TextView
-            android:id="@+id/ruoloText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:text="Ruolo: Volontario"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_on_surface"
-            app:layout_constraintTop_toBottomOf="@id/emailText"
-            app:layout_constraintStart_toStartOf="parent" />
+            <!-- Targhetta ruolo (stile pillola già usato per gli stati). -->
+            <TextView
+                style="@style/CareConnect.StatusChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:text="Volontario" />
 
-        <TextView
-            android:id="@+id/ratingText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:text="Valutazione: non ancora valutato"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_on_surface"
-            app:layout_constraintTop_toBottomOf="@id/ruoloText"
-            app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/emailText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:gravity="center"
+                android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_on_surface_variant"
+                tools:text="mario.rossi@email.com" />
 
-        <!-- Sezione "immagine profilo": rimandata come possibile estensione
-             per la tesi (vedi Visione_e_Requisiti.md, backlog). Per ora la
-             schermata resta così, senza spazio riservato per non lasciare
-             un buco visivo per una feature non ancora decisa nei dettagli. -->
+            <!-- ===== CARD: valutazioni ===== -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/CareConnect.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large">
 
-        <TextView
-            android:id="@+id/bioLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_large"
-            android:text="Descrizione (facoltativa)"
-            android:textSize="@dimen/text_size_body"
-            android:textStyle="bold"
-            android:textColor="@color/care_on_surface"
-            app:layout_constraintTop_toBottomOf="@id/ratingText"
-            app:layout_constraintStart_toStartOf="parent" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/bioEditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:minLines="3"
-            android:gravity="top|start"
-            android:inputType="textMultiLine"
-            android:hint="Racconta qualcosa di te a chi riceverà il tuo aiuto"
-            android:textSize="@dimen/text_size_body"
-            android:textColor="@color/care_on_surface"
-            android:background="@color/care_surface"
-            android:padding="@dimen/spacing_small"
-            app:layout_constraintTop_toBottomOf="@id/bioLabel"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Le tue valutazioni"
+                        android:textSize="@dimen/text_size_body"
+                        android:textStyle="bold"
+                        android:textColor="@color/care_on_surface" />
 
-        <Button
-            android:id="@+id/salvaBioButton"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:text="Salva descrizione"
-            android:textColor="@color/care_primary_dark"
-            app:layout_constraintTop_toBottomOf="@id/bioEditText"
-            app:layout_constraintStart_toStartOf="parent" />
+                    <TextView
+                        android:id="@+id/ratingText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:textSize="@dimen/text_size_body"
+                        android:textColor="@color/care_on_surface_variant"
+                        tools:text="Valutazione: non ancora valutato" />
 
-        <Button
-            android:id="@+id/logoutButton"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/button_height"
-            android:text="Esci"
-            android:layout_marginTop="@dimen/spacing_large"
-            android:backgroundTint="@color/care_error"
-            android:textColor="@color/care_on_error"
-            app:layout_constraintTop_toBottomOf="@id/salvaBioButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+                </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== CARD: descrizione ===== -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/CareConnect.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Descrizione (facoltativa)"
+                        android:textSize="@dimen/text_size_body"
+                        android:textStyle="bold"
+                        android:textColor="@color/care_on_surface" />
+
+                    <EditText
+                        android:id="@+id/bioEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:minLines="3"
+                        android:gravity="top|start"
+                        android:inputType="textMultiLine"
+                        android:hint="Racconta qualcosa di te a chi riceverà il tuo aiuto"
+                        android:textSize="@dimen/text_size_body"
+                        android:textColor="@color/care_on_surface"
+                        android:background="@drawable/bg_input_outline"
+                        android:padding="@dimen/spacing_medium" />
+
+                    <Button
+                        android:id="@+id/salvaBioButton"
+                        style="@style/CareConnect.Button.Accent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:text="Salva descrizione" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== ESCI ===== -->
+            <Button
+                android:id="@+id/logoutButton"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:text="Esci"
+                android:backgroundTint="@color/care_error"
+                android:textColor="@color/care_on_error" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 </layout>
