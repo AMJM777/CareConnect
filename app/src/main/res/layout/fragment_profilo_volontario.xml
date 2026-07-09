@@ -3,6 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- La "variabile" del DataBinding: il ViewModel. Nell'XML possiamo
+         leggerne i LiveData con @{viewModel.campo}. -->
+    <data>
+        <variable
+            name="viewModel"
+            type="com.careconnect.viewmodel.volontario.ProfiloVolontarioViewModel" />
+    </data>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,18 +35,21 @@
                 android:padding="22dp"
                 android:contentDescription="@null" />
 
+            <!-- Nome: legato al LiveData del ViewModel (niente più codice
+                 nel Fragment per riempirlo). -->
             <TextView
                 android:id="@+id/nomeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
                 android:gravity="center"
+                android:text="@{viewModel.nome}"
                 android:textSize="@dimen/text_size_title"
                 android:textStyle="bold"
                 android:textColor="@color/care_on_surface"
                 tools:text="Mario Rossi" />
 
-            <!-- Targhetta ruolo (stile pillola già usato per gli stati). -->
+            <!-- Targhetta ruolo (fissa: siamo nel profilo del Volontario). -->
             <TextView
                 style="@style/CareConnect.StatusChip"
                 android:layout_width="wrap_content"
@@ -47,12 +58,14 @@
                 android:layout_marginTop="@dimen/spacing_small"
                 android:text="Volontario" />
 
+            <!-- Email: legata alla proprietà del ViewModel. -->
             <TextView
                 android:id="@+id/emailText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
                 android:gravity="center"
+                android:text="@{viewModel.email}"
                 android:textSize="@dimen/text_size_body"
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="mario.rossi@email.com" />
@@ -77,11 +90,14 @@
                         android:textStyle="bold"
                         android:textColor="@color/care_on_surface" />
 
+                    <!-- Testo valutazione: legato al LiveData già formattato
+                         dal ViewModel. -->
                     <TextView
                         android:id="@+id/ratingText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_small"
+                        android:text="@{viewModel.valutazione}"
                         android:textSize="@dimen/text_size_body"
                         android:textColor="@color/care_on_surface_variant"
                         tools:text="Valutazione: non ancora valutato" />
@@ -90,7 +106,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ===== CARD: descrizione ===== -->
+            <!-- ===== CARD: descrizione (EDITABILE, gestita a mano) ===== -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/CareConnect.Card"
                 android:layout_width="match_parent"
@@ -110,6 +126,8 @@
                         android:textStyle="bold"
                         android:textColor="@color/care_on_surface" />
 
+                    <!-- Campo editabile: NON legato in due vie. Lo pre-riempie
+                         il Fragment una volta e lo legge al click su "Salva". -->
                     <EditText
                         android:id="@+id/bioEditText"
                         android:layout_width="match_parent"

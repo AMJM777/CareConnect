@@ -1,5 +1,7 @@
 package com.careconnect.viewmodel.anziano
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,26 +14,49 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
- * ViewModel del Profilo Anziano (FASE 8).
- * Stessa logica già scritta per DashboardAnzianoViewModel (codice invito +
- * indirizzo), qui riunita con nome/email/ruolo — stesso schema già usato
- * per Profilo Volontario e Profilo Familiare.
+ * ViewModel del Profilo Anziano (FASE 8): nome, email, ruolo, codice invito
+ * e indirizzo, più logout.
+ *
+ * DATA BINDING (lezione 9): i dati di sola lettura (nome, codice invito)
+ * sono esposti come LiveData e legati dall'XML con @{}. Schema visto a
+ * lezione: un MutableLiveData privato di appoggio (_campo) + un LiveData
+ * pubblico di sola lettura (campo). L'indirizzo è EDITABILE, quindi resta
+ * gestito a mano dal Fragment.
  */
 class ProfiloAnzianoViewModel(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    // Email non cambia mai durante la sessione: la leggiamo una volta,
-    // come proprietà, non come StateFlow (stesso schema di ProfiloVolontarioViewModel).
+    // Utente caricato: sorgente per salvaIndirizzo() (salvaUtente = .set()
+    // completo, serve l'oggetto User intero, copiato con .copy()).
+    private var utenteCaricato: User? = null
+
+    // Codice invito "grezzo", tenuto per la copia negli appunti.
+    private var codiceCorrente: String? = null
+
+    // Email: fissa durante la sessione, semplice proprietà (bindabile).
     val email: String? = authRepository.utenteCorrente()?.email
 
-    private val _utente = MutableStateFlow<User?>(null)
-    val utente: StateFlow<User?> = _utente.asStateFlow()
+    // ----- Campi di SOLA LETTURA legati dall'XML tramite DataBinding -----
+    private val _nome = MutableLiveData("")
+    val nome: LiveData<String> = _nome
 
-    private val _codiceInvito = MutableStateFlow<String?>(null)
-    val codiceInvito: StateFlow<String?> = _codiceInvito.asStateFlow()
+    // Testo del codice invito: il codice vero, oppure "..." mentre carica.
+    private val _codiceInvitoTesto = MutableLiveData("...")
+    val codiceInvitoTesto: LiveData<String> = _codiceInvitoTesto
 
+    // Abilita il bottone "Copia" solo quando il codice è davvero pronto.
+    private val _copiaAbilitato = MutableLiveData(false)
+    val copiaAbilitato: LiveData<Boolean> = _copiaAbilitato
+
+    // Indirizzo con cui pre-riempire il campo UNA volta. Nessun valore
+    // iniziale: il Fragment lo scrive nell'EditText solo quando arriva.
+    private val _indirizzoIniziale = MutableLiveData<String>()
+    val indirizzoIniziale: LiveData<String> = _indirizzoIniziale
+
+    // ----- Eventi "una tantum" (Toast): restano StateFlow, sono segnali,
+    //       non stato da disegnare. -----
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
@@ -51,18 +76,24 @@ class ProfiloAnzianoViewModel(
         }
         viewModelScope.launch {
             userRepository.getUtente(uid).fold(
-                onSuccess = { utenteCaricato -> _utente.value = utenteCaricato },
+                onSuccess = { utente -> mostraUtente(utente) },
                 onFailure = { errore -> _errore.value = errore.message ?: "Impossibile caricare il profilo" }
             )
         }
     }
 
+    // Riempie i LiveData del profilo: da qui le View legate si aggiornano da sole.
+    private fun mostraUtente(utente: User) {
+        utenteCaricato = utente
+        _nome.value = utente.nome
+        _indirizzoIniziale.value = utente.indirizzo ?: ""
+    }
+
     private fun caricaCodiceInvito() {
-        val uid = authRepository.utenteCorrente()?.uid
-        if (uid == null) return
+        val uid = authRepository.utenteCorrente()?.uid ?: return
         viewModelScope.launch {
             userRepository.ottieniOCreaCodiceInvito(uid).fold(
-                onSuccess = { codice -> _codiceInvito.value = codice },
+                onSuccess = { codice -> mostraCodiceInvito(codice) },
                 onFailure = { errore ->
                     _errore.value = errore.message ?: "Impossibile generare il codice invito"
                 }
@@ -70,9 +101,18 @@ class ProfiloAnzianoViewModel(
         }
     }
 
+    private fun mostraCodiceInvito(codice: String) {
+        codiceCorrente = codice
+        _codiceInvitoTesto.value = codice
+        _copiaAbilitato.value = true
+    }
+
+    /** Codice grezzo da copiare negli appunti (null se non ancora pronto). */
+    fun codicePerCopia(): String? = codiceCorrente
+
     /** Parte dall'utente già in memoria (.copy()): salvaUtente() è un .set() completo. */
     fun salvaIndirizzo(nuovoIndirizzo: String) {
-        val utenteAttuale = _utente.value
+        val utenteAttuale = utenteCaricato
         if (utenteAttuale == null) {
             _errore.value = "Profilo non ancora caricato"
             return
@@ -86,7 +126,7 @@ class ProfiloAnzianoViewModel(
         viewModelScope.launch {
             userRepository.salvaUtente(utenteAggiornato).fold(
                 onSuccess = {
-                    _utente.value = utenteAggiornato
+                    utenteCaricato = utenteAggiornato
                     _indirizzoSalvato.value = true
                 },
                 onFailure = { errore ->

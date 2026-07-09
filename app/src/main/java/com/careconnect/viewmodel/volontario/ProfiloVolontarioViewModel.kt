@@ -1,5 +1,7 @@
 package com.careconnect.viewmodel.volontario
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -14,24 +16,52 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel del Profilo Volontario. Carica il profilo una sola volta
  * all'apertura (non è realtime) e gestisce logout + modifica della bio.
+ *
+ * DATA BINDING (lezione 9): i dati di sola lettura mostrati a schermo
+ * (nome, valutazione) sono esposti come LiveData e legati direttamente
+ * dall'XML con espressioni @{}. Schema visto a lezione: un MutableLiveData
+ * privato "di appoggio" (_campo) e un LiveData pubblico di sola lettura
+ * (campo). Così il Fragment NON aggiorna più a mano le TextView: ci pensa
+ * il DataBinding, che osserva il LiveData tramite il lifecycleOwner.
  */
 class ProfiloVolontarioViewModel(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _utente = MutableStateFlow<User?>(null)
-    val utente: StateFlow<User?> = _utente.asStateFlow()
+    // Utente caricato, tenuto in memoria come sorgente per salvaBio():
+    // salvaUtente() fa un .set() completo, quindi serve sempre l'oggetto
+    // User intero (lo copiamo con .copy()), non solo il campo cambiato.
+    private var utenteCaricato: User? = null
 
+    // ----- Campi di SOLA LETTURA, legati dall'XML tramite DataBinding -----
+
+    // Nome del volontario. Parte da stringa vuota finché il profilo carica.
+    private val _nome = MutableLiveData("")
+    val nome: LiveData<String> = _nome
+
+    // Testo della valutazione, GIÀ formattato qui (logica fuori dal Fragment):
+    // "Valutazione: 4.5 / 5" oppure "Valutazione: non ancora valutato".
+    private val _valutazione = MutableLiveData("")
+    val valutazione: LiveData<String> = _valutazione
+
+    // Bio con cui pre-riempire il campo di testo UNA volta. Non ha valore
+    // iniziale: così il Fragment lo osserva e scrive nell'EditText solo
+    // quando il profilo è davvero caricato (una singola emissione).
+    private val _bioIniziale = MutableLiveData<String>()
+    val bioIniziale: LiveData<String> = _bioIniziale
+
+    // Email: non cambia durante la sessione, la leggiamo una volta come
+    // semplice proprietà (il DataBinding può legare anche una String fissa).
+    val email: String? = authRepository.utenteCorrente()?.email
+
+    // ----- Eventi "una tantum" (Toast): restano StateFlow, il Fragment li
+    //       raccoglie. Non sono stato da disegnare, ma segnali momentanei. -----
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
-    // Messaggio di conferma separato dall'errore: "bio salvata" non è un
-    // errore, ma merita comunque un feedback visivo (Toast) all'utente.
     private val _bioSalvata = MutableStateFlow(false)
     val bioSalvata: StateFlow<Boolean> = _bioSalvata.asStateFlow()
-
-    val email: String? = authRepository.utenteCorrente()?.email
 
     init {
         caricaProfilo()
@@ -45,19 +75,29 @@ class ProfiloVolontarioViewModel(
         }
         viewModelScope.launch {
             userRepository.getUtente(uid).fold(
-                onSuccess = { utenteCaricato -> _utente.value = utenteCaricato },
+                onSuccess = { utente -> mostraUtente(utente) },
                 onFailure = { errore -> _errore.value = errore.message ?: "Impossibile caricare il profilo" }
             )
         }
     }
 
+    // Riempie i LiveData a partire dall'utente caricato: da qui in poi le
+    // TextView legate nell'XML si aggiornano da sole.
+    private fun mostraUtente(utente: User) {
+        utenteCaricato = utente
+        _nome.value = utente.nome
+        _valutazione.value = utente.ratingMedio
+            ?.let { media -> "Valutazione: %.1f / 5".format(media) }
+            ?: "Valutazione: non ancora valutato"
+        _bioIniziale.value = utente.bio ?: ""
+    }
+
     /**
-     * Salva la nuova bio. Parte dall'utente già caricato in memoria e lo
-     * copia con il nuovo testo: salvaUtente() fa un .set() completo, quindi
-     * serve sempre l'oggetto User intero, non solo il campo cambiato.
+     * Salva la nuova bio. Parte dall'utente già in memoria e lo copia con il
+     * nuovo testo (salvaUtente = .set() completo, serve l'oggetto intero).
      */
     fun salvaBio(nuovaBio: String) {
-        val utenteAttuale = _utente.value
+        val utenteAttuale = utenteCaricato
         if (utenteAttuale == null) {
             _errore.value = "Profilo non ancora caricato"
             return
@@ -67,7 +107,7 @@ class ProfiloVolontarioViewModel(
         viewModelScope.launch {
             userRepository.salvaUtente(utenteAggiornato).fold(
                 onSuccess = {
-                    _utente.value = utenteAggiornato
+                    utenteCaricato = utenteAggiornato
                     _bioSalvata.value = true
                 },
                 onFailure = { errore ->

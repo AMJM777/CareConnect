@@ -46,9 +46,26 @@ interface RequestRepository {
     /** Stream in tempo reale delle richieste con stato APERTA (per il volontario). */
     fun osservaRichiesteAperte(): Flow<List<Request>>
 
+    /**
+     * Legge UNA VOLTA SOLA le richieste aperte (query singola, non realtime).
+     * Serve al Worker in background (FASE 11): un task periodico compie un'unità
+     * di lavoro discreta e poi termina, quindi non deve registrare un listener
+     * realtime come osservaRichiesteAperte(), che invece serve alla UI del volontario.
+     * Coerente con la scelta di progetto "suspend fun per operazioni singole,
+     * Flow per gli ascolti realtime".
+     */
+    suspend fun getRichiesteAperte(): Result<List<Request>>
+
     /** Stream in tempo reale delle richieste create da un anziano (storico). */
     fun osservaRichiestePerAnziano(anzianoId: String): Flow<List<Request>>
 
+    /**
+     * Legge UNA VOLTA SOLA tutte le richieste di un anziano (query singola,
+     * non realtime). Serve al Worker del Familiare (FASE 11b), che poi filtra
+     * quelle in attesa di conferma. Stessa logica di getRichiesteAperte():
+     * il task fa un'operazione discreta e termina, non resta in ascolto.
+     */
+    suspend fun getRichiestePerAnziano(anzianoId: String): Result<List<Request>>
     /**
      * Stream in tempo reale delle richieste "attive" di un volontario, cioè
      * quelle che ha preso in carico e non sono ancora arrivate a uno stato

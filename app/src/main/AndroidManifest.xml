@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
+    <!--mostrare notifiche richiede questo permesso, concesso dall'utente a runtime. Serve a WorkManager e a FCM  -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -22,6 +23,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- FASE 12 — Servizio FCM: riceve le push e le trasforma in notifiche.
+             exported="false": è invocato dall'SDK Firebase DENTRO l'app, non deve
+             essere raggiungibile da altre app. (Le slide mostrano "true", ma "false"
+             è la scelta corretta e sicura: da dire all'orale.) -->
+        <service
+            android:name=".fcm.CareConnectMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- Canale predefinito per le "notification message" ricevute ad app chiusa
+             (es. il test dalla Console): senza questo il sistema userebbe un canale
+             generico. Il valore DEVE combaciare con NotificationHelper.CANALE_GENERALE_ID. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="careconnect_generale" />
     </application>
 
 </manifest>

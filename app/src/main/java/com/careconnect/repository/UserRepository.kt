@@ -45,4 +45,11 @@ interface UserRepository {
      * puntuali di documenti, non query — per questo è un passo separato.
      */
     suspend fun aggiornaRatingMedio(volontarioId: String): Result<Unit>
+
+    /**
+     * FASE 12 — salva il token FCM del dispositivo sul profilo utente.
+     * Update parziale: tocca solo "fcmToken". Serve alla Cloud Function per
+     * sapere a quale dispositivo inviare la push (es. l'SOS al familiare).
+     */
+    suspend fun aggiornaFcmToken(uid: String, token: String): Result<Unit>
 }

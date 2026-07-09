@@ -29,6 +29,27 @@ class RequestRepositoryImpl(
             ?: throw NoSuchElementException("Richiesta non trovata: $requestId")
     }
 
+    override suspend fun getRichiesteAperte(): Result<List<Request>> = runCatching {
+        // Stessa forma di osservaRichiesteAperte() (solo whereEqualTo, nessun orderBy):
+        // così NON serve alcun indice composito su Firestore. Qui però leggiamo una
+        // volta sola con get() invece di registrare un listener realtime.
+        val snapshot = collection
+            .whereEqualTo("stato", RequestStatus.APERTA.firestoreValue)
+            .get()
+            .await()
+        snapshot.documents.mapNotNull { it.toRequest() }
+    }
+
+    override suspend fun getRichiestePerAnziano(anzianoId: String): Result<List<Request>> = runCatching {
+        // Stessa forma di osservaRichiestePerAnziano() (solo whereEqualTo("autoreId")):
+        // nessun indice composito. Qui leggiamo una volta sola con get().
+        val snapshot = collection
+            .whereEqualTo("autoreId", anzianoId)
+            .get()
+            .await()
+        snapshot.documents.mapNotNull { it.toRequest() }
+    }
+
     override suspend fun aggiornaStato(
         requestId: String,
         nuovoStato: RequestStatus,

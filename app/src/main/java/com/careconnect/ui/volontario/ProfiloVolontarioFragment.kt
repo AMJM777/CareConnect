@@ -30,11 +30,14 @@ import kotlinx.coroutines.launch
  * Schermata Profilo del Volontario: nome, email, ruolo, valutazione,
  * descrizione modificabile, e logout.
  *
- * FIX: il logout ora passa dal condiviso AuthViewModel (stesso schema di
- * Anziano/Familiare), non più da un logout() locale di
- * ProfiloVolontarioViewModel — quest'ultimo disconnetteva Firebase ma non
- * resettava lo stato di AuthViewModel, causando un rimbalzo immediato
- * indietro alla Home Volontario appena si arrivava al login.
+ * DATA BINDING (lezione 9): nome/email/valutazione sono legati direttamente
+ * dall'XML tramite @{viewModel.campo}. Per farlo bastano due righe dopo
+ * l'inflate: binding.viewModel = viewModel e binding.lifecycleOwner =
+ * viewLifecycleOwner (così il binding osserva i LiveData e aggiorna le
+ * TextView da solo). Il Fragment non ha più codice per riempirle a mano.
+ *
+ * FIX (invariato): il logout passa dal condiviso AuthViewModel, non da un
+ * logout() locale, per non lasciare lo stato di autenticazione "sporco".
  */
 class ProfiloVolontarioFragment : Fragment() {
 
@@ -57,8 +60,6 @@ class ProfiloVolontarioFragment : Fragment() {
         )
     }
 
-    private var bioGiaPrecompilata = false
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -67,40 +68,33 @@ class ProfiloVolontarioFragment : Fragment() {
         _binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_profilo_volontario, container, false
         )
+        // Colleghiamo il ViewModel al layout: da qui le espressioni @{} nel
+        // file XML possono leggere i suoi LiveData.
+        binding.viewModel = viewModel
+        // Diamo al binding un "proprietario del ciclo di vita": senza questo
+        // le TextView legate a LiveData NON si aggiornerebbero da sole.
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.emailText.text = viewModel.email ?: ""
         binding.logoutButton.setOnClickListener { mostraConfermaLogout() }
         binding.salvaBioButton.setOnClickListener {
             viewModel.salvaBio(binding.bioEditText.text.toString())
         }
 
-        osservaUtente()
+        preRiempiBio()
         osservaErrori()
         osservaBioSalvata()
     }
 
-    private fun osservaUtente() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.utente.collect { utente ->
-                    if (utente != null) {
-                        binding.nomeText.text = utente.nome
-                        binding.ratingText.text = utente.ratingMedio?.let { media ->
-                            "Valutazione: %.1f / 5".format(media)
-                        } ?: "Valutazione: non ancora valutato"
-
-                        if (!bioGiaPrecompilata) {
-                            binding.bioEditText.setText(utente.bio ?: "")
-                            bioGiaPrecompilata = true
-                        }
-                    }
-                }
-            }
+    // La bio è un campo EDITABILE: non la leghiamo in due vie, la scriviamo
+    // nell'EditText una sola volta quando il profilo è caricato.
+    private fun preRiempiBio() {
+        viewModel.bioIniziale.observe(viewLifecycleOwner) { bio ->
+            binding.bioEditText.setText(bio)
         }
     }
 
@@ -140,7 +134,7 @@ class ProfiloVolontarioFragment : Fragment() {
     }
 
     private fun eseguiLogout() {
-        // FIX: il logout ora passa dal condiviso AuthViewModel (resetta anche
+        // Il logout passa dal condiviso AuthViewModel (resetta anche
         // sessionCache e AuthUiState).
         authViewModel.logout()
 
@@ -148,17 +142,13 @@ class ProfiloVolontarioFragment : Fragment() {
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navControllerPrincipale = navHostFragmentPrincipale.navController
 
-        // Svuota TUTTO lo stack principale fino alla radice del grafo (inclusa)
-        // e riparte dal login. In modo deterministico, non con il trucco
-        // popUpTo(0): così il logout riporta sempre al login (mai fuori
-        // dall'app) e da lì il tasto Indietro esce dall'app, senza residui
-        // della sessione precedente.
+        // Svuota tutto lo stack principale fino alla radice (inclusa) e
+        // riparte dal login, in modo deterministico (non con popUpTo(0)).
         val opzioni = navOptions {
             popUpTo(navControllerPrincipale.graph.id) { inclusive = true }
         }
         navControllerPrincipale.navigate(R.id.nav_graph_auth, null, opzioni)
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

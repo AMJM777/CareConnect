@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.careconnect.viewmodel.anziano.ProfiloAnzianoViewModel" />
+    </data>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,12 +33,14 @@
                 android:padding="22dp"
                 android:contentDescription="@null" />
 
+            <!-- Nome: legato al LiveData del ViewModel. -->
             <TextView
                 android:id="@+id/nomeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
                 android:gravity="center"
+                android:text="@{viewModel.nome}"
                 android:textSize="@dimen/text_size_title"
                 android:textStyle="bold"
                 android:textColor="@color/care_on_surface"
@@ -46,12 +54,14 @@
                 android:layout_marginTop="@dimen/spacing_small"
                 android:text="Anziano" />
 
+            <!-- Email: legata alla proprietà del ViewModel. -->
             <TextView
                 android:id="@+id/emailText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
                 android:gravity="center"
+                android:text="@{viewModel.email}"
                 android:textSize="@dimen/text_size_body"
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="maria.rossi@email.it" />
@@ -76,17 +86,22 @@
                         android:textStyle="bold"
                         android:textColor="@color/care_on_surface" />
 
+                    <!-- Codice invito: legato al LiveData (mostra "..." finché
+                         non è pronto). -->
                     <TextView
                         android:id="@+id/codiceInvitoText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_small"
+                        android:text="@{viewModel.codiceInvitoTesto}"
                         android:textSize="@dimen/text_size_title"
                         android:textStyle="bold"
                         android:textColor="@color/care_primary"
                         android:letterSpacing="0.2"
                         tools:text="A7K9P2" />
 
+                    <!-- Bottone abilitato dal DataBinding solo quando il
+                         codice è disponibile. -->
                     <Button
                         android:id="@+id/copiaCodiceButton"
                         style="@style/CareConnect.Button.Accent"
@@ -94,13 +109,14 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:layout_marginTop="@dimen/spacing_small"
+                        android:enabled="@{viewModel.copiaAbilitato}"
                         android:text="Copia codice" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ===== CARD: indirizzo ===== -->
+            <!-- ===== CARD: indirizzo (EDITABILE, gestito a mano) ===== -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/CareConnect.Card"
                 android:layout_width="match_parent"
@@ -120,6 +136,8 @@
                         android:textStyle="bold"
                         android:textColor="@color/care_on_surface" />
 
+                    <!-- Campo editabile: NON legato in due vie. Lo pre-riempie
+                         il Fragment una volta e lo legge al click su "Salva". -->
                     <EditText
                         android:id="@+id/indirizzoEditText"
                         android:layout_width="match_parent"

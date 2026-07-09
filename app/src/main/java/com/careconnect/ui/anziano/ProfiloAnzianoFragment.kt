@@ -31,8 +31,12 @@ import kotlinx.coroutines.launch
 
 /**
  * Profilo dell'Anziano (FASE 8): nome/email/ruolo, codice invito e
- * indirizzo (spostati qui da Dashboard, che nello Step 2 diventa solo
- * 2 pulsanti), logout.
+ * indirizzo, logout.
+ *
+ * DATA BINDING (lezione 9): nome, email e codice invito sono legati
+ * dall'XML con @{viewModel.campo}; basta collegare il ViewModel al binding
+ * e impostare il lifecycleOwner. L'indirizzo è editabile e resta gestito a
+ * mano (pre-riempito una volta, letto al click su "Salva").
  */
 class ProfiloAnzianoFragment : Fragment() {
 
@@ -57,47 +61,33 @@ class ProfiloAnzianoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profilo_anziano, container, false)
+        // Colleghiamo il ViewModel al layout e diamo il proprietario del
+        // ciclo di vita: così le View legate a LiveData si aggiornano da sole.
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.emailText.text = viewModel.email ?: ""
         binding.logoutButton.setOnClickListener { mostraConfermaLogout() }
         binding.copiaCodiceButton.setOnClickListener { copiaCodiceNegliAppunti() }
         binding.salvaIndirizzoButton.setOnClickListener {
             viewModel.salvaIndirizzo(binding.indirizzoEditText.text.toString())
         }
 
-        osservaProfilo()
-        osservaCodiceInvito()
+        preRiempiIndirizzo()
         osservaErrori()
         osservaIndirizzoSalvato()
     }
 
-    private fun osservaProfilo() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.utente.collect { utente ->
-                    if (utente != null) {
-                        binding.nomeText.text = utente.nome
-                        if (binding.indirizzoEditText.text.isNullOrBlank()) {
-                            binding.indirizzoEditText.setText(utente.indirizzo ?: "")
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun osservaCodiceInvito() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.codiceInvito.collect { codice ->
-                    binding.codiceInvitoText.text = codice ?: "..."
-                    binding.copiaCodiceButton.isEnabled = codice != null
-                }
+    // L'indirizzo è un campo EDITABILE: lo scriviamo nell'EditText una sola
+    // volta, quando il profilo è caricato.
+    private fun preRiempiIndirizzo() {
+        viewModel.indirizzoIniziale.observe(viewLifecycleOwner) { indirizzo ->
+            if (binding.indirizzoEditText.text.isNullOrBlank()) {
+                binding.indirizzoEditText.setText(indirizzo)
             }
         }
     }
@@ -129,7 +119,8 @@ class ProfiloAnzianoFragment : Fragment() {
     }
 
     private fun copiaCodiceNegliAppunti() {
-        val codice = viewModel.codiceInvito.value ?: return
+        // Il codice grezzo lo chiediamo al ViewModel (null se non pronto).
+        val codice = viewModel.codicePerCopia() ?: return
         val clipboardManager =
             requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         clipboardManager.setPrimaryClip(ClipData.newPlainText("Codice invito CareConnect", codice))
@@ -146,7 +137,7 @@ class ProfiloAnzianoFragment : Fragment() {
     }
 
     private fun eseguiLogout() {
-        // FIX: il logout ora passa dal condiviso AuthViewModel (resetta anche
+        // Il logout passa dal condiviso AuthViewModel (resetta anche
         // sessionCache e AuthUiState).
         authViewModel.logout()
 
@@ -154,11 +145,8 @@ class ProfiloAnzianoFragment : Fragment() {
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navControllerPrincipale = navHostFragmentPrincipale.navController
 
-        // Svuota TUTTO lo stack principale fino alla radice del grafo (inclusa)
-        // e riparte dal login. In modo deterministico, non con il trucco
-        // popUpTo(0): così il logout riporta sempre al login (mai fuori
-        // dall'app) e da lì il tasto Indietro esce dall'app, senza residui
-        // della sessione precedente.
+        // Svuota tutto lo stack principale fino alla radice (inclusa) e
+        // riparte dal login, in modo deterministico (non con popUpTo(0)).
         val opzioni = navOptions {
             popUpTo(navControllerPrincipale.graph.id) { inclusive = true }
         }

@@ -14,6 +14,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.careconnect.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.careconnect.work.WorkScheduler
+import android.widget.Toast
 
 /**
  * Contenitore della sezione Volontario: Toolbar del ruolo + NavHost annidato
@@ -35,8 +37,12 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
         collegaToolbar(view, navController)
         collegaBottomNav(view, navController)
         gestisciTastoIndietro(navController)
+        // Il volontario è appena entrato nella sua sezione: pianifico
+        // il controllo periodico delle nuove richieste (KEEP: nessun doppione se già attivo).
+        WorkScheduler.pianificaControlloPeriodico(requireContext())
     }
 
+    // Collega la Toolbar del ruolo al grafo annidato.
     // Collega la Toolbar del ruolo al grafo annidato.
     private fun collegaToolbar(view: View, navController: NavController) {
         val toolbar = view.findViewById<Toolbar>(R.id.volontarioToolbar)
@@ -53,6 +59,15 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
         // NON compare. In tutte le altre schermate la freccia compare e torna indietro.
         appBarConfiguration = AppBarConfiguration(setOf(R.id.richiesteDisponibiliFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
+
+        // FASE 11 (solo per la DEMO) — Innesco nascosto: un long-press sulla Toolbar
+        // fa partire SUBITO il Worker, senza aspettare l'intervallo periodico di 15 min.
+        // NON è una funzione per l'utente finale: serve solo a mostrare il task all'orale.
+        toolbar.setOnLongClickListener {
+            WorkScheduler.eseguiOraPerDemo(requireContext())
+            Toast.makeText(requireContext(), "Controllo richieste avviato…", Toast.LENGTH_SHORT).show()
+            true // true = evento consumato, non propaghiamo oltre
+        }
     }
 
     private fun collegaBottomNav(view: View, navController: NavController) {

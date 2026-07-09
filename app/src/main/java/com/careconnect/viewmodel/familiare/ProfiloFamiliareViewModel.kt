@@ -1,5 +1,7 @@
 package com.careconnect.viewmodel.familiare
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -10,25 +12,30 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/** Dati mostrati nel Profilo Familiare: nome proprio e nome dell'anziano seguito. */
-data class ProfiloFamiliareInfo(
-    val nomeFamiliare: String,
-    val nomeAnziano: String
-)
-
 /**
  * ViewModel del Profilo Familiare (FASE 6). Carica una sola volta (non
  * realtime: questi dati non cambiano mentre la schermata è aperta) il
  * proprio nome e quello dell'anziano collegato.
+ *
+ * DATA BINDING (lezione 9): essendo tutto in SOLA LETTURA, le due TextView
+ * sono legate interamente dall'XML con @{}. I testi già pronti ("Sei
+ * collegato/a come: ...", "Stai seguendo: ...") vengono composti qui col
+ * solito schema MutableLiveData privato + LiveData pubblico, così il
+ * Fragment non ha più codice per riempire le View.
  */
 class ProfiloFamiliareViewModel(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _info = MutableStateFlow<ProfiloFamiliareInfo?>(null)
-    val info: StateFlow<ProfiloFamiliareInfo?> = _info.asStateFlow()
+    // Testi già pronti, legati dall'XML.
+    private val _nomeFamiliareTesto = MutableLiveData("")
+    val nomeFamiliareTesto: LiveData<String> = _nomeFamiliareTesto
 
+    private val _nomeAnzianoTesto = MutableLiveData("")
+    val nomeAnzianoTesto: LiveData<String> = _nomeAnzianoTesto
+
+    // Evento "una tantum" (Toast): resta StateFlow, è un segnale momentaneo.
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
@@ -56,10 +63,10 @@ class ProfiloFamiliareViewModel(
                 _errore.value = it.message ?: "Impossibile caricare i dati dell'anziano"
                 return@launch
             }
-            _info.value = ProfiloFamiliareInfo(
-                nomeFamiliare = familiare.nome,
-                nomeAnziano = anziano.nome
-            )
+            // Componiamo i testi qui: da questo momento le TextView legate
+            // nell'XML si aggiornano da sole.
+            _nomeFamiliareTesto.value = "Sei collegato/a come: ${familiare.nome}"
+            _nomeAnzianoTesto.value = "Stai seguendo: ${anziano.nome}"
         }
     }
 

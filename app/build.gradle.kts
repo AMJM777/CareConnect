@@ -68,4 +68,9 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services)
     implementation(libs.googleid)
+    // WorkManager: pianifica ed esegue task in background
+    implementation(libs.androidx.work.runtime.ktx)
+    // Firebase Cloud Messaging: ricezione notifiche push
+    // Versione gestita dalla BoM, come firebase-auth e firebase-firestore.
+    implementation(libs.firebase.messaging)
 }

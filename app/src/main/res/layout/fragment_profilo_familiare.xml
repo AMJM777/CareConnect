@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.careconnect.viewmodel.familiare.ProfiloFamiliareViewModel" />
+    </data>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,12 +33,14 @@
                 android:padding="22dp"
                 android:contentDescription="@null" />
 
+            <!-- Nome familiare: legato al LiveData del ViewModel. -->
             <TextView
                 android:id="@+id/nomeFamiliareText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
                 android:gravity="center"
+                android:text="@{viewModel.nomeFamiliareTesto}"
                 android:textSize="@dimen/text_size_title"
                 android:textStyle="bold"
                 android:textColor="@color/care_on_surface"
@@ -66,11 +74,13 @@
                         android:textStyle="bold"
                         android:textColor="@color/care_on_surface" />
 
+                    <!-- Nome anziano seguito: legato al LiveData. -->
                     <TextView
                         android:id="@+id/nomeAnzianoText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_small"
+                        android:text="@{viewModel.nomeAnzianoTesto}"
                         android:textSize="@dimen/text_size_body"
                         android:textStyle="bold"
                         android:textColor="@color/care_primary"

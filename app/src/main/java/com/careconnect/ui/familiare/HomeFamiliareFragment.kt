@@ -27,6 +27,8 @@ import com.careconnect.viewmodel.familiare.HomeFamiliareViewModel
 import com.careconnect.viewmodel.familiare.HomeFamiliareViewModelFactory
 import com.careconnect.viewmodel.familiare.StatoHomeFamiliare
 import kotlinx.coroutines.launch
+import android.widget.Toast
+import com.careconnect.work.WorkScheduler
 
 /**
  * Home del Familiare (FASE 6).
@@ -108,6 +110,10 @@ class HomeFamiliareFragment : Fragment() {
         collegaToolbar(navHostFragment.navController)
         collegaBottomNav(navHostFragment.navController)
         gestisciTastoIndietro(navHostFragment.navController)
+
+        // FASE 11b — Ora che sappiamo che il familiare è collegato a un anziano,
+        // pianifichiamo il controllo periodico delle richieste da confermare.
+        WorkScheduler.pianificaControlloConfermePeriodico(requireContext())
     }
 
     // Collega la Toolbar del ruolo al grafo annidato del Familiare.
@@ -126,8 +132,16 @@ class HomeFamiliareFragment : Fragment() {
         // Su Profilo la freccia compare e riporta ad Attività.
         appBarConfiguration = AppBarConfiguration(setOf(R.id.attivitaFamiliareFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
-    }
 
+        // FASE 11b (solo per la DEMO) — Long-press sulla Toolbar: fa partire SUBITO
+        // il controllo delle richieste da confermare, senza aspettare i 15 minuti.
+        // NON è una funzione per l'utente finale: serve solo per l'orale.
+        toolbar.setOnLongClickListener {
+            WorkScheduler.eseguiControlloConfermeOraPerDemo(requireContext())
+            Toast.makeText(requireContext(), "Controllo conferme avviato…", Toast.LENGTH_SHORT).show()
+            true
+        }
+    }
     private fun collegaBottomNav(navController: NavController) {
         val bottomNav = binding.familiareBottomNav
 

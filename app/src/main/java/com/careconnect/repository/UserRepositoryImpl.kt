@@ -151,6 +151,12 @@ class UserRepositoryImpl(
         collection.document(volontarioId).update("ratingMedio", media).await()
     }
 
+    override suspend fun aggiornaFcmToken(uid: String, token: String): Result<Unit> = runCatching {
+        // Update parziale, come per codiceInvito: tocca solo il campo "fcmToken".
+        collection.document(uid).update("fcmToken", token).await()
+    }
+
+
     /** Alfabeto senza 0/O/1/I: caratteri facili da confondere se il codice viene letto ad alta voce o scritto a mano. */
     private fun generaCodiceCasuale(): String {
         val alfabeto = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"

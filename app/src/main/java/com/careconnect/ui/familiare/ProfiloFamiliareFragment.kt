@@ -28,7 +28,11 @@ import kotlinx.coroutines.launch
 
 /**
  * Profilo del Familiare (FASE 6): mostra il proprio nome e quello
- * dell'anziano seguito, più il logout (già presente dallo Step 4).
+ * dell'anziano seguito, più il logout.
+ *
+ * DATA BINDING (lezione 9): le due TextView sono legate interamente
+ * dall'XML con @{viewModel.campo}; basta collegare il ViewModel al binding
+ * e impostare il lifecycleOwner. Il Fragment non riempie più nessuna View.
  */
 class ProfiloFamiliareFragment : Fragment() {
 
@@ -49,6 +53,10 @@ class ProfiloFamiliareFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profilo_familiare, container, false)
+        // Colleghiamo il ViewModel al layout e diamo il proprietario del
+        // ciclo di vita: le due TextView legate si aggiornano da sole.
+        binding.viewModel = profiloViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -57,21 +65,7 @@ class ProfiloFamiliareFragment : Fragment() {
 
         binding.logoutButton.setOnClickListener { mostraConfermaLogout() }
 
-        osservaInfo()
         osservaErrori()
-    }
-
-    private fun osservaInfo() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                profiloViewModel.info.collect { info ->
-                    if (info != null) {
-                        binding.nomeFamiliareText.text = "Sei collegato/a come: ${info.nomeFamiliare}"
-                        binding.nomeAnzianoText.text = "Stai seguendo: ${info.nomeAnziano}"
-                    }
-                }
-            }
-        }
     }
 
     private fun osservaErrori() {
@@ -97,7 +91,7 @@ class ProfiloFamiliareFragment : Fragment() {
     }
 
     private fun eseguiLogout() {
-        // FIX: il logout ora passa dal condiviso AuthViewModel (resetta anche
+        // Il logout passa dal condiviso AuthViewModel (resetta anche
         // sessionCache e AuthUiState).
         authViewModel.logout()
 
@@ -105,11 +99,8 @@ class ProfiloFamiliareFragment : Fragment() {
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navControllerPrincipale = navHostFragmentPrincipale.navController
 
-        // Svuota TUTTO lo stack principale fino alla radice del grafo (inclusa)
-        // e riparte dal login. In modo deterministico, non con il trucco
-        // popUpTo(0): così il logout riporta sempre al login (mai fuori
-        // dall'app) e da lì il tasto Indietro esce dall'app, senza residui
-        // della sessione precedente.
+        // Svuota tutto lo stack principale fino alla radice (inclusa) e
+        // riparte dal login, in modo deterministico (non con popUpTo(0)).
         val opzioni = navOptions {
             popUpTo(navControllerPrincipale.graph.id) { inclusive = true }
         }

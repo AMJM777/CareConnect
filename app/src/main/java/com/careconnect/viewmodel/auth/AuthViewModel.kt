@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.careconnect.fcm.FcmTokenManager
 
 /**
  * Stato della schermata di autenticazione (Login e Registrazione condividono
@@ -140,6 +141,7 @@ class AuthViewModel(
         userRepository.getUtente(authUser.uid).fold(
             onSuccess = { user ->
                 sessionCache.salvaRuolo(user.ruolo)
+                salvaTokenFcm(authUser.uid)
                 _uiState.value = AuthUiState.Autenticato(authUser, user.ruolo)
             },
             onFailure = { errore -> _uiState.value = AuthUiState.Errore(errore) }
@@ -150,6 +152,7 @@ class AuthViewModel(
         userRepository.getUtente(authUser.uid).fold(
             onSuccess = { user ->
                 sessionCache.salvaRuolo(user.ruolo)
+                salvaTokenFcm(authUser.uid)
                 _uiState.value = AuthUiState.Autenticato(authUser, user.ruolo)
             },
             onFailure = { errore ->
@@ -169,10 +172,23 @@ class AuthViewModel(
         userRepository.salvaUtente(user).fold(
             onSuccess = {
                 sessionCache.salvaRuolo(ruolo)
+                salvaTokenFcm(authUser.uid)
                 _uiState.value = AuthUiState.Autenticato(authUser, ruolo)
             },
             onFailure = { errore -> _uiState.value = AuthUiState.Errore(errore) }
         )
+    }
+
+    /**
+     * FASE 12 — dopo un'autenticazione riuscita salva il token FCM del
+     * dispositivo sul profilo utente, così la Cloud Function saprà a chi
+     * inviare le push. Se il recupero o la scrittura falliscono NON blocchiamo
+     * il login: la push è una funzionalità extra, l'accesso deve riuscire comunque.
+     */
+    private suspend fun salvaTokenFcm(uid: String) {
+        FcmTokenManager.tokenCorrente().onSuccess { token ->
+            userRepository.aggiornaFcmToken(uid, token)
+        }
     }
 }
 
