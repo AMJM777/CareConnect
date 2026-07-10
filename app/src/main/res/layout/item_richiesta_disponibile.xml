@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
                 android:textSize="@dimen/text_size_body"
-                android:textColor="@color/care_on_surface_variant"
+                android:textColor="@color/care_on_surface"
                 tools:text="04/07/2026 10:15" />
 
             <!-- Unica azione su una richiesta ancora APERTA vista dal volontario:
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
                 android:text="Prendi in carico"
-                android:textColor="@color/care_primary_dark" />
+                android:textColor="@color/black" />
 
         </LinearLayout>
 

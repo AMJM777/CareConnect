@@ -4,6 +4,7 @@
     <!--mostrare notifiche richiede questo permesso, concesso dall'utente a runtime. Serve a WorkManager e a FCM  -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
+        android:name=".CareConnectApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"

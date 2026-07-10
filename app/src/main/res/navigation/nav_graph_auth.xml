@@ -13,7 +13,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.careconnect.ui.auth.LoginFragment"
-        android:label="Accedi"
+        android:label=""
         tools:layout="@layout/fragment_login">
 
         <action
