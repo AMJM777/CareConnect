@@ -6,15 +6,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/care_background"
-        android:padding="@dimen/screen_padding">
+        android:paddingStart="@dimen/screen_padding"
+        android:paddingEnd="@dimen/screen_padding">
 
-        <!-- FASE 8: banner SOS, visibile solo se c'è un allarme ATTIVO.
-             care_sos: colore riservato al bottone SOS dell'Anziano e a
-             questo banner, mai usato altrove nell'app. -->
         <LinearLayout
             android:id="@+id/sosBanner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
             android:orientation="vertical"
             android:background="@color/care_sos"
             android:padding="@dimen/spacing_medium"
@@ -44,17 +43,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/titoloText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_medium"
-            android:text="Attività"
-            android:textSize="@dimen/text_size_title"
-            android:textColor="@color/care_on_surface"
-            app:layout_constraintTop_toBottomOf="@id/sosBanner"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
             android:id="@+id/emptyStateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -62,7 +50,7 @@
             android:textSize="@dimen/text_size_body"
             android:textColor="@color/care_on_surface"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/titoloText"
+            app:layout_constraintTop_toBottomOf="@id/sosBanner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -71,8 +59,10 @@
             android:id="@+id/richiesteRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/spacing_medium"
-            app:layout_constraintTop_toBottomOf="@id/titoloText"
+            android:paddingTop="@dimen/screen_padding"
+            android:paddingBottom="@dimen/screen_padding"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toBottomOf="@id/sosBanner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

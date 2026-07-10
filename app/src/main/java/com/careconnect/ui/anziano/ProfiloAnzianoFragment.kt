@@ -28,6 +28,9 @@ import com.careconnect.viewmodel.anziano.ProfiloAnzianoViewModelFactory
 import com.careconnect.viewmodel.auth.AuthViewModel
 import com.careconnect.viewmodel.auth.AuthViewModelFactory
 import kotlinx.coroutines.launch
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 /**
  * Profilo dell'Anziano (FASE 8): nome/email/ruolo, codice invito e
@@ -70,6 +73,15 @@ class ProfiloAnzianoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Tastiera: padding in basso pari all'altezza della tastiera, così il
+        // campo indirizzo può salire sopra di essa (stesso meccanismo di
+        // Nuova richiesta).
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val tastiera = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            v.updatePadding(bottom = tastiera)
+            insets
+        }
 
         binding.logoutButton.setOnClickListener { mostraConfermaLogout() }
         binding.copiaCodiceButton.setOnClickListener { copiaCodiceNegliAppunti() }

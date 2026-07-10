@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,6 +27,7 @@ import com.careconnect.viewmodel.familiare.StatoHomeFamiliare
 import kotlinx.coroutines.launch
 import android.widget.Toast
 import com.careconnect.work.WorkScheduler
+import com.careconnect.ui.common.nascondiBottomNavQuandoTastieraAperta
 
 /**
  * Home del Familiare (FASE 6).
@@ -36,6 +35,11 @@ import com.careconnect.work.WorkScheduler
  * codice invito (senza alcuna barra in alto). Una volta collegato, aggancia
  * a runtime il NavHost annidato (Attività/Profilo), la Toolbar del ruolo e
  * la BottomNavigation.
+ *
+ * Barre di sistema: lo spazio è riservato nel layout con fitsSystemWindows
+ * (vedi fragment_home_familiare.xml). Lo sfondo della root è chiaro finché si
+ * è sul form; quando ci si collega lo coloriamo di blu, così le strisce in
+ * alto/basso diventano blu come nelle sezioni Anziano e Volontario.
  */
 class HomeFamiliareFragment : Fragment() {
 
@@ -101,6 +105,11 @@ class HomeFamiliareFragment : Fragment() {
         if (navGraphAnnidatoAgganciato) return
         navGraphAnnidatoAgganciato = true
 
+        // Da collegati coloriamo la root di blu: le schermate interne (opache)
+        // coprono il centro, quindi si vede blu solo nelle strisce delle barre
+        // di sistema, coerente con Anziano e Volontario.
+        binding.root.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.care_primary))
+
         val navHostFragment = NavHostFragment.create(R.navigation.nav_graph_familiare)
         childFragmentManager.beginTransaction()
             .replace(R.id.familiareNavHostContainer, navHostFragment)
@@ -109,6 +118,15 @@ class HomeFamiliareFragment : Fragment() {
 
         collegaToolbar(navHostFragment.navController)
         collegaBottomNav(navHostFragment.navController)
+        // Nasconde la bottom nav mentre la tastiera è aperta. Qui va DENTRO
+        // agganciaNavGraphAnnidato perché la bottom nav esiste solo da
+        // collegati. Usiamo binding.root come vista di riferimento e
+        // viewLifecycleOwner per la rimozione automatica del listener.
+        nascondiBottomNavQuandoTastieraAperta(
+            binding.root,
+            binding.familiareBottomNav,
+            viewLifecycleOwner
+        )
         gestisciTastoIndietro(navHostFragment.navController)
 
         // FASE 11b — Ora che sappiamo che il familiare è collegato a un anziano,
@@ -119,14 +137,6 @@ class HomeFamiliareFragment : Fragment() {
     // Collega la Toolbar del ruolo al grafo annidato del Familiare.
     private fun collegaToolbar(navController: NavController) {
         val toolbar = binding.familiareToolbar
-
-        // L'app disegna edge-to-edge: spingo la Toolbar sotto la barra di stato,
-        // così titolo e freccia non finiscono sotto orologio/batteria.
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
-            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            v.setPadding(v.paddingLeft, statusBar.top, v.paddingRight, v.paddingBottom)
-            insets
-        }
 
         // Solo Attività è "di primo livello": lì la freccia NON compare.
         // Su Profilo la freccia compare e riporta ad Attività.
@@ -142,6 +152,7 @@ class HomeFamiliareFragment : Fragment() {
             true
         }
     }
+
     private fun collegaBottomNav(navController: NavController) {
         val bottomNav = binding.familiareBottomNav
 

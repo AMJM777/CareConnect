@@ -25,6 +25,9 @@ import com.careconnect.viewmodel.auth.AuthViewModelFactory
 import com.careconnect.viewmodel.volontario.ProfiloVolontarioViewModel
 import com.careconnect.viewmodel.volontario.ProfiloVolontarioViewModelFactory
 import kotlinx.coroutines.launch
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 /**
  * Schermata Profilo del Volontario: nome, email, ruolo, valutazione,
@@ -80,6 +83,14 @@ class ProfiloVolontarioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Tastiera: padding in basso pari all'altezza della tastiera, così il
+        // campo bio può salire sopra di essa (stesso meccanismo di Nuova
+        // richiesta).
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val tastiera = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            v.updatePadding(bottom = tastiera)
+            insets
+        }
         binding.logoutButton.setOnClickListener { mostraConfermaLogout() }
         binding.salvaBioButton.setOnClickListener {
             viewModel.salvaBio(binding.bioEditText.text.toString())

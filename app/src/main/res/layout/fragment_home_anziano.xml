@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Contenitore della sezione Anziano. In alto la Toolbar del ruolo (strada B:
-     ogni sezione ha la sua app bar, collegata al proprio grafo), al centro il
-     NavHost annidato con le schermate, in fondo la BottomNavigationView. -->
+<!-- Contenitore della sezione Anziano. fitsSystemWindows="true" fa riservare
+     al framework lo spazio delle barre di sistema (status bar in alto, barra
+     di navigazione in basso) già durante il layout: così la barra in alto ha
+     SEMPRE l'altezza giusta, anche sulla prima schermata (la Home), senza
+     dipendere da listener a runtime. Lo sfondo blu riempie quello spazio, così
+     sembra il prolungamento della Toolbar e della bottom nav. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/care_primary"
+    android:fitsSystemWindows="true">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/anzianoToolbar"

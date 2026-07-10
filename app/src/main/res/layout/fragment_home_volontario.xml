@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Contenitore della sezione Volontario. Stesso schema dell'Anziano:
-     Toolbar del ruolo in alto (strada B), NavHost annidato al centro,
-     BottomNavigationView in fondo. -->
+<!-- Contenitore della sezione Volontario. Come l'Anziano: fitsSystemWindows
+     fa riservare al framework lo spazio delle barre di sistema già durante il
+     layout, così la barra in alto ha SEMPRE l'altezza giusta anche sulla prima
+     schermata. Lo sfondo blu riempie quello spazio (sembra il prolungamento
+     della Toolbar e della bottom nav). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/care_primary"
+    android:fitsSystemWindows="true">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/volontarioToolbar"

@@ -9,6 +9,16 @@
         android:background="@color/care_background"
         android:padding="@dimen/screen_padding">
 
+        <!-- Guideline orizzontale al 10% dell'altezza: da qui parte il titolo,
+             così il blocco del form scende un po' rispetto al bordo alto ma in
+             modo PROPORZIONALE (adattivo a schermi diversi, non un dp fisso). -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/topGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.10" />
+
         <!-- Titolo schermata -->
         <TextView
             android:id="@+id/titleText"
@@ -18,9 +28,8 @@
             android:textSize="@dimen/text_size_title"
             android:textColor="@color/care_on_surface"
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="@dimen/spacing_large" />
+            app:layout_constraintTop_toTopOf="@id/topGuideline"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <!-- Campo email -->
         <EditText
@@ -74,7 +83,7 @@
             android:layout_height="@dimen/button_height"
             android:text="@string/login_button"
             android:textSize="@dimen/text_size_button"
-            android:backgroundTint="@color/care_primary"
+            android:backgroundTint="@color/care_accent"
             android:textColor="@color/care_on_primary"
             app:layout_constraintTop_toBottomOf="@id/errorText"
             app:layout_constraintStart_toStartOf="parent"

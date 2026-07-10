@@ -21,6 +21,10 @@ import com.careconnect.viewmodel.anziano.NuovaRichiestaUiState
 import com.careconnect.viewmodel.anziano.NuovaRichiestaViewModel
 import com.careconnect.viewmodel.anziano.NuovaRichiestaViewModelFactory
 import kotlinx.coroutines.launch
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import androidx.appcompat.widget.Toolbar
 
 class NuovaRichiestaFragment : Fragment() {
 
@@ -46,6 +50,17 @@ class NuovaRichiestaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Tastiera: diamo allo scroll (la root del layout) un padding in basso
+        // pari all'altezza della tastiera quando compare. Serve perché in
+        // edge-to-edge la finestra NON si ridimensiona da sola: senza questo,
+        // la tastiera coprirebbe i campi. Con il padding, il campo attivo può
+        // scorrere sopra la tastiera.
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val tastiera = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            v.updatePadding(bottom = tastiera)
+            insets
+        }
 
         binding.tipoRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             binding.altroInput.visibility =
@@ -83,7 +98,10 @@ class NuovaRichiestaFragment : Fragment() {
         val descrizioneEsistente = arguments?.getString(ARG_DESCRIZIONE) ?: ""
 
         requestIdInModifica = requestId
-        binding.titoloText.text = "Modifica richiesta"
+        // In modifica cambiamo il titolo della Toolbar del ruolo (in creazione
+        // resta "Nuova richiesta", impostato dalla label di navigazione). Così
+        // la barra indica la modalità senza doppioni in pagina.
+        requireActivity().findViewById<Toolbar>(R.id.anzianoToolbar)?.title = "Modifica richiesta"
         binding.inviaButton.text = "Salva modifiche"
 
         when (tipoEsistente) {

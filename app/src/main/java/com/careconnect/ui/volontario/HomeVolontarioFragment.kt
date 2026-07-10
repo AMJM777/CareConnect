@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.addCallback
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -16,12 +14,17 @@ import com.careconnect.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.careconnect.work.WorkScheduler
 import android.widget.Toast
+import com.careconnect.ui.common.nascondiBottomNavQuandoTastieraAperta
 
 /**
  * Contenitore della sezione Volontario: Toolbar del ruolo + NavHost annidato
  * (nav_graph_volontario) + BottomNavigationView.
  * Stesso schema di HomeAnzianoFragment; qui la home del ruolo è
  * "Richieste disponibili".
+ *
+ * Gli spazi delle barre di sistema sono gestiti nel layout con
+ * fitsSystemWindows="true" (vedi fragment_home_volontario.xml): niente da
+ * fare qui a runtime.
  */
 class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
 
@@ -34,6 +37,14 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
             .findFragmentById(R.id.volontarioNavHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
 
+        // Nasconde la bottom nav mentre la tastiera è aperta (stesso
+        // comportamento delle altre sezioni).
+        nascondiBottomNavQuandoTastieraAperta(
+            view,
+            view.findViewById(R.id.volontarioBottomNav),
+            viewLifecycleOwner
+        )
+
         collegaToolbar(view, navController)
         collegaBottomNav(view, navController)
         gestisciTastoIndietro(navController)
@@ -43,17 +54,8 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
     }
 
     // Collega la Toolbar del ruolo al grafo annidato.
-    // Collega la Toolbar del ruolo al grafo annidato.
     private fun collegaToolbar(view: View, navController: NavController) {
         val toolbar = view.findViewById<Toolbar>(R.id.volontarioToolbar)
-
-        // L'app disegna edge-to-edge: spingo la Toolbar sotto la barra di stato,
-        // così titolo e freccia non finiscono sotto orologio/batteria.
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
-            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            v.setPadding(v.paddingLeft, statusBar.top, v.paddingRight, v.paddingBottom)
-            insets
-        }
 
         // Solo la home (Richieste disponibili) è "di primo livello": lì la freccia
         // NON compare. In tutte le altre schermate la freccia compare e torna indietro.

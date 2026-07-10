@@ -3,10 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- fitsSystemWindows fa riservare al framework lo spazio delle barre di
+         sistema già durante il layout (robusto e adattivo). Lo sfondo di
+         default resta chiaro: così lo stato "non collegato" (il form) è bianco
+         e pulito. Da collegati, HomeFamiliareFragment colora la root di blu,
+         così le strisce in alto/basso diventano blu come nelle altre sezioni. -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/care_background">
+        android:background="@color/care_background"
+        android:fitsSystemWindows="true">
 
         <!-- Toolbar del ruolo. Fa parte del collegatoGroup: compare SOLO quando
              il Familiare è collegato a un anziano (insieme a Attività/Profilo).
@@ -34,8 +40,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Stato: non ancora collegato a nessun anziano.
-             Il form ha già il suo titolo grande, quindi niente Toolbar qui. -->
+        <!-- ===== FORM "non collegato": catena verticale CENTRATA nello schermo.
+             Il titolo apre la catena (constraintTop=parent, constraintBottom al
+             sottotitolo) con chainStyle="packed": il blocco intero galleggia al
+             centro dello spazio disponibile, invece di stare incollato in alto. ===== -->
         <TextView
             android:id="@+id/collegaTitleText"
             android:layout_width="0dp"
@@ -45,7 +53,9 @@
             android:text="Collegati al tuo assistito"
             android:textSize="@dimen/text_size_title"
             android:textColor="@color/care_on_surface"
+            app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/collegaSubtitleText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -60,6 +70,7 @@
             android:textSize="@dimen/text_size_body"
             android:textColor="@color/care_on_surface"
             app:layout_constraintTop_toBottomOf="@id/collegaTitleText"
+            app:layout_constraintBottom_toTopOf="@id/codiceInvitoEditText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -75,6 +86,7 @@
             android:imeOptions="actionDone"
             android:maxLines="1"
             app:layout_constraintTop_toBottomOf="@id/collegaSubtitleText"
+            app:layout_constraintBottom_toTopOf="@id/erroreCollegamentoText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -89,6 +101,7 @@
             android:visibility="gone"
             tools:text="Codice non valido"
             app:layout_constraintTop_toBottomOf="@id/codiceInvitoEditText"
+            app:layout_constraintBottom_toTopOf="@id/collegatiButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -101,6 +114,7 @@
             android:layout_marginEnd="@dimen/screen_padding"
             android:text="Collegati"
             app:layout_constraintTop_toBottomOf="@id/erroreCollegamentoText"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

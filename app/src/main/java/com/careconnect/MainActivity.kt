@@ -52,7 +52,10 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        appBarConfiguration = AppBarConfiguration(navController.graph)
+        // Splash e Login sono schermate "di primo livello": niente freccia
+        // indietro. Le altre (Registrati, Completa profilo) restano di secondo
+        // livello e mantengono la freccia per tornare al login.
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.splashFragment, R.id.loginFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
         // La Toolbar dell'Activity serve solo alle schermate di autenticazione.
