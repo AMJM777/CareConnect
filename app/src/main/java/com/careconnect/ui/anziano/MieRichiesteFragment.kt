@@ -22,10 +22,8 @@ import kotlinx.coroutines.launch
 import androidx.navigation.fragment.findNavController
 import com.careconnect.ui.common.mostraProfiloVolontario
 
-/**
- * Schermata "Le mie richieste": lista in tempo reale + azioni "Modifica"
- * (solo se APERTA) e "Annulla" (APERTA o PRESA_IN_CARICO).
- */
+// schermata "Le mie richieste": lista in tempo reale + azioni "Modifica"
+// (solo se APERTA) e "Annulla" (APERTA o PRESA_IN_CARICO)
 class MieRichiesteFragment : Fragment() {
 
     private var _binding: FragmentMieRichiesteBinding? = null
@@ -35,10 +33,7 @@ class MieRichiesteFragment : Fragment() {
         MieRichiesteViewModelFactory(RequestRepositoryImpl(), AuthRepositoryImpl())
     }
 
-    // L'Adapter riceve due lambda: cosa fare quando l'utente tocca
-    // "Modifica" o "Annulla" su una riga. Per ora "Modifica" mostra solo
-    // un Toast placeholder: la vera navigazione verso il form di modifica
-    // arriva nel prossimo passaggio (serve ancora una decisione, vedi chat).
+    // tre lambda per l'Adapter: modifica, annulla, apri profilo volontario
 
     private val adapter = RichiesteAdapter(
         onModificaClick = { richiesta ->
@@ -75,11 +70,8 @@ class MieRichiesteFragment : Fragment() {
         osservaErroriAnnullamento()
     }
 
-    /**
-     * Chiede conferma prima di annullare: azione irreversibile, e un tocco
-     * accidentale sul bottone (facile con un'utenza anziana) non deve
-     * cancellare una richiesta senza che l'utente se ne accorga.
-     */
+    // chiede conferma prima di annullare: azione irreversibile, un tap
+    // accidentale non deve cancellare la richiesta senza accorgersene
     private fun mostraConfermaAnnullamento(requestId: String) {
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Annullare la richiesta?")
@@ -91,6 +83,7 @@ class MieRichiesteFragment : Fragment() {
             .show()
     }
 
+    // funzione per osservare la lista di richieste e aggiornare la RecyclerView
     private fun osservaRichieste() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -105,6 +98,7 @@ class MieRichiesteFragment : Fragment() {
         }
     }
 
+    // funzione per osservare eventuali errori durante l'annullamento e mostrarli con un Toast
     private fun osservaErroriAnnullamento() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

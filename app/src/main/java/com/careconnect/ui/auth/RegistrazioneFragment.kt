@@ -23,16 +23,14 @@ import androidx.navigation.fragment.findNavController
 import com.careconnect.ui.auth.navigaAllaHomePerRuolo
 import com.careconnect.util.SessionCache
 
-/**
- * Schermata di registrazione (email/password + scelta ruolo).
- * Condivide lo stesso AuthViewModel di LoginFragment tramite activityViewModels():
- * essendo un'unica Activity nell'app, entrambi i Fragment osservano la stessa istanza.
- */
+
+ //Schermata di registrazione (email/password + scelta ruolo)
+
 class RegistrazioneFragment : Fragment() {
 
     private var _binding: FragmentRegistrazioneBinding? = null
     private val binding get() = _binding!!
-
+    // stesso AuthViewModel di LoginFragment, condiviso tramite l'Activity
     private val viewModel: AuthViewModel by activityViewModels {
         AuthViewModelFactory(AuthRepositoryImpl(), UserRepositoryImpl(), SessionCache(requireContext()))
     }
@@ -58,11 +56,7 @@ class RegistrazioneFragment : Fragment() {
         osservaStatoAutenticazione()
     }
 
-    /**
-     * Legge i campi del form, valida che siano compilati correttamente
-     * (controlli puramente di UI, non toccano Firebase), e solo se tutto
-     * è a posto chiama il ViewModel per la registrazione vera e propria.
-     */
+    // funzione che valida il form e chiama il ViewModel per la registrazione
     private fun onRegistratiClick() {
         val nome = binding.nomeInput.text.toString().trim()
         val email = binding.emailInput.text.toString().trim()
@@ -89,7 +83,8 @@ class RegistrazioneFragment : Fragment() {
         viewModel.registraConEmail(nome, email, password, ruolo!!)
     }
 
-    /** Mappa il RadioButton selezionato sull'enum di dominio UserRole. */
+
+    // funzione per leggere quale RadioButton del ruolo è selezionato
     private fun ruoloSelezionato(): UserRole? = when (binding.ruoloRadioGroup.checkedRadioButtonId) {
         R.id.ruoloAnzianoRadio -> UserRole.ANZIANO
         R.id.ruoloVolontarioRadio -> UserRole.VOLONTARIO
@@ -97,11 +92,13 @@ class RegistrazioneFragment : Fragment() {
         else -> null
     }
 
+    // funzione per mostrare un errore di validazione locale (non da Firebase)
     private fun mostraErroreLocale(messaggio: String) {
         binding.errorText.text = messaggio
         binding.errorText.visibility = View.VISIBLE
     }
 
+    // funzione per osservare lo stato del ViewModel e aggiornare la UI di conseguenza
     private fun osservaStatoAutenticazione() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

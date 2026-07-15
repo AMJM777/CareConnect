@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- contenitore radice obbligatorio per abilitare il data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Card della richiesta (Anziano): angoli arrotondati + ombra leggera
-         (stile CareConnect.Card). I margini distanziano le card nella lista. -->
+    <!-- card della singola richiesta per l'anziano con margini per distanziarla nella lista -->
     <com.google.android.material.card.MaterialCardView
         style="@style/CareConnect.Card"
         android:layout_width="match_parent"
@@ -12,7 +12,7 @@
         android:layout_marginEnd="@dimen/spacing_small"
         android:layout_marginTop="@dimen/spacing_small">
 
-        <!-- Contenuto: niente sfondo/padding qui, li fornisce la card. -->
+        <!-- layout interno della card che organizza i testi e i bottoni in verticale -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
 
-            <!-- Stato "a pillola". Colore per stato: nel prossimo step. -->
+            <!-- indicatore a pillola per lo stato della richiesta -->
             <TextView
                 android:id="@+id/statoText"
                 style="@style/CareConnect.StatusChip"
@@ -45,8 +45,7 @@
                 android:layout_marginTop="@dimen/spacing_small"
                 tools:text="Aperta" />
 
-            <!-- Visibile solo quando un volontario ha accettato (Adapter).
-                 Cliccabile: apre il profilo del volontario. -->
+            <!-- nome del volontario assegnato, cliccabile per aprirne il profilo, visibile solo se accettata -->
             <TextView
                 android:id="@+id/volontarioNomeText"
                 android:layout_width="wrap_content"
@@ -68,6 +67,7 @@
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="03/07/2026 14:30" />
 
+            <!-- contenitore per i bottoni di modifica e annullamento disposti in orizzontale -->
             <LinearLayout
                 android:id="@+id/azioniContainer"
                 android:layout_width="wrap_content"

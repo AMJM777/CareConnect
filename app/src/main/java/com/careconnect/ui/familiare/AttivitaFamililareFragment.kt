@@ -28,6 +28,8 @@ import com.careconnect.viewmodel.familiare.AttivitaFamiliareViewModel
 import com.careconnect.viewmodel.familiare.AttivitaFamiliareViewModelFactory
 import kotlinx.coroutines.launch
 
+// schermata "Attività" del familiare: lista delle richieste dell'anziano
+// seguito, dialog di conferma con valutazione, e banner SOS
 class AttivitaFamiliareFragment : Fragment() {
 
     private var _binding: FragmentAttivitaFamiliareBinding? = null
@@ -43,9 +45,6 @@ class AttivitaFamiliareFragment : Fragment() {
         )
     }
 
-    // FASE 7: onVolontarioClick apre il profilo di sola lettura del
-    // volontario (dialog condiviso in ui/common/). Mancava in questo file
-    // dopo l'ultima modifica per il banner SOS — corretto qui.
     private val adapter = AttivitaFamiliareAdapter(
         onConfermaClick = { richiesta -> mostraDialogValutazione(richiesta) },
         onVolontarioClick = { volontarioId -> mostraProfiloVolontario(volontarioId) }
@@ -71,6 +70,7 @@ class AttivitaFamiliareFragment : Fragment() {
         osservaSos()
     }
 
+    // funzione per osservare eventuali alert SOS attivi e mostrare/nascondere il banner
     private fun osservaSos() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -84,6 +84,7 @@ class AttivitaFamiliareFragment : Fragment() {
         }
     }
 
+    // funzione che mostra il dialog per confermare il completamento e assegnare la valutazione
     private fun mostraDialogValutazione(richiesta: Request) {
         val vistaDialog = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_conferma_valutazione, null)
@@ -97,6 +98,8 @@ class AttivitaFamiliareFragment : Fragment() {
             .setNegativeButton("Annulla", null)
             .create()
 
+        // listener impostato dopo la creazione, non nel builder: così si può
+        // validare il rating senza chiudere il dialog se non è valido
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 val stelle = ratingBar.rating.toInt()
@@ -112,6 +115,7 @@ class AttivitaFamiliareFragment : Fragment() {
         dialog.show()
     }
 
+    // funzione per osservare la lista di richieste e aggiornare la RecyclerView
     private fun osservaRichieste() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -124,6 +128,7 @@ class AttivitaFamiliareFragment : Fragment() {
         }
     }
 
+    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un Toas
     private fun osservaErrori() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

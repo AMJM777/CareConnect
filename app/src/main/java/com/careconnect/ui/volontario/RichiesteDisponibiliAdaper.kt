@@ -8,13 +8,10 @@ import com.careconnect.model.Request
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-/**
- * Adapter della lista "Richieste disponibili": SOLO tipo/descrizione/data
- * e il bottone "Prendi in carico". Niente autoreNome/autoreIndirizzo qui
- * di proposito (FASE 7): queste richieste sono visibili a TUTTI i
- * volontari prima che qualcuno le accetti, mostrare nome e indirizzo di
- * un anziano a chiunque stia solo guardando sarebbe un problema di privacy.
- */
+// adapter della lista "Richieste disponibili": solo tipo/descrizione/data
+// e il bottone "Prendi in carico". niente autoreNome/autoreIndirizzo: sono
+// visibili a tutti i volontari prima dell'accettazione, mostrarli sarebbe
+// un problema di privacy
 class RichiesteDisponibiliAdapter(
     private val onPrendiInCaricoClick: (Request) -> Unit
 ) : RecyclerView.Adapter<RichiesteDisponibiliAdapter.RichiestaViewHolder>() {
@@ -31,6 +28,7 @@ class RichiesteDisponibiliAdapter(
         return RichiestaViewHolder(binding)
     }
 
+    // funzione che collega i dati di una richiesta alla riga corrispondente della lista
     override fun onBindViewHolder(holder: RichiestaViewHolder, position: Int) {
         val richiesta = richieste[position]
 
@@ -43,6 +41,7 @@ class RichiesteDisponibiliAdapter(
 
     override fun getItemCount(): Int = richieste.size
 
+    // funzione per sostituire la lista mostrata e aggiornare la RecyclerView
     fun aggiornaLista(nuovaLista: List<Request>) {
         richieste = nuovaLista
         notifyDataSetChanged()

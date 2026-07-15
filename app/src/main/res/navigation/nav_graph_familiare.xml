@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Grafo annidato della sezione Familiare. A differenza di
-     nav_graph_anziano/nav_graph_volontario, NON è agganciato staticamente
-     a un FragmentContainerView in XML: lo aggancia a runtime
-     HomeFamiliareFragment, solo quando l'utente risulta già collegato
-     a un anziano (vedi commento in HomeFamiliareFragment.kt). -->
+<!-- grafo di navigazione interno per la sezione volontario con le destinazioni della bottom bar -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph_familiare"
-    app:startDestination="@id/attivitaFamiliareFragment">
+    android:id="@+id/nav_graph_volontario"
+    app:startDestination="@id/richiesteDisponibiliFragment">
 
+    <!-- schermata iniziale con l'elenco dei nuovi incarichi da accettare -->
     <fragment
-        android:id="@+id/attivitaFamiliareFragment"
-        android:name="com.careconnect.ui.familiare.AttivitaFamiliareFragment"
-        android:label="Attività" />
+        android:id="@+id/richiesteDisponibiliFragment"
+        android:name="com.careconnect.ui.volontario.RichiesteDisponibiliFragment"
+        android:label="Richieste disponibili" />
 
+    <!-- schermata per gestire i task già presi in carico dal volontario -->
     <fragment
-        android:id="@+id/profiloFamiliareFragment"
-        android:name="com.careconnect.ui.familiare.ProfiloFamiliareFragment"
+        android:id="@+id/richiestePreseInCaricoFragment"
+        android:name="com.careconnect.ui.volontario.RichiestePreseInCaricoFragment"
+        android:label="Le mie richieste" />
+
+    <!-- schermata per visualizzare recensioni e aggiornare la propria descrizione -->
+    <fragment
+        android:id="@+id/profiloVolontarioFragment"
+        android:name="com.careconnect.ui.volontario.ProfiloVolontarioFragment"
         android:label="Profilo" />
 
 </navigation>

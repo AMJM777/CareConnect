@@ -15,11 +15,7 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel della schermata "Le mie richieste prese in carico": mostra in
- * tempo reale le richieste PRESA_IN_CARICO/COMPLETATA_DAL_VOLONTARIO del
- * volontario loggato, e gestisce "Segna come completata" e "Rilascia".
- */
+// mostra in tempo reale le richieste prese in carico dal volontario e gestisce "segna come completata" e "rilascia"
 class RichiestePreseInCaricoViewModel(
     private val requestRepository: RequestRepository,
     authRepository: AuthRepository
@@ -41,16 +37,15 @@ class RichiestePreseInCaricoViewModel(
         )
     }
 
-    // Messaggio di errore da mostrare come Toast, se una delle due azioni fallisce.
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
+    // funzione per segnare una richiesta come completata dal volontario
     fun segnaCompletata(requestId: String) {
         viewModelScope.launch {
-            // nuovoVolontarioId non passato: resta quello già presente sul
-            // documento, qui cambia solo lo stato.
+            // nuovoVolontarioId non passato: resta quello già presente sul documento, qui cambia solo lo stato
             requestRepository.aggiornaStato(requestId, RequestStatus.COMPLETATA_DAL_VOLONTARIO).fold(
-                onSuccess = { /* la UI si aggiorna da sola: Flow realtime */ },
+                onSuccess = { /* la ui si aggiorna da sola: flow realtime */ },
                 onFailure = { errore ->
                     _errore.value = errore.message ?: "Impossibile segnare la richiesta come completata"
                 }
@@ -58,12 +53,12 @@ class RichiestePreseInCaricoViewModel(
         }
     }
 
+    // funzione per rilasciare una richiesta presa in carico, rimettendola a disposizione di tutti
     fun rilasciaRichiesta(requestId: String) {
         viewModelScope.launch {
-            // Tornare ad APERTA con volontarioId=null: il repository si
-            // occupa già di azzerare il campo (vedi RequestRepositoryImpl).
+            // il repository azzera già volontarioId/volontarioNome quando lo stato torna aperta
             requestRepository.aggiornaStato(requestId, RequestStatus.APERTA).fold(
-                onSuccess = { /* la UI si aggiorna da sola: Flow realtime */ },
+                onSuccess = { /* la ui si aggiorna da sola: flow realtime */ },
                 onFailure = { errore ->
                     _errore.value = errore.message ?: "Impossibile rilasciare la richiesta"
                 }

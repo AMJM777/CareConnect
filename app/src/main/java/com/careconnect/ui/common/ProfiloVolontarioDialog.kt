@@ -9,17 +9,11 @@ import com.careconnect.R
 import com.careconnect.repository.UserRepositoryImpl
 import kotlinx.coroutines.launch
 
-/**
- * FASE 7 — Direzione 1: mostra un dialog di sola lettura con nome,
- * descrizione e valutazione di un volontario. Condiviso tra Anziano
- * ("Le mie richieste") e Familiare ("Attività"): stesso contenuto in
- * entrambi i ruoli, quindi vive in un package comune invece di essere
- * duplicato due volte.
- */
+// funzione di estensione su Fragment: mostra un dialog di sola lettura con
+// nome, descrizione e valutazione di un volontario.
+// condivisa tra anziano e faamiliare
 fun Fragment.mostraProfiloVolontario(volontarioId: String) {
     viewLifecycleOwner.lifecycleScope.launch {
-        // Lettura singola, non realtime: il profilo di un volontario non
-        // cambia mentre stai guardando questo dialog, non serve un listener.
         val volontario = UserRepositoryImpl().getUtente(volontarioId).getOrNull() ?: return@launch
 
         val vistaDialog = LayoutInflater.from(requireContext())

@@ -30,16 +30,9 @@ import com.careconnect.work.WorkScheduler
 import com.careconnect.ui.common.nascondiBottomNavQuandoTastieraAperta
 
 /**
- * Home del Familiare (FASE 6).
- * Se l'utente non è ancora collegato a un anziano, mostra il form per il
- * codice invito (senza alcuna barra in alto). Una volta collegato, aggancia
- * a runtime il NavHost annidato (Attività/Profilo), la Toolbar del ruolo e
- * la BottomNavigation.
- *
- * Barre di sistema: lo spazio è riservato nel layout con fitsSystemWindows
- * (vedi fragment_home_familiare.xml). Lo sfondo della root è chiaro finché si
- * è sul form; quando ci si collega lo coloriamo di blu, così le strisce in
- * alto/basso diventano blu come nelle sezioni Anziano e Volontario.
+ * home del familiare. se l'utente non è ancora collegato a un anziano,
+ * mostra il form per il codice invito. una volta collegato, aggancia a
+ * runtime il NavHost annidato (Attività/Profilo), la toolbar e la bottomnav.
  */
 class HomeFamiliareFragment : Fragment() {
 
@@ -52,7 +45,7 @@ class HomeFamiliareFragment : Fragment() {
         HomeFamiliareViewModelFactory(UserRepositoryImpl(), AuthRepositoryImpl())
     }
 
-    // Evita di ricreare il grafo annidato ogni volta che lo stato "Collegato" viene riemesso.
+    // evita di ricreare il grafo annidato ogni volta che lo stato "Collegato" viene riemesso
     private var navGraphAnnidatoAgganciato = false
 
     override fun onCreateView(
@@ -76,6 +69,7 @@ class HomeFamiliareFragment : Fragment() {
         osservaCollegamentoInCorso()
     }
 
+    // funzione per osservare lo stato (caricamento, non collegato, collegato) e mostrare la vista corretta
     private fun osservaStato() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -95,19 +89,11 @@ class HomeFamiliareFragment : Fragment() {
         }
     }
 
-    /**
-     * Crea e collega il NavHostFragment annidato SOLO ora che sappiamo per
-     * certo che l'utente è collegato a un anziano. Qui agganciamo anche la
-     * Toolbar del ruolo, la BottomNavigation e il tasto Indietro: prima di
-     * questo momento il NavHost non esiste ancora.
-     */
+    // crea il NavHost annidato solo ora che si sa per certo che l'utente è
+    // collegato a un anziano
     private fun agganciaNavGraphAnnidato() {
         if (navGraphAnnidatoAgganciato) return
         navGraphAnnidatoAgganciato = true
-
-        // Da collegati coloriamo la root di blu: le schermate interne (opache)
-        // coprono il centro, quindi si vede blu solo nelle strisce delle barre
-        // di sistema, coerente con Anziano e Volontario.
         binding.root.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.care_primary))
 
         val navHostFragment = NavHostFragment.create(R.navigation.nav_graph_familiare)
@@ -118,10 +104,6 @@ class HomeFamiliareFragment : Fragment() {
 
         collegaToolbar(navHostFragment.navController)
         collegaBottomNav(navHostFragment.navController)
-        // Nasconde la bottom nav mentre la tastiera è aperta. Qui va DENTRO
-        // agganciaNavGraphAnnidato perché la bottom nav esiste solo da
-        // collegati. Usiamo binding.root come vista di riferimento e
-        // viewLifecycleOwner per la rimozione automatica del listener.
         nascondiBottomNavQuandoTastieraAperta(
             binding.root,
             binding.familiareBottomNav,
@@ -129,12 +111,10 @@ class HomeFamiliareFragment : Fragment() {
         )
         gestisciTastoIndietro(navHostFragment.navController)
 
-        // FASE 11b — Ora che sappiamo che il familiare è collegato a un anziano,
-        // pianifichiamo il controllo periodico delle richieste da confermare.
         WorkScheduler.pianificaControlloConfermePeriodico(requireContext())
     }
 
-    // Collega la Toolbar del ruolo al grafo annidato del Familiare.
+    // Collega la Toolbar del ruolo al grafo annidato del Familiare
     private fun collegaToolbar(navController: NavController) {
         val toolbar = binding.familiareToolbar
 
@@ -143,9 +123,8 @@ class HomeFamiliareFragment : Fragment() {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.attivitaFamiliareFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
-        // FASE 11b (solo per la DEMO) — Long-press sulla Toolbar: fa partire SUBITO
-        // il controllo delle richieste da confermare, senza aspettare i 15 minuti.
-        // NON è una funzione per l'utente finale: serve solo per l'orale.
+        // scorciatoia solo per la presentazoine: long-press avvia subito il controllo
+        // delle richieste da confermare, senza aspettare i 15 minuti
         toolbar.setOnLongClickListener {
             WorkScheduler.eseguiControlloConfermeOraPerDemo(requireContext())
             Toast.makeText(requireContext(), "Controllo conferme avviato…", Toast.LENGTH_SHORT).show()
@@ -153,16 +132,15 @@ class HomeFamiliareFragment : Fragment() {
         }
     }
 
+    // funzione per collegare la BottomNavigationView al grafo annidato
     private fun collegaBottomNav(navController: NavController) {
         val bottomNav = binding.familiareBottomNav
 
         bottomNav.setOnItemSelectedListener { item ->
-            // Se tocco il tab su cui sono già, non faccio nulla.
             if (item.itemId == navController.currentDestination?.id) {
                 return@setOnItemSelectedListener true
             }
-            // popUpTo(start) senza inclusive: lo stack resta [Attività, tab scelto],
-            // così l'Indietro da Profilo riporta sempre ad Attività.
+
             val opzioni = navOptions {
                 popUpTo(navController.graph.startDestinationId)
                 launchSingleTop = true
@@ -170,23 +148,16 @@ class HomeFamiliareFragment : Fragment() {
             navController.navigate(item.itemId, null, opzioni)
             true
         }
-
-        // Tiene evidenziato il tab giusto anche quando la navigazione avviene
-        // per altre vie (es. tasto Indietro). Non gestisce il tasto stesso.
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomNav.menu.findItem(destination.id)?.isChecked = true
         }
     }
-
-    // Tasto Indietro di sistema, gestito in modo esplicito e prevedibile.
+    // funzione che gestisce il tasto Indietro di sistema in modo esplicito
     private fun gestisciTastoIndietro(navController: NavController) {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            // Provo a tornare indietro nello stack del ruolo (Profilo -> Attività).
-            // popBackStack() restituisce false se non c'è più nulla da togliere,
-            // cioè se siamo già su Attività (la home del ruolo).
             val tornatoIndietro = navController.popBackStack()
             if (!tornatoIndietro) {
-                // Siamo sulla home: disabilito questo callback e lascio agire il
+                //  sulla home: disabilito questo callback e lascio agire il
                 // sistema. Non essendoci altro nello stack, l'app si chiude.
                 isEnabled = false
                 requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -194,6 +165,7 @@ class HomeFamiliareFragment : Fragment() {
         }
     }
 
+    // funzione per osservare eventuali errori nel collegamento tramite codice invito
     private fun osservaErroreCollegamento() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -205,6 +177,7 @@ class HomeFamiliareFragment : Fragment() {
         }
     }
 
+    // funzione per osservare se il collegamento è in corso e mostrare/nascondere il caricamento
     private fun osservaCollegamentoInCorso() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

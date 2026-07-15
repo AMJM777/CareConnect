@@ -3,14 +3,11 @@ package com.careconnect.ui.common
 import com.careconnect.R
 import com.careconnect.model.RequestStatus
 
-/**
- * Colori della "pillola" di stato di una richiesta, centralizzati qui così
- * tutte le liste (Anziano, Volontario, Familiare) mostrano lo stesso stato
- * con lo stesso colore. Ogni stato ha uno sfondo tenue e un testo leggibile.
- */
+// colori della "pillola" di stato di una richiesta, centralizzati qui così
+// tutte le liste mostrano lo stesso stato con lo stesso colore
 object StatoRichiestaColori {
 
-    // Colore di SFONDO della pillola per ogni stato.
+    // Colore di sofndo
     fun sfondo(stato: RequestStatus): Int = when (stato) {
         RequestStatus.APERTA -> R.color.stato_aperta_bg
         RequestStatus.PRESA_IN_CARICO -> R.color.stato_incarico_bg
@@ -19,7 +16,7 @@ object StatoRichiestaColori {
         RequestStatus.ANNULLATA -> R.color.stato_annullata_bg
     }
 
-    // Colore del TESTO della pillola per ogni stato.
+    // Colore del testo
     fun testo(stato: RequestStatus): Int = when (stato) {
         RequestStatus.APERTA -> R.color.stato_aperta_fg
         RequestStatus.PRESA_IN_CARICO -> R.color.stato_incarico_fg

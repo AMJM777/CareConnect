@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Grafo principale dell'app: include il grafo di autenticazione come
-     nested graph, più le 3 home per ruolo. startDestination è ora
-     splashFragment (Fase 4): decide runtime se saltare al login o
-     direttamente alla home corretta, invece di mostrare sempre il login. -->
+<!-- grafo di navigazione principale che smista l'utente tra autenticazione e le varie home in base al ruolo -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_main"
     app:startDestination="@id/splashFragment">
 
+    <!-- schermata iniziale che verifica la sessione e decide dove indirizzare l'utente senza passare sempre dal login -->
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.careconnect.ui.auth.SplashFragment"
         android:label="Caricamento" />
 
+    <!-- include i percorsi di login e registrazione tenendoli separati per pulizia del codice -->
     <include app:graph="@navigation/nav_graph_auth" />
 
-
+    <!-- destinazione radice per l'area dell'assistito -->
     <fragment
         android:id="@+id/homeAnzianoFragment"
         android:name="com.careconnect.ui.anziano.HomeAnzianoFragment"
         android:label="Home Anziano" />
 
+    <!-- destinazione radice per l'area del volontario -->
     <fragment
         android:id="@+id/homeVolontarioFragment"
         android:name="com.careconnect.ui.volontario.HomeVolontarioFragment"
         android:label="Home Volontario" />
 
+    <!-- destinazione radice per l'area del familiare -->
     <fragment
         android:id="@+id/homeFamiliareFragment"
         android:name="com.careconnect.ui.familiare.HomeFamiliareFragment"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- FASE 8: "Nuova richiesta" non è più un tab (si raggiunge con un
-     bottone dalla Home, Step 2). Nuovo tab "Profilo". -->
+<!-- voci della bottom navigation per il ruolo anziano
+     (gli id devono coincidere con le destinazioni in nav_graph_anziano.xml,
+     altrimenti setupWithNavController non trova la destinazione) -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item

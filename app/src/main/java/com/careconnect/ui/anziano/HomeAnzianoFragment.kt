@@ -16,14 +16,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.careconnect.ui.common.nascondiBottomNavQuandoTastieraAperta
 
-/**
- * Contenitore della sezione Anziano: Toolbar del ruolo + NavHost annidato
- * (nav_graph_anziano) + BottomNavigationView.
- *
- * Gli spazi delle barre di sistema sono gestiti nel layout con
- * fitsSystemWindows="true" (vedi fragment_home_anziano.xml): niente da fare
- * qui a runtime.
- */
+// contenitore della sezione Anziano: Toolbar del ruolo + NavHost annidato
+// (nav_graph_anziano) + BottomNavigationView
 class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -35,20 +29,15 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
             .findFragmentById(R.id.anzianoNavHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // Nasconde la bottom nav mentre la tastiera è aperta (altrimenti
-        // "salta" sopra la tastiera). Funziona misurando l'area visibile,
-        // non gli insets, che qui sono inaffidabili.
+        // nasconde la bottom nav mentre la tastiera è aperta, altrimenti "salta" sopra di essa
         nascondiBottomNavQuandoTastieraAperta(
             view,
             view.findViewById(R.id.anzianoBottomNav),
             viewLifecycleOwner
         )
-        // Tastiera + bottom nav: quando la tastiera è aperta nascondiamo la
-        // barra in basso (i tab non servono mentre si scrive e altrimenti
-        // "saltano" sopra la tastiera). La rimostriamo quando si chiude.
-        // Usiamo isVisible(ime()) e NON l'altezza: se la finestra si
-        // ridimensiona, l'altezza della tastiera risulta 0 pur essendo aperta,
-        // mentre isVisible resta affidabile.
+        // stessa cosa applicata direttamente alla bottom nav: usa isVisible(ime())
+        // e non l'altezza, perché con la finestra ridimensionata l'altezza
+        // risulterebbe 0 pur essendo la tastiera aperta
         val bottomNav = view.findViewById<View>(R.id.anzianoBottomNav)
         ViewCompat.setOnApplyWindowInsetsListener(bottomNav) { v, insets ->
             val tastieraAperta = insets.isVisible(WindowInsetsCompat.Type.ime())
@@ -60,15 +49,16 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
         gestisciTastoIndietro(navController)
     }
 
-    // Collega la Toolbar del ruolo al grafo annidato.
+    // Collega la Toolbar del ruolo al grafo annidatop
     private fun collegaToolbar(view: View, navController: NavController) {
         val toolbar = view.findViewById<Toolbar>(R.id.anzianoToolbar)
 
-        // Solo la Home (dashboard) è "di primo livello": lì la freccia NON compare.
+        // solo la Home è "di primo livello": lì la freccia non compare
         appBarConfiguration = AppBarConfiguration(setOf(R.id.dashboardAnzianoFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 
+    // funzione per collegare la BottomNavigationView al grafo di navigazione annidato
     private fun collegaBottomNav(view: View, navController: NavController) {
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.anzianoBottomNav)
 
@@ -87,23 +77,19 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
             true
         }
 
-        // Tiene evidenziato il tab giusto anche quando la navigazione avviene
-        // per altre vie (es. tasto Indietro). Non gestisce il tasto stesso.
+        // tiene evidenziato il tab giusto anche quando la navigazione avviene per altre vie
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomNav.menu.findItem(destination.id)?.isChecked = true
         }
     }
 
-    // Tasto Indietro di sistema, gestito in modo esplicito e prevedibile.
+    // funzione che gestisce il tasto Indietro di sistema in modo esplicito e prevedibile
     private fun gestisciTastoIndietro(navController: NavController) {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            // Provo a tornare indietro nello stack del ruolo (tab secondario o
-            // Nuova richiesta -> Home). popBackStack() restituisce false se non
-            // c'è più nulla da togliere, cioè se siamo già sulla Home.
+            // popBackStack() restituisce false se non c'è più nulla da togliere.
             val tornatoIndietro = navController.popBackStack()
             if (!tornatoIndietro) {
-                // Siamo sulla Home: disabilito questo callback e lascio agire il
-                // sistema. Non essendoci altro nello stack, l'app si chiude.
+                // si è sulla Home: si lascia agire il sistema, l'app si chiude
                 isEnabled = false
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }

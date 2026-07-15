@@ -12,6 +12,8 @@ import java.util.Locale
 import androidx.core.content.ContextCompat
 import com.careconnect.ui.common.StatoRichiestaColori
 
+// adapter della RecyclerView che mostra le richieste dell'anziano, con i
+// bottoni "Modifica" e "Annulla" e il nome del volontario, se presente.
 class RichiesteAdapter(
     private val onModificaClick: (Request) -> Unit,
     private val onAnnullaClick: (Request) -> Unit,
@@ -30,6 +32,7 @@ class RichiesteAdapter(
         return RichiestaViewHolder(binding)
     }
 
+    // funzione che collega i dati di una richiesta alla riga corrispondente della lista.
     override fun onBindViewHolder(holder: RichiestaViewHolder, position: Int) {
         val richiesta = richieste[position]
 
@@ -44,8 +47,7 @@ class RichiesteAdapter(
             ContextCompat.getColor(ctxStato, StatoRichiestaColori.testo(richiesta.stato)))
         holder.binding.dataText.text = formattaData(richiesta.timestampCreazione.toDate())
 
-        // FASE 7: nome del volontario, solo se presente (richiesta già
-        // accettata). Cliccabile: apre il profilo di sola lettura.
+        // nome del volontario, mostrato solo se presente. cliccabile: apre il profilo di sola lettura
         val nomeVolontario = richiesta.volontarioNome
         if (nomeVolontario != null) {
             holder.binding.volontarioNomeText.visibility = View.VISIBLE
@@ -70,11 +72,13 @@ class RichiesteAdapter(
 
     override fun getItemCount(): Int = richieste.size
 
+    // funzione per sostituire la lista mostrata e aggiornare la RecyclerView
     fun aggiornaLista(nuovaLista: List<Request>) {
         richieste = nuovaLista
         notifyDataSetChanged()
     }
 
+    // funzione per tradurre lo stato della richiesta in un'etichetta leggibile
     private fun etichettaStato(stato: RequestStatus): String = when (stato) {
         RequestStatus.APERTA -> "Aperta"
         RequestStatus.PRESA_IN_CARICO -> "Presa in carico"
@@ -83,6 +87,7 @@ class RichiesteAdapter(
         RequestStatus.ANNULLATA -> "Annullata"
     }
 
+    // funzione per formattare una data nel formato gg/mm/aaaa hh:mm
     private fun formattaData(data: java.util.Date): String {
         val formato = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALY)
         return formato.format(data)

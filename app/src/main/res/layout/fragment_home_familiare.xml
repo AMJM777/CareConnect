@@ -3,20 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- fitsSystemWindows fa riservare al framework lo spazio delle barre di
-         sistema già durante il layout (robusto e adattivo). Lo sfondo di
-         default resta chiaro: così lo stato "non collegato" (il form) è bianco
-         e pulito. Da collegati, HomeFamiliareFragment colora la root di blu,
-         così le strisce in alto/basso diventano blu come nelle altre sezioni. -->
+    <!-- adatta il layout alle barre di sistema per mantenere proporzioni corrette in base allo stato -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/care_background"
         android:fitsSystemWindows="true">
 
-        <!-- Toolbar del ruolo. Fa parte del collegatoGroup: compare SOLO quando
-             il Familiare è collegato a un anziano (insieme a Attività/Profilo).
-             Sul form di collegamento non c'è alcuna barra (scelta A). -->
+        <!-- barra superiore visibile solo quando il familiare è già collegato all'assistito -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/familiareToolbar"
             android:layout_width="0dp"
@@ -30,7 +24,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Stato: caricamento iniziale (verifica se già collegato) -->
+        <!-- rotella di caricamento iniziale per verificare lo stato di collegamento -->
         <ProgressBar
             android:id="@+id/caricamentoProgressBar"
             android:layout_width="wrap_content"
@@ -40,10 +34,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- ===== FORM "non collegato": catena verticale CENTRATA nello schermo.
-             Il titolo apre la catena (constraintTop=parent, constraintBottom al
-             sottotitolo) con chainStyle="packed": il blocco intero galleggia al
-             centro dello spazio disponibile, invece di stare incollato in alto. ===== -->
+        <!-- titolo della sezione di collegamento, raggruppato al centro dello schermo -->
         <TextView
             android:id="@+id/collegaTitleText"
             android:layout_width="0dp"
@@ -59,6 +50,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- sottotitolo con le istruzioni per ottenere il codice dall'assistito -->
         <TextView
             android:id="@+id/collegaSubtitleText"
             android:layout_width="0dp"
@@ -74,6 +66,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- campo di testo dove il familiare digita il codice invito -->
         <EditText
             android:id="@+id/codiceInvitoEditText"
             android:layout_width="0dp"
@@ -90,6 +83,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- messaggio di errore in caso di codice non valido -->
         <TextView
             android:id="@+id/erroreCollegamentoText"
             android:layout_width="0dp"
@@ -105,6 +99,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- bottone per confermare il codice e avviare il collegamento -->
         <Button
             android:id="@+id/collegatiButton"
             android:layout_width="0dp"
@@ -118,6 +113,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- indicatore di attesa durante la verifica del codice inserito -->
         <ProgressBar
             android:id="@+id/collegamentoProgressBar"
             android:layout_width="wrap_content"
@@ -128,15 +124,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- raggruppa gli elementi del modulo di collegamento per gestirne la visibilità in blocco -->
         <androidx.constraintlayout.widget.Group
             android:id="@+id/collegaGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="collegaTitleText,collegaSubtitleText,codiceInvitoEditText,collegatiButton" />
 
-        <!-- Stato: già collegato. Il NavHost annidato (Attività/Profilo) è
-             agganciato a runtime da HomeFamiliareFragment ed è vincolato
-             SOTTO la Toolbar del ruolo. -->
+        <!-- contenitore dinamico per le schermate interne come attività e profilo -->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/familiareNavHostContainer"
             android:layout_width="0dp"
@@ -146,6 +141,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/familiareBottomNav" />
 
+        <!-- menu di navigazione inferiore dedicato al familiare -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/familiareBottomNav"
             android:layout_width="match_parent"
@@ -161,7 +157,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- La Toolbar è nel collegatoGroup: appare solo da collegati. -->
+        <!-- raggruppa gli elementi dell'interfaccia attiva solo a collegamento avvenuto -->
         <androidx.constraintlayout.widget.Group
             android:id="@+id/collegatoGroup"
             android:layout_width="wrap_content"

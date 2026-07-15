@@ -10,48 +10,33 @@ import com.careconnect.util.SessionCache
 import com.google.firebase.auth.FirebaseAuth
 
 /**
- * FASE 11 — Task in background per il VOLONTARIO.
- *
- * Controlla periodicamente se sono comparse NUOVE richieste di aiuto aperte
- * e, in caso, mostra una notifica. Così il volontario viene avvisato anche
- * ad app chiusa, senza dover tenere aperta la lista delle richieste.
- *
- * Perché CoroutineWorker e non Worker (quello mostrato a lezione):
- * i nostri repository espongono funzioni `suspend`. CoroutineWorker permette
- * di chiamarle direttamente dentro doWork() senza bloccare un thread con
- * runBlocking. È comunque WorkManager: cambia solo che doWork() è `suspend`.
+ * task in background per il volontario: controlla periodicamente se sono
+ * comparse nuove richieste aperte e mostra una notifica
+ * CoroutineWorker (non Worker base) perché i repository sono `suspend`:
+ * si possono chiamare direttamente in doWork() senza bloccare un thread
  */
 class ControlloRichiesteWorker(
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
 
-    // Il Worker può girare ad app chiusa: creiamo qui le dipendenze con i
-    // costruttori di default già usati nel resto del progetto (nessun DI container).
     private val requestRepository = RequestRepositoryImpl()
     private val sessionCache = SessionCache(applicationContext)
 
     override suspend fun doWork(): Result {
-        // 1) Il task ha senso solo per un VOLONTARIO loggato. Se non c'è sessione
-        //    o il ruolo non è volontario, non c'è lavoro: usciamo con success
-        //    (non è un errore, semplicemente non dobbiamo fare nulla).
+        // ha senso solo per un volontario loggato
         FirebaseAuth.getInstance().currentUser ?: return Result.success()
         if (sessionCache.getRuoloSalvato() != UserRole.VOLONTARIO) return Result.success()
 
-        // 2) Leggiamo le richieste aperte con una query singola.
         val richieste = requestRepository.getRichiesteAperte().getOrElse {
-            // Errore di rete/Firestore: chiediamo a WorkManager di riprovare più tardi.
             return Result.retry()
         }
 
-        // 3) Teniamo solo le richieste "nuove", create DOPO l'ultimo controllo.
-        //    Senza questo confronto il volontario riceverebbe la stessa notifica
-        //    a ogni esecuzione, anche per richieste già viste: sarebbe spam.
+        // tiene solo le richieste create dopo l'ultimo controllo, per non
+        // rinotificare sempre le stesse
         val ultimoControllo = leggiUltimoControllo()
         val nuove = richieste.filter { it.timestampCreazione.toDate().time > ultimoControllo }
 
-        // 4) Se ci sono richieste nuove, notifichiamo e spostiamo in avanti il
-        //    "segnalibro" temporale, così la prossima volta non le riconteremo.
         if (nuove.isNotEmpty()) {
             val testo = if (nuove.size == 1) {
                 "C'è una nuova richiesta di aiuto disponibile"
@@ -71,10 +56,7 @@ class ControlloRichiesteWorker(
         return Result.success()
     }
 
-    // --- "Segnalibro" locale: istante dell'ultimo controllo con notifica inviata.
-    //     Vive in uno SharedPreferences dedicato al Worker perché è stato locale
-    //     del task, non riguarda il ruolo (SessionCache) né Firestore.
-
+    //  "segno" locale dell'ultimo controllo con notifica inviata
     private fun leggiUltimoControllo(): Long =
         prefs().getLong(CHIAVE_ULTIMO_CONTROLLO, 0L)
 

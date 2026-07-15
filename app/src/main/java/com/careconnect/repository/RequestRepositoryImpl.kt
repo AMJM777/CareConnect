@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
+// implementazione di RequestRepository
 class RequestRepositoryImpl(
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 ) : RequestRepository {
@@ -30,9 +31,6 @@ class RequestRepositoryImpl(
     }
 
     override suspend fun getRichiesteAperte(): Result<List<Request>> = runCatching {
-        // Stessa forma di osservaRichiesteAperte() (solo whereEqualTo, nessun orderBy):
-        // così NON serve alcun indice composito su Firestore. Qui però leggiamo una
-        // volta sola con get() invece di registrare un listener realtime.
         val snapshot = collection
             .whereEqualTo("stato", RequestStatus.APERTA.firestoreValue)
             .get()
@@ -41,8 +39,6 @@ class RequestRepositoryImpl(
     }
 
     override suspend fun getRichiestePerAnziano(anzianoId: String): Result<List<Request>> = runCatching {
-        // Stessa forma di osservaRichiestePerAnziano() (solo whereEqualTo("autoreId")):
-        // nessun indice composito. Qui leggiamo una volta sola con get().
         val snapshot = collection
             .whereEqualTo("autoreId", anzianoId)
             .get()
@@ -50,6 +46,10 @@ class RequestRepositoryImpl(
         snapshot.documents.mapNotNull { it.toRequest() }
     }
 
+    /**
+     * usa una transazione Firestore per evitare che due volontari ottengano
+     * la stessa richiesta nello stesso istante
+     */
     override suspend fun aggiornaStato(
         requestId: String,
         nuovoStato: RequestStatus,
@@ -58,11 +58,6 @@ class RequestRepositoryImpl(
     ): Result<Unit> = runCatching {
         val docRef = collection.document(requestId)
 
-        // FASE 5: Transaction già presente per evitare che due volontari
-        // "vincano" la stessa richiesta nello stesso istante (vedi commento
-        // storico più sotto). FASE 7: aggiungo solo la scrittura di
-        // volontarioNome nella stessa transazione, nessun cambiamento alla
-        // logica di validazione già esistente.
         firestore.runTransaction { transaction ->
             val attuale = transaction.get(docRef).toRequest()
                 ?: throw NoSuchElementException("Richiesta non trovata: $requestId")
@@ -154,8 +149,7 @@ class RequestRepositoryImpl(
         awaitClose { listener.remove() }
     }
 
-    // Mapping firestore <-> modello di dominio
-
+    // funzione di mapping
     private fun DocumentSnapshot.toRequest(): Request? {
         if (!exists()) return null
         val statoRaw = getString("stato") ?: return null

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- LinearLayout verticale: Toolbar in alto, sotto il NavHostFragment
-     che occupa tutto lo spazio restante (weight="1"). -->
+<!-- contenitore principale dell'app che ospita la barra di navigazione inferiore e il navigatore delle schermate -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

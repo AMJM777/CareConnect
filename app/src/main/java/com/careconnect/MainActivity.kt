@@ -17,17 +17,17 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.careconnect.util.NotificationHelper
 
+// unica Activity dell'app (single-activity architecture): ospita il
+// NavHostFragment principale e la Toolbar delle schermate di autenticazione.
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
-    // FASE 11/12 — Launcher per chiedere il permesso di mostrare notifiche.
-    // Va registrato come proprietà (non dentro onCreate) perché l'API richiede
-    // che la registrazione avvenga prima che l'Activity sia avviata.
+    // registrato come proprietà (non dentro onCreate): l'API richiede che
+    // la registrazione avvenga prima che l'Activity sia avviata.
     private val richiediPermessoNotifiche =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
-            // Non blocchiamo nulla se l'utente rifiuta: l'app continua a funzionare,
-            // semplicemente non mostrerà notifiche finché il permesso non viene concesso.
+            // se l'utente rifiuta l'app continua a funzionare senza notifiche
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,8 +35,6 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        // FASE 11/12 — Prepariamo il canale di notifica fin dall'avvio e chiediamo
-        // il permesso (solo su Android 13+, e solo se non già concesso).
         NotificationHelper.creaCanali(this)
         chiediPermessoNotificheSeNecessario()
 
@@ -52,15 +50,13 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // Splash e Login sono schermate "di primo livello": niente freccia
-        // indietro. Le altre (Registrati, Completa profilo) restano di secondo
-        // livello e mantengono la freccia per tornare al login.
+        // Splash e Login sono "di primo livello": niente freccia indietro
         appBarConfiguration = AppBarConfiguration(setOf(R.id.splashFragment, R.id.loginFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
-        // La Toolbar dell'Activity serve solo alle schermate di autenticazione.
-        // Dentro le sezioni di ruolo l'app bar la fornisce la schermata
-        // contenitore (una Toolbar per ruolo): qui la nascondiamo per non averne due.
+        // la Toolbar dell'Activity serve solo alle schermate di
+        // autenticazione: dentro le sezioni di ruolo c'è una Toolbar per
+        // ruolo, quindi qui va nascosta per non averne due
         navController.addOnDestinationChangedListener { _, destination, _ ->
             toolbar.visibility = when (destination.id) {
                 R.id.homeAnzianoFragment,
@@ -71,8 +67,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // FASE 11/12 — Chiede il permesso POST_NOTIFICATIONS solo dove serve davvero.
-    // Prima di Android 13 il permesso non esiste (è implicito), quindi non facciamo nulla.
+    // funzione che chiede il permesso POST_NOTIFICATIONS solo dove serve
+    // (Android 13+, permesso implicito prima)
     private fun chiediPermessoNotificheSeNecessario() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val giaConcesso = ContextCompat.checkSelfPermission(
@@ -84,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // gestisce il tasto freccia della Toolbar
     override fun onSupportNavigateUp(): Boolean {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.navHostFragment) as NavHostFragment

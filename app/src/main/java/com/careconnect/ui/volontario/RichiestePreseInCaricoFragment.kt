@@ -21,12 +21,10 @@ import com.careconnect.viewmodel.volontario.RichiestePreseInCaricoViewModel
 import com.careconnect.viewmodel.volontario.RichiestePreseInCaricoViewModelFactory
 import kotlinx.coroutines.launch
 
-/**
- * Schermata "Le mie richieste prese in carico": lista in tempo reale delle
- * richieste attive del volontario, con azioni "Segna come completata" e
- * "Rilascia" (quest'ultima con conferma, è un'azione che toglie la
- * richiesta al volontario stesso).
- */
+// schermata "Le mie richieste prese in carico": lista in tempo reale delle
+// richieste attive del volontario, con azioni "Segna come completata" e
+// "Rilascia" (quest'ultima con conferma, è un'azione che toglie la
+// richiesta al volontario stesso).
 class RichiestePreseInCaricoFragment : Fragment() {
 
     private var _binding: FragmentRichiestePreseInCaricoBinding? = null
@@ -66,8 +64,8 @@ class RichiestePreseInCaricoFragment : Fragment() {
         osservaErrori()
     }
 
-    /** Conferma prima di rilasciare: rimette la richiesta a disposizione di
-     *  tutti, un tocco accidentale non deve far perdere l'incarico. */
+    // chiede conferma prima di rilasciare: rimette la richiesta a disposizione
+    // di tutti, un tocco accidentale non deve far perdere l'incarico.
     private fun mostraConfermaRilascio(requestId: String) {
         AlertDialog.Builder(requireContext())
             .setTitle("Rilasciare la richiesta?")
@@ -79,6 +77,7 @@ class RichiestePreseInCaricoFragment : Fragment() {
             .show()
     }
 
+    // funzione per osservare la lista di richieste esposta dal ViewModel e aggiornare la RecyclerView.
     private fun osservaRichieste() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -93,6 +92,7 @@ class RichiestePreseInCaricoFragment : Fragment() {
         }
     }
 
+    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un Toast.
     private fun osservaErrori() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

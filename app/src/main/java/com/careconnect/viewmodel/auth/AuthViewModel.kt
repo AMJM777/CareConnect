@@ -15,45 +15,23 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.careconnect.fcm.FcmTokenManager
 
-/**
- * Stato della schermata di autenticazione (Login e Registrazione condividono
- * questo stato tramite un unico AuthViewModel scoped all'Activity).
- */
+// stato della schermata di autenticazione: Login e Registrazione lo condividono
 sealed class AuthUiState {
-
-    /** Nessuna operazione in corso, form pronto per l'input. */
     object Idle : AuthUiState()
-
-    /** Login/registrazione/chiamata Firebase in corso: la UI mostra un loading. */
     object Loading : AuthUiState()
 
-    /**
-     * Login o registrazione completati con successo, profilo Firestore pronto.
-     * Il ruolo è incluso qui (non solo in AuthUser) perché serve subito
-     * dopo l'autenticazione per scegliere la home corretta da mostrare.
-     */
+    // il ruolo è incluso qui (non solo in AuthUser) perché serve subito dopo il login per scegliere la home
     data class Autenticato(val utente: AuthUser, val ruolo: UserRole) : AuthUiState()
 
-    /**
-     * Caso speciale del login Google: le credenziali Firebase sono valide,
-     * ma è il primo accesso e il profilo Firestore non esiste ancora.
-     * La UI deve mostrare una schermata per far scegliere nome e ruolo
-     * prima di considerare la registrazione conclusa.
-     */
+    // primo accesso con Google: credenziali valide, ma il profilo Firestore non esiste ancora
     data class RichiestaRuoloGoogle(val utente: AuthUser) : AuthUiState()
 
-    /** Un'operazione è fallita: la UI legge il messaggio da mostrare all'utente. */
     data class Errore(val eccezione: Throwable) : AuthUiState()
 }
 
-/**
- * ViewModel condiviso tra LoginFragment e RegistrazioneFragment.
- * Orchestra AuthRepository (credenziali Firebase Auth), UserRepository
- * (profilo utente su Firestore) e SessionCache (ruolo salvato in locale,
- * usato dalla Fase 4 per l'auto-login senza dover rileggere Firestore
- * a ogni avvio dell'app): i tre restano indipendenti, è questo ViewModel
- * a sapere come combinarli.
- */
+// ViewModel condiviso tra LoginFragment e RegistrazioneFragment. orchestra
+// AuthRepository (credenziali Firebase), UserRepository (profilo Firestore)
+// e SessionCache
 class AuthViewModel(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
@@ -63,12 +41,7 @@ class AuthViewModel(
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    /**
-     * Login con email e password già registrate. A differenza della
-     * registrazione, qui non conosciamo ancora il ruolo dell'utente:
-     * va letto dal profilo Firestore già esistente prima di considerare
-     * il login concluso, altrimenti non sapremmo dove navigare dopo.
-     */
+    // funzione per il login con email e password: il ruolo va letto dal profilo Firestore già esistente
     fun loginConEmail(email: String, password: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
@@ -79,10 +52,7 @@ class AuthViewModel(
         }
     }
 
-    /**
-     * Registrazione con email e password: crea prima la credenziale Firebase Auth,
-     * poi salva il profilo (nome + ruolo) su Firestore.
-     */
+    // funzione per registrare un nuovo utente: crea la credenziale Firebase, poi salva il profilo su Firestore
     fun registraConEmail(nome: String, email: String, password: String, ruolo: UserRole) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
@@ -93,11 +63,8 @@ class AuthViewModel(
         }
     }
 
-    /**
-     * Login/registrazione con Google. Firebase gestisce le due cose come
-     * un'unica operazione: dopo il login controlliamo se esiste già un
-     * profilo Firestore per capire se è un utente nuovo o di ritorno.
-     */
+    // funzione per login/registrazione con Google: Firebase le gestisce come
+    // un'unica operazione, si distingue poi in base al profilo Firestore
     fun loginConGoogle(idToken: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
@@ -108,11 +75,7 @@ class AuthViewModel(
         }
     }
 
-    /**
-     * Secondo passo per un nuovo utente Google: la UI ha raccolto nome e ruolo,
-     * qui salviamo finalmente il profilo su Firestore.
-     * Chiamabile solo se lo stato corrente è RichiestaRuoloGoogle.
-     */
+    // secondo passo per un nuovo utente Google: nome e ruolo raccolti dalla UI, ora si salva il profilo
     fun completaRegistrazioneGoogle(nome: String, ruolo: UserRole) {
         val statoAttuale = _uiState.value
         if (statoAttuale !is AuthUiState.RichiestaRuoloGoogle) return
@@ -123,20 +86,15 @@ class AuthViewModel(
         }
     }
 
-    /**
-     * Logout: pulisce sia la sessione Firebase (AuthRepository) sia il ruolo
-     * salvato in cache locale. Se dimenticassimo di pulire la cache, un
-     * eventuale login successivo con un ALTRO utente (ruolo diverso) sul
-     * medesimo dispositivo potrebbe leggere per errore il ruolo del
-     * vecchio utente durante l'auto-login, prima ancora di interpellare Firestore.
-     */
+    // funzione per il logout: pulisce sia la sessione Firebase sia il ruolo
+    // in cache locale, altrimenti un login successivo con un altro utente
+    // sullo stesso dispositivo potrebbe leggere per errore il vecchio ruolo
     fun logout() {
         authRepository.logout()
         sessionCache.pulisci()
         _uiState.value = AuthUiState.Idle
     }
 
-    /** Legge il profilo Firestore di un utente che ha già un account (login, non registrazione). */
     private suspend fun completaConProfiloEsistente(authUser: AuthUser) {
         userRepository.getUtente(authUser.uid).fold(
             onSuccess = { user ->
@@ -148,6 +106,7 @@ class AuthViewModel(
         )
     }
 
+    // funzione che, dopo un login Google, distingue utente esistente da primo accesso
     private suspend fun gestisciEsitoLoginGoogle(authUser: AuthUser) {
         userRepository.getUtente(authUser.uid).fold(
             onSuccess = { user ->
@@ -156,8 +115,7 @@ class AuthViewModel(
                 _uiState.value = AuthUiState.Autenticato(authUser, user.ruolo)
             },
             onFailure = { errore ->
-                // Profilo non trovato = primo accesso, non un vero errore.
-                // Qualsiasi altra eccezione (es. rete) resta un errore reale.
+                // profilo non trovato = primo accesso, non un vero errore
                 _uiState.value = if (errore is NoSuchElementException) {
                     AuthUiState.RichiestaRuoloGoogle(authUser)
                 } else {
@@ -179,12 +137,8 @@ class AuthViewModel(
         )
     }
 
-    /**
-     * FASE 12 — dopo un'autenticazione riuscita salva il token FCM del
-     * dispositivo sul profilo utente, così la Cloud Function saprà a chi
-     * inviare le push. Se il recupero o la scrittura falliscono NON blocchiamo
-     * il login: la push è una funzionalità extra, l'accesso deve riuscire comunque.
-     */
+    // funzione che salva il token FCM del dispositivo dopo l'autenticazione.
+    // se fallisce non blocca il login (la push è una funzionalità extra)
     private suspend fun salvaTokenFcm(uid: String) {
         FcmTokenManager.tokenCorrente().onSuccess { token ->
             userRepository.aggiornaFcmToken(uid, token)
@@ -192,11 +146,6 @@ class AuthViewModel(
     }
 }
 
-/**
- * Factory manuale per creare AuthViewModel con le sue dipendenze.
- * Non usiamo un framework DI (Hilt) nel progetto: stessa scelta già
- * applicata per gli altri RepositoryImpl.
- */
 class AuthViewModelFactory(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,

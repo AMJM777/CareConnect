@@ -16,16 +16,8 @@ import com.careconnect.work.WorkScheduler
 import android.widget.Toast
 import com.careconnect.ui.common.nascondiBottomNavQuandoTastieraAperta
 
-/**
- * Contenitore della sezione Volontario: Toolbar del ruolo + NavHost annidato
- * (nav_graph_volontario) + BottomNavigationView.
- * Stesso schema di HomeAnzianoFragment; qui la home del ruolo è
- * "Richieste disponibili".
- *
- * Gli spazi delle barre di sistema sono gestiti nel layout con
- * fitsSystemWindows="true" (vedi fragment_home_volontario.xml): niente da
- * fare qui a runtime.
- */
+// contenitore della sezione Volontario: Toolbar del ruolo + NavHost annidato
+// (nav_graph_volontario) + BottomNavigationView. Stesso schema di HomeAnzianoFragment.
 class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -37,8 +29,6 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
             .findFragmentById(R.id.volontarioNavHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // Nasconde la bottom nav mentre la tastiera è aperta (stesso
-        // comportamento delle altre sezioni).
         nascondiBottomNavQuandoTastieraAperta(
             view,
             view.findViewById(R.id.volontarioBottomNav),
@@ -48,40 +38,35 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
         collegaToolbar(view, navController)
         collegaBottomNav(view, navController)
         gestisciTastoIndietro(navController)
-        // Il volontario è appena entrato nella sua sezione: pianifico
-        // il controllo periodico delle nuove richieste (KEEP: nessun doppione se già attivo).
+        // pianifica il controllo periodico delle nuove richieste (KEEP: nessun doppione se già attivo).
         WorkScheduler.pianificaControlloPeriodico(requireContext())
     }
 
-    // Collega la Toolbar del ruolo al grafo annidato.
+    // funzione per collegare la Toolbar del ruolo al grafo di navigazione annidato.
     private fun collegaToolbar(view: View, navController: NavController) {
         val toolbar = view.findViewById<Toolbar>(R.id.volontarioToolbar)
 
-        // Solo la home (Richieste disponibili) è "di primo livello": lì la freccia
-        // NON compare. In tutte le altre schermate la freccia compare e torna indietro.
+        // solo la home (Richieste disponibili) è "di primo livello": lì la freccia non compare.
         appBarConfiguration = AppBarConfiguration(setOf(R.id.richiesteDisponibiliFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
-        // FASE 11 (solo per la DEMO) — Innesco nascosto: un long-press sulla Toolbar
-        // fa partire SUBITO il Worker, senza aspettare l'intervallo periodico di 15 min.
-        // NON è una funzione per l'utente finale: serve solo a mostrare il task all'orale.
+        // scorciatoia solo per la demo: long-press avvia subito il Worker,
+        // senza aspettare i 15 minuti. non è per l'utente finale.
         toolbar.setOnLongClickListener {
             WorkScheduler.eseguiOraPerDemo(requireContext())
             Toast.makeText(requireContext(), "Controllo richieste avviato…", Toast.LENGTH_SHORT).show()
-            true // true = evento consumato, non propaghiamo oltre
+            true
         }
     }
 
+    // funzione per collegare la BottomNavigationView al grafo di navigazione annidato.
     private fun collegaBottomNav(view: View, navController: NavController) {
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.volontarioBottomNav)
 
         bottomNav.setOnItemSelectedListener { item ->
-            // Se tocco il tab su cui sono già, non faccio nulla.
             if (item.itemId == navController.currentDestination?.id) {
                 return@setOnItemSelectedListener true
             }
-            // popUpTo(start) senza inclusive: lo stack resta [Home, tab scelto],
-            // così l'Indietro da un tab secondario riporta sempre alla home.
             val opzioni = navOptions {
                 popUpTo(navController.graph.startDestinationId)
                 launchSingleTop = true
@@ -90,23 +75,16 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
             true
         }
 
-        // Tiene evidenziato il tab giusto anche quando la navigazione avviene
-        // per altre vie (es. tasto Indietro). Non gestisce il tasto stesso.
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomNav.menu.findItem(destination.id)?.isChecked = true
         }
     }
 
-    // Tasto Indietro di sistema, gestito in modo esplicito e prevedibile.
+    // funzione che gestisce il tasto Indietro di sistema in modo esplicito e prevedibile.
     private fun gestisciTastoIndietro(navController: NavController) {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            // Provo a tornare indietro nello stack del ruolo (tab secondario -> home).
-            // popBackStack() restituisce false se non c'è più nulla da togliere,
-            // cioè se siamo già sulla home.
             val tornatoIndietro = navController.popBackStack()
             if (!tornatoIndietro) {
-                // Siamo sulla home: disabilito questo callback e lascio agire il
-                // sistema. Non essendoci altro nello stack, l'app si chiude.
                 isEnabled = false
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }

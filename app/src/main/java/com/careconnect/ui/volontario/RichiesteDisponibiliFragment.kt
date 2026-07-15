@@ -21,10 +21,8 @@ import com.careconnect.viewmodel.volontario.RichiesteDisponibiliViewModelFactory
 import kotlinx.coroutines.launch
 import com.careconnect.repository.UserRepositoryImpl
 
-/**
- * Schermata "Richieste disponibili": lista in tempo reale di tutte le
- * richieste APERTA, con azione "Prendi in carico" su ciascuna riga.
- */
+// schermata "Richieste disponibili": lista in tempo reale di tutte le
+// richieste APERTA, con azione "Prendi in carico" su ciascuna riga.
 class RichiesteDisponibiliFragment : Fragment() {
 
     private var _binding: FragmentRichiesteDisponibiliBinding? = null
@@ -60,6 +58,7 @@ class RichiesteDisponibiliFragment : Fragment() {
         osservaErrori()
     }
 
+    // funzione per osservare la lista di richieste esposta dal ViewModel e aggiornare la RecyclerView.
     private fun osservaRichieste() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -74,6 +73,7 @@ class RichiesteDisponibiliFragment : Fragment() {
         }
     }
 
+    // funzione per osservare eventuali errori nella presa in carico e mostrarli con un Toast.
     private fun osservaErrori() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

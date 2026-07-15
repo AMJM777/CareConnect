@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- modulo con campi email, password, bottone di accesso standard e bottone per Google -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -15,7 +16,7 @@
             android:padding="@dimen/screen_padding">
 
             <!-- Guideline al 10% dell'altezza: da qui parte il titolo, così il
-                 blocco scende un po' in modo proporzionale (adattivo). -->
+                 blocco scende un po' in modo proporzionale (adattivo) -->
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/topGuideline"
                 android:layout_width="wrap_content"
@@ -23,7 +24,7 @@
                 android:orientation="horizontal"
                 app:layout_constraintGuide_percent="0.10" />
 
-            <!-- Titolo in pagina (unico titolo: la barra blu del login è vuota). -->
+            <!-- Titolo in pagina (unico titolo: la barra blu del login è vuota) -->
             <TextView
                 android:id="@+id/titleText"
                 android:layout_width="wrap_content"

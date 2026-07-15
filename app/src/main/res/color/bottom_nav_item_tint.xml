@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Colore di icone e testo della bottom bar, in base allo stato della voce. -->
+<!-- Colore di icone e testo della bottom bar, in base allo stato della voce -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Voce selezionata: bianco pieno -->
     <item android:color="@color/care_on_primary" android:state_checked="true" />
-    <!-- Voci non selezionate: bianco attenuato (leggibile, non sparisce) -->
+    <!-- Voci non selezionate: bianco attenuato -->
     <item android:color="#B3FFFFFF" />
 </selector>

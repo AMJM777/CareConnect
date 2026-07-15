@@ -1,13 +1,9 @@
 package com.careconnect.model
 
 /**
- * Rappresenta un utente dell'app, con campi diversi valorizzati a seconda del ruolo.
- *
- * FASE 6 — collegamento Anziano <-> Familiare 1:N: un anziano può avere
- * PIÙ familiari/garanti collegati, ma ogni familiare segue UN SOLO anziano.
- * FASE 7 — aggiunto "indirizzo": serve al Volontario per sapere dove andare
- * quando accetta una richiesta (letto e denormalizzato su Request alla
- * creazione, vedi RequestRepository).
+ * rappresenta un utente dell'app, con campi diversi a seconda del ruolo.
+ * un anziano può avere più familiari/garanti collegati, ma ogni familiare
+ * segue un solo anziano (relazione 1:N).
  */
 data class User(
     val uid: String = "",

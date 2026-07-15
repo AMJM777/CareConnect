@@ -12,30 +12,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel del Profilo Familiare (FASE 6). Carica una sola volta (non
- * realtime: questi dati non cambiano mentre la schermata è aperta) il
- * proprio nome e quello dell'anziano collegato.
- *
- * DATA BINDING (lezione 9): essendo tutto in SOLA LETTURA, le due TextView
- * sono legate interamente dall'XML con @{}. I testi già pronti ("Sei
- * collegato/a come: ...", "Stai seguendo: ...") vengono composti qui col
- * solito schema MutableLiveData privato + LiveData pubblico, così il
- * Fragment non ha più codice per riempire le View.
- */
+// carica una sola volta (non realtime) il proprio nome e quello dell'anziano collegato
+// i due testi sono già pronti qui e legati dall'xml con data binding
 class ProfiloFamiliareViewModel(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    // Testi già pronti, legati dall'XML.
     private val _nomeFamiliareTesto = MutableLiveData("")
     val nomeFamiliareTesto: LiveData<String> = _nomeFamiliareTesto
 
     private val _nomeAnzianoTesto = MutableLiveData("")
     val nomeAnzianoTesto: LiveData<String> = _nomeAnzianoTesto
 
-    // Evento "una tantum" (Toast): resta StateFlow, è un segnale momentaneo.
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
@@ -43,6 +32,7 @@ class ProfiloFamiliareViewModel(
         caricaInfo()
     }
 
+    // funzione per caricare i dati del familiare e dell'anziano collegato, e comporre i testi da mostrare
     private fun caricaInfo() {
         val uid = authRepository.utenteCorrente()?.uid
         if (uid == null) {
@@ -63,13 +53,12 @@ class ProfiloFamiliareViewModel(
                 _errore.value = it.message ?: "Impossibile caricare i dati dell'anziano"
                 return@launch
             }
-            // Componiamo i testi qui: da questo momento le TextView legate
-            // nell'XML si aggiornano da sole.
             _nomeFamiliareTesto.value = "Sei collegato/a come: ${familiare.nome}"
             _nomeAnzianoTesto.value = "Stai seguendo: ${anziano.nome}"
         }
     }
 
+    // funzione per segnalare che l'errore è stato mostrato e va nascosto
     fun erroreMostrato() {
         _errore.value = null
     }

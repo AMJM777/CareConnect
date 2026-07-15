@@ -2,54 +2,41 @@ package com.careconnect.repository
 
 import com.careconnect.model.User
 
+//interfaccia per la gestione dei profili utente
 interface UserRepository {
 
-    /** Salva (crea o sovrascrive) il profilo utente su Firestore, alla registrazione. */
+    // funzione per salvare (creare o sovrascrivere) il profilo utente su Firestore, alla registrazione
     suspend fun salvaUtente(user: User): Result<Unit>
 
-    /** Legge il profilo utente per uid. */
+    // funzione per leggere il profilo utente per uid
     suspend fun getUtente(uid: String): Result<User>
 
     /**
-     * FASE 6 — restituisce il codice invito dell'anziano indicato.
-     * Se non esiste ancora lo genera, verificando che sia univoco, e lo
-     * salva. Chiamate successive per lo stesso anziano restituiscono
-     * sempre lo STESSO codice: è pensato per essere condiviso con più
-     * familiari nel tempo, non "a consumo singolo".
+     * funzione che restituisce il codice invito dell'anziano indicato.
+     * se non esiste ancora lo genera, verificando che sia univoco, e lo salva
      */
     suspend fun ottieniOCreaCodiceInvito(anzianoId: String): Result<String>
 
-    /**
-     * FASE 6 — cerca l'anziano proprietario di un dato codice invito.
-     * Usato dalla schermata "Collegati al tuo assistito" del Familiare.
-     */
+    // funzione per cercare l'anziano proprietario di un dato codice invito,
+    // usata dalla schermata "collegati al tuo assistito" del familiare.
     suspend fun trovaAnzianoPerCodiceInvito(codice: String): Result<User>
 
     /**
-     * FASE 6 — collega un familiare a un anziano in un'unica scrittura
-     * atomica: aggiunge familiareId alla lista dell'anziano E imposta
-     * anzianoCollegatoId sul familiare. Fallisce se il familiare risulta
-     * già collegato a un altro anziano (un familiare segue un solo assistito).
+     * funzione per collegare un familiare a un anziano:
+     * aggiunge familiareId alla lista dell'anziano e imposta
+     * anzianoCollegatoId sul familiare. fallisce se il familiare risulta
+     * già collegato a un altro anziano (un familiare segue un solo assistito)
      */
     suspend fun collegaFamiliareAdAnziano(anzianoId: String, familiareId: String): Result<Unit>
 
     /**
-     * FASE 9 — ricalcola la media aritmetica delle stelle di TUTTE le
-     * valutazioni ricevute dal volontario indicato, e aggiorna il campo
-     * ratingMedio sul suo profilo.
-     *
-     * Va chiamato DOPO che un nuovo Rating è stato creato con successo
-     * (vedi RatingRepository.creaRatingEConfermaRichiesta). Non è incluso
-     * in quella Transaction: qui serve una query su tutta la collezione
-     * "ratings", e le Transaction di Firestore supportano solo letture
-     * puntuali di documenti, non query — per questo è un passo separato.
+     * funzione che ricalcola la media aritmetica delle stelle di tutte le valutazioni
+     * ricevute dal volontario indicato, e aggiorna il campo ratingMedio sul suo profilo
      */
     suspend fun aggiornaRatingMedio(volontarioId: String): Result<Unit>
 
-    /**
-     * FASE 12 — salva il token FCM del dispositivo sul profilo utente.
-     * Update parziale: tocca solo "fcmToken". Serve alla Cloud Function per
-     * sapere a quale dispositivo inviare la push (es. l'SOS al familiare).
-     */
+
+
+    //funzione per salvare il token FCM del dispositivo sul profilo utente
     suspend fun aggiornaFcmToken(uid: String, token: String): Result<Unit>
 }

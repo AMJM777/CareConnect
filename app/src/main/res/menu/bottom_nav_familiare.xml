@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Gli id devono coincidere ESATTAMENTE con quelli in nav_graph_familiare.xml -->
+<!-- voci della bottom navigation per il ruolo familiare, solo due tab perché
+     il familiare non crea né accetta richieste, si limita a seguire e confermare -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item

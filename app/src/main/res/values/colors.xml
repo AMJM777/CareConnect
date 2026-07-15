@@ -3,39 +3,37 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- ============ PRIMARIO (blu indaco con punta di viola) ============ -->
-    <!-- ============ 122171 ============ 3A3585 =========== 534EAD-->
+    <!-- colori primari del brand, dominano la barra superiore e le sezioni principali -->
     <color name="care_primary">#3A3585</color>
     <color name="care_primary_variant">#FF3340B5</color>
     <color name="care_primary_container">#FFE4E7FB</color>
     <color name="care_on_primary">#FFFFFFFF</color>
 
-    <!-- ============ ACCENTO (arancione) ============ -->
+    <!-- colori di accento per i bottoni e gli elementi interattivi di spicco -->
     <color name="care_accent">#FFF26522</color>
     <color name="care_accent_variant">#FFC2410C</color>
     <color name="care_accent_container">#FFFCE3D4</color>
     <color name="care_on_accent">#FFFFFFFF</color>
 
-    <!-- SOS: riservato ESCLUSIVAMENTE al bottone di emergenza. Mai riusato. -->
+    <!-- rosso acceso riservato esclusivamente al banner e al bottone di emergenza -->
     <color name="care_sos">#FFD32F2F</color>
     <color name="care_on_sos">#FFFFFFFF</color>
 
-    <!-- ============ SFONDI E TESTO ===FFF5F6FA=====FFF6F1EA==== -->
+    <!-- colori per gli sfondi dell'app, le card e le varie gerarchie di testo -->
     <color name="care_background">#FFECEEF7</color>
-    <color name="care_surface">#FFFFFFFF</color> <!-- card colore-->
+    <color name="care_surface">#FFFFFFFF</color>
     <color name="care_on_surface">#FF2D3436</color>
     <color name="care_on_surface_variant">#FF6B7280</color>
     <color name="care_outline">#FFE5E7EB</color>
 
-    <!-- care_primary_dark = COLORE DEL TESTO principale (non variante del primario). -->
+    <!-- colore scuro specifico per i testi principali, da non confondere con le varianti del brand -->
     <color name="care_primary_dark">#FF111820</color>
 
-    <!-- Errore form: distinto da accent e da SOS. -->
+    <!-- rosso scuro per i messaggi di errore nei form, distinto dal rosso emergenza -->
     <color name="care_error">#FFB00020</color>
     <color name="care_on_error">#FFFFFFFF</color>
 
-    <!-- ===== COLORI DI STATO delle richieste (sfondo tenue + testo intenso) =====
-         Colori "funzionali" (tipo semaforo), distinti dal brand. -->
+    <!-- combinazioni di sfondo e testo per evidenziare lo stato delle richieste -->
     <color name="stato_aperta_bg">#FFE4E7FB</color>
     <color name="stato_aperta_fg">#FF3340B5</color>
 

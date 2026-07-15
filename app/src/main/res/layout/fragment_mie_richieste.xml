@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- contenitore radice per abilitare il data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- contenitore principale della schermata con sfondo e margini standard -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -9,6 +11,7 @@
         android:paddingStart="@dimen/screen_padding"
         android:paddingEnd="@dimen/screen_padding">
 
+        <!-- messaggio centrale mostrato solo quando non ci sono richieste create -->
         <TextView
             android:id="@+id/emptyStateText"
             android:layout_width="wrap_content"
@@ -22,8 +25,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Padding verticale sulla lista + clipToPadding=false: lo spazio in
-             alto/basso scorre via con gli elementi, niente fascia bianca fissa. -->
+        <!-- lista scorrevole delle richieste, il padding scorre con gli elementi per un effetto visivo pulito -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/richiesteRecyclerView"
             android:layout_width="match_parent"

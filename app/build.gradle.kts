@@ -46,7 +46,7 @@ kotlin {
 }
 
 dependencies {
-    // Firebase BoM: allinea automaticamente le versioni di tutte le librerie Firebase
+    //firebase bom per allineare automaticamente le versioni di tutte le librerie firebase
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
@@ -68,9 +68,10 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services)
     implementation(libs.googleid)
-    // WorkManager: pianifica ed esegue task in background
+
+    //workmanager per pianificare ed eseguire task in background
     implementation(libs.androidx.work.runtime.ktx)
-    // Firebase Cloud Messaging: ricezione notifiche push
-    // Versione gestita dalla BoM, come firebase-auth e firebase-firestore.
+
+    // firebase cloud messaging per ricevere le notifiche push, versione gestita dalla bom
     implementation(libs.firebase.messaging)
 }

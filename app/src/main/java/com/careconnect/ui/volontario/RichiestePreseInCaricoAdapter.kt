@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import com.careconnect.ui.common.StatoRichiestaColori
 
 /**
- * Adapter della lista "Le mie richieste prese in carico". Due azioni per
+ * adapter della lista "Le mie richieste prese in carico". due azioni per
  * riga ("Segna come completata" e "Rilascia"), entrambe passate come lambda
  * dal Fragment: l'Adapter non parla mai con ViewModel/Repository.
  */
@@ -34,6 +34,7 @@ class RichiestePreseInCaricoAdapter(
         return RichiestaViewHolder(binding)
     }
 
+    // funzione che collega i dati di una richiesta alla riga corrispondente della lista.
     override fun onBindViewHolder(holder: RichiestaViewHolder, position: Int) {
         val richiesta = richieste[position]
 
@@ -42,7 +43,7 @@ class RichiestePreseInCaricoAdapter(
         holder.binding.autoreNomeText.text = "Da: ${richiesta.autoreNome}"
         holder.binding.autoreIndirizzoText.text = richiesta.autoreIndirizzo
         holder.binding.statoText.text = etichettaStato(richiesta.stato)
-        // Colora la pillola in base allo stato (sfondo tenue + testo intenso).
+        // colora la pillola in base allo stato (sfondo tenue + testo intenso).
         val ctxStato = holder.binding.statoText.context
         holder.binding.statoText.backgroundTintList =
             ContextCompat.getColorStateList(ctxStato, StatoRichiestaColori.sfondo(richiesta.stato))
@@ -50,7 +51,7 @@ class RichiestePreseInCaricoAdapter(
             ContextCompat.getColor(ctxStato, StatoRichiestaColori.testo(richiesta.stato)))
         holder.binding.dataText.text = formattaData(richiesta.timestampCreazione.toDate())
 
-        // Entrambi i bottoni hanno senso solo mentre la richiesta è ancora
+        // entrambi i bottoni hanno senso solo mentre la richiesta è ancora
         // PRESA_IN_CARICO: una volta COMPLETATA_DAL_VOLONTARIO, tocca al
         // garante confermare, il volontario non agisce più su di essa.
         val puoAgire = richiesta.stato == RequestStatus.PRESA_IN_CARICO
@@ -63,11 +64,13 @@ class RichiestePreseInCaricoAdapter(
 
     override fun getItemCount(): Int = richieste.size
 
+    // funzione per sostituire la lista mostrata e aggiornare la RecyclerView.
     fun aggiornaLista(nuovaLista: List<Request>) {
         richieste = nuovaLista
         notifyDataSetChanged()
     }
 
+    // funzione per tradurre lo stato della richiesta in un'etichetta leggibile per l'utente.
     private fun etichettaStato(stato: RequestStatus): String = when (stato) {
         RequestStatus.APERTA -> "Aperta"
         RequestStatus.PRESA_IN_CARICO -> "Presa in carico"
@@ -76,6 +79,7 @@ class RichiestePreseInCaricoAdapter(
         RequestStatus.ANNULLATA -> "Annullata"
     }
 
+    // funzione per formattare una data nel formato gg/mm/aaaa hh:mm.
     private fun formattaData(data: java.util.Date): String {
         val formato = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALY)
         return formato.format(data)

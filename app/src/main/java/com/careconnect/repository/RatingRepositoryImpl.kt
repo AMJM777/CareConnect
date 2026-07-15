@@ -5,6 +5,7 @@ import com.careconnect.model.RequestStatus
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
+// implementazione di RatingRepository
 class RatingRepositoryImpl(
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 ) : RatingRepository {
@@ -36,7 +37,7 @@ class RatingRepositoryImpl(
         }.await()
     }
 
-    // --- Mapping Firestore <-> modello di dominio ---
+    // funzione di mapping
 
     private fun Rating.toFirestoreMap(): Map<String, Any?> = mapOf(
         "requestId" to requestId,

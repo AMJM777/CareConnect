@@ -10,18 +10,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/** Stato della Home Familiare: sappiamo solo DOPO una chiamata a Firestore se l'utente è già collegato a un anziano. */
+// stato della home familiare: si sa solo dopo una chiamata a Firestore se l'utente è già collegato a un anziano
 sealed class StatoHomeFamiliare {
     object Caricamento : StatoHomeFamiliare()
     object NonCollegato : StatoHomeFamiliare()
     data class Collegato(val nomeAnziano: String) : StatoHomeFamiliare()
 }
 
-/**
- * ViewModel della Home Familiare (FASE 6).
- * Si occupa di due cose: capire se l'utente è già collegato a un anziano,
- * e gestire il collegamento tramite codice invito quando non lo è ancora.
- */
+// capisce se l'utente è già collegato a un anziano e gestisce il collegamento tramite codice invito
 class HomeFamiliareViewModel(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository
@@ -30,8 +26,7 @@ class HomeFamiliareViewModel(
     private val _stato = MutableStateFlow<StatoHomeFamiliare>(StatoHomeFamiliare.Caricamento)
     val stato: StateFlow<StatoHomeFamiliare> = _stato.asStateFlow()
 
-    // Errore del TENTATIVO di collegamento (codice sbagliato, già collegato altrove, ecc.)
-    // Separato da _stato perché un errore non deve far sparire il form: l'utente deve poter riprovare.
+    // separato da _stato: un errore non deve far sparire il form, l'utente deve poter riprovare
     private val _erroreCollegamento = MutableStateFlow<String?>(null)
     val erroreCollegamento: StateFlow<String?> = _erroreCollegamento.asStateFlow()
 
@@ -42,6 +37,7 @@ class HomeFamiliareViewModel(
         caricaStatoCollegamento()
     }
 
+    // funzione per verificare se l'utente è già collegato a un anziano e caricarne il nome
     private fun caricaStatoCollegamento() {
         val uid = authRepository.utenteCorrente()?.uid
         if (uid == null) {
@@ -55,7 +51,7 @@ class HomeFamiliareViewModel(
                     if (anzianoId == null) {
                         _stato.value = StatoHomeFamiliare.NonCollegato
                     } else {
-                        // Servono anche i dati dell'anziano per mostrarne il nome.
+                        // servono anche i dati dell'anziano per mostrarne il nome
                         userRepository.getUtente(anzianoId).fold(
                             onSuccess = { anziano -> _stato.value = StatoHomeFamiliare.Collegato(anziano.nome) },
                             onFailure = { _stato.value = StatoHomeFamiliare.NonCollegato }
@@ -67,7 +63,7 @@ class HomeFamiliareViewModel(
         }
     }
 
-    /** Chiamato quando l'utente preme "Collegati" con un codice inserito. */
+    // funzione chiamata quando l'utente preme "collegati" con un codice inserito
     fun collegati(codiceInserito: String) {
         val uid = authRepository.utenteCorrente()?.uid
         if (uid == null) {
@@ -101,6 +97,7 @@ class HomeFamiliareViewModel(
         }
     }
 
+    // funzione per segnalare che l'errore è stato mostrato e va nascosto
     fun erroreMostrato() {
         _erroreCollegamento.value = null
     }

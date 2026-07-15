@@ -33,4 +33,10 @@
         <item name="android:textColor">@color/care_accent_variant</item>
     </style>
 
+    <!--Bottone arancione - blu: inutilizzato -->
+    <style name="CareConnect.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/care_accent</item>
+        <item name="android:textColor">@color/care_primary</item>
+    </style>
+
 </resources>

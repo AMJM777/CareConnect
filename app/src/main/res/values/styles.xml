@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Pillola dietro la voce selezionata della bottom bar (Step B). -->
+    <!-- sfondo a pillola per la voce attiva nella barra di navigazione inferiore -->
     <style name="CareConnect.BottomNav.ActiveIndicator"
         parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">#33FFFFFF</item>
     </style>
 
-    <!-- Card riutilizzabile per le richieste: angoli arrotondati, ombra
-         leggera, bordo tenue, padding interno. Usata da tutti gli item_richiesta*. -->
+    <!-- stile base per le card con angoli arrotondati, ombra leggera e bordi tenui -->
     <style name="CareConnect.Card" parent="Widget.Material3.CardView.Elevated">
         <item name="cardCornerRadius">16dp</item>
         <item name="cardElevation">2dp</item>
@@ -18,8 +17,7 @@
         <item name="contentPadding">@dimen/spacing_medium</item>
     </style>
 
-    <!-- Etichetta di stato "a pillola". Di default lavanda; il colore per
-         stato lo imposteremo dall'Adapter nello step successivo. -->
+    <!-- stile per l'etichetta di stato a forma di pillola, i colori cambieranno dinamicamente -->
     <style name="CareConnect.StatusChip" parent="">
         <item name="android:background">@drawable/bg_status_chip</item>
         <item name="android:backgroundTint">@color/care_primary_container</item>
@@ -32,8 +30,7 @@
         <item name="android:paddingBottom">4dp</item>
     </style>
 
-    <!-- Bottone di azione secondaria dentro le card (Copia codice, Salva…):
-         arancione tenue con testo scuro, coerente con la palette accento. -->
+    <!-- bottone per azioni secondarie con tinte di accento arancioni -->
     <style name="CareConnect.Button.Accent" parent="Widget.Material3.Button.TonalButton">
         <item name="backgroundTint">@color/care_accent_container</item>
         <item name="android:textColor">@color/care_accent</item>

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Il tag <layout> è obbligatorio per generare FragmentNuovaRichiestaBinding
-     (vedi bug corretto in fragment_splash.xml: senza, DataBinding fallisce
-     silenziosamente a runtime invece che a compile-time). -->
+<!-- contenitore radice obbligatorio per abilitare il data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- NestedScrollView: rende la schermata scrollabile, così quando la
-         tastiera è aperta il campo attivo può salire sopra di essa. -->
+    <!-- vista scorrevole per evitare che la tastiera copra i campi di inserimento -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,17 +11,13 @@
         android:clipToPadding="false"
         android:fillViewport="true">
 
+        <!-- contenitore principale con i margini standard -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/screen_padding">
 
-            <!-- Titolo in pagina rimosso: lo mostra la Toolbar, che in modifica
-                 diventa "Modifica richiesta" (gestito nel Fragment). -->
-
-            <!-- Tipo di aiuto: set chiuso di opzioni, come richiesto. "Altro" è
-                 sempre selezionabile e va bene anche senza compilare il campo
-                 sotto: in quel caso il tipo salvato resta la stringa "altro". -->
+            <!-- gruppo di opzioni predefinite per selezionare il tipo di bisogno -->
             <RadioGroup
                 android:id="@+id/tipoRadioGroup"
                 android:layout_width="match_parent"
@@ -67,8 +60,7 @@
 
             </RadioGroup>
 
-            <!-- Visibile solo quando è selezionato "Altro" (gestito nel Fragment).
-                 Se lasciato vuoto, il tipo salvato resta semplicemente "altro". -->
+            <!-- campo di testo aggiuntivo visibile solo se viene selezionata l'opzione altro -->
             <EditText
                 android:id="@+id/altroInput"
                 android:layout_width="match_parent"
@@ -81,6 +73,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- area di testo per descrivere i dettagli della richiesta -->
             <EditText
                 android:id="@+id/descrizioneInput"
                 android:layout_width="match_parent"
@@ -94,6 +87,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- messaggio di errore mostrato in caso di validazione fallita -->
             <TextView
                 android:id="@+id/errorText"
                 android:layout_width="match_parent"
@@ -106,6 +100,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- bottone per inviare o salvare la richiesta -->
             <Button
                 android:id="@+id/inviaButton"
                 android:layout_width="match_parent"
@@ -119,6 +114,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- indicatore di caricamento mostrato durante l'invio dei dati -->
             <ProgressBar
                 android:id="@+id/loadingIndicator"
                 android:layout_width="wrap_content"

@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Grafo annidato, valido solo dentro la sezione Volontario. Contiene le 3
-     destinazioni raggiungibili dalla bottom navigation di quel ruolo.
-     Isolato da nav_graph_main, stesso schema di nav_graph_anziano. -->
+<!-- grafo di navigazione interno per la sezione volontario con le destinazioni della bottom bar -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_volontario"
     app:startDestination="@id/richiesteDisponibiliFragment">
 
+    <!-- schermata iniziale con l'elenco dei nuovi incarichi da accettare -->
     <fragment
         android:id="@+id/richiesteDisponibiliFragment"
         android:name="com.careconnect.ui.volontario.RichiesteDisponibiliFragment"
         android:label="Richieste disponibili" />
 
+    <!-- schermata per gestire i task già presi in carico dal volontario -->
     <fragment
         android:id="@+id/richiestePreseInCaricoFragment"
         android:name="com.careconnect.ui.volontario.RichiestePreseInCaricoFragment"
         android:label="Le mie richieste" />
 
+    <!-- schermata per visualizzare recensioni e aggiornare la propria descrizione -->
     <fragment
         android:id="@+id/profiloVolontarioFragment"
         android:name="com.careconnect.ui.volontario.ProfiloVolontarioFragment"

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- contenitore radice obbligatorio per abilitare il data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- La "variabile" del DataBinding: il ViewModel. Nell'XML possiamo
-         leggerne i LiveData con @{viewModel.campo}. -->
+    <!-- collegamento con il viewmodel per popolare i dati dell'interfaccia dinamicamente -->
     <data>
         <variable
             name="viewModel"
             type="com.careconnect.viewmodel.volontario.ProfiloVolontarioViewModel" />
     </data>
 
+    <!-- vista scorrevole per evitare che la tastiera nasconda i campi durante la digitazione -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,7 +25,7 @@
             android:orientation="vertical"
             android:padding="@dimen/screen_padding">
 
-            <!-- ===== INTESTAZIONE: avatar + nome + ruolo + email ===== -->
+            <!-- immagine di profilo standard arrotondata per il volontario -->
             <ImageView
                 android:layout_width="88dp"
                 android:layout_height="88dp"
@@ -36,8 +37,7 @@
                 android:padding="22dp"
                 android:contentDescription="@null" />
 
-            <!-- Nome: legato al LiveData del ViewModel (niente più codice
-                 nel Fragment per riempirlo). -->
+            <!-- nome dell'utente caricato dinamicamente dal viewmodel -->
             <TextView
                 android:id="@+id/nomeText"
                 android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="Mario Rossi" />
 
-            <!-- Targhetta ruolo (fissa: siamo nel profilo del Volontario). -->
+            <!-- etichetta visiva che identifica chiaramente il ruolo dell'utente -->
             <TextView
                 style="@style/CareConnect.StatusChip"
                 android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
                 android:layout_marginTop="@dimen/spacing_small"
                 android:text="Volontario" />
 
-            <!-- Email: legata alla proprietà del ViewModel. -->
+            <!-- indirizzo email collegato in automatico ai dati del profilo -->
             <TextView
                 android:id="@+id/emailText"
                 android:layout_width="match_parent"
@@ -71,7 +71,7 @@
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="mario.rossi@email.com" />
 
-            <!-- ===== CARD: valutazioni ===== -->
+            <!-- scheda riepilogativa delle valutazioni ricevute -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/CareConnect.Card"
                 android:layout_width="match_parent"
@@ -91,8 +91,7 @@
                         android:textStyle="bold"
                         android:textColor="@color/care_on_surface" />
 
-                    <!-- Testo valutazione: legato al LiveData già formattato
-                         dal ViewModel. -->
+                    <!-- testo della valutazione gestito in tempo reale dal viewmodel -->
                     <TextView
                         android:id="@+id/ratingText"
                         android:layout_width="wrap_content"
@@ -107,7 +106,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ===== CARD: descrizione (EDITABILE, gestita a mano) ===== -->
+            <!-- scheda per visualizzare e modificare la descrizione personale -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/CareConnect.Card"
                 android:layout_width="match_parent"
@@ -127,8 +126,7 @@
                         android:textStyle="bold"
                         android:textColor="@color/care_on_surface" />
 
-                    <!-- Campo editabile: NON legato in due vie. Lo pre-riempie
-                         il Fragment una volta e lo legge al click su "Salva". -->
+                    <!-- campo di testo per inserire o aggiornare la bio utente -->
                     <EditText
                         android:id="@+id/bioEditText"
                         android:layout_width="match_parent"
@@ -143,6 +141,7 @@
                         android:background="@drawable/bg_input_outline"
                         android:padding="@dimen/spacing_medium" />
 
+                    <!-- bottone manuale per confermare il salvataggio della bio utente -->
                     <Button
                         android:id="@+id/salvaBioButton"
                         style="@style/CareConnect.Button.Accent"
@@ -156,7 +155,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ===== ESCI ===== -->
+            <!-- bottone rosso di disconnessione dall'account -->
             <Button
                 android:id="@+id/logoutButton"
                 android:layout_width="match_parent"

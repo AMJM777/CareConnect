@@ -12,12 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel della Home Anziano (FASE 8, ridisegnata).
- * Codice invito/indirizzo/logout sono stati spostati nel nuovo
- * ProfiloAnzianoViewModel (Step 1); "Nuova richiesta" naviga direttamente
- * al Fragment esistente, non serve logica qui. Resta solo l'invio SOS.
- */
+// gestisce solo l'invio dell'SOS ("Nuova richiesta" naviga direttamente al Fragment esistente)
 class DashboardAnzianoViewModel(
     private val sosRepository: SosRepository,
     private val userRepository: UserRepository,
@@ -30,13 +25,8 @@ class DashboardAnzianoViewModel(
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
-    /**
-     * Scrive un SosAlert per OGNI familiare collegato, non uno solo:
-     * SosAlert.familiareId è singolare (risale alla Fase 1), ma dalla
-     * Fase 6 un anziano può avere più familiari collegati — vedi Roadmap
-     * Fase 8. Riusiamo SosRepository.creaAlert() così com'è, chiamandolo
-     * una volta per familiare, invece di cambiare lo schema del modello.
-     */
+    // funzione per inviare l'SOS: scrive un alert per ogni familiare
+    // collegato (un anziano può averne più di uno)
     fun inviaSos() {
         val anzianoId = authRepository.utenteCorrente()?.uid
         if (anzianoId == null) {

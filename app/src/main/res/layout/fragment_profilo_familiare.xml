@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- contenitore radice obbligatorio per abilitare il data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- collegamento con il viewmodel per popolare i dati dell'interfaccia dinamicamente -->
     <data>
         <variable
             name="viewModel"
             type="com.careconnect.viewmodel.familiare.ProfiloFamiliareViewModel" />
     </data>
 
+    <!-- vista scorrevole per adattarsi a schermi di diverse dimensioni -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,7 +24,7 @@
             android:orientation="vertical"
             android:padding="@dimen/screen_padding">
 
-            <!-- ===== INTESTAZIONE: avatar + ruolo ===== -->
+            <!-- immagine di profilo standard arrotondata per il familiare -->
             <ImageView
                 android:layout_width="88dp"
                 android:layout_height="88dp"
@@ -33,7 +36,7 @@
                 android:padding="22dp"
                 android:contentDescription="@null" />
 
-            <!-- Nome familiare: legato al LiveData del ViewModel. -->
+            <!-- nome del familiare caricato dinamicamente dal viewmodel -->
             <TextView
                 android:id="@+id/nomeFamiliareText"
                 android:layout_width="match_parent"
@@ -46,6 +49,7 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="Sei collegato/a come: Marco" />
 
+            <!-- etichetta visiva che identifica chiaramente il ruolo dell'utente -->
             <TextView
                 style="@style/CareConnect.StatusChip"
                 android:layout_width="wrap_content"
@@ -54,7 +58,7 @@
                 android:layout_marginTop="@dimen/spacing_small"
                 android:text="Familiare" />
 
-            <!-- ===== CARD: collegamento all'anziano ===== -->
+            <!-- scheda riepilogativa del collegamento con l'assistito -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/CareConnect.Card"
                 android:layout_width="match_parent"
@@ -74,7 +78,7 @@
                         android:textStyle="bold"
                         android:textColor="@color/care_on_surface" />
 
-                    <!-- Nome anziano seguito: legato al LiveData. -->
+                    <!-- nome dell'anziano seguito gestito in tempo reale dal viewmodel -->
                     <TextView
                         android:id="@+id/nomeAnzianoText"
                         android:layout_width="match_parent"
@@ -90,7 +94,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ===== ESCI ===== -->
+            <!-- bottone rosso di disconnessione dall'account -->
             <Button
                 android:id="@+id/logoutButton"
                 android:layout_width="match_parent"

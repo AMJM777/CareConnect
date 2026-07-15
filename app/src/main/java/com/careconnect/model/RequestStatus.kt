@@ -1,8 +1,8 @@
 package com.careconnect.model
 
 /**
- * Stato del ciclo di vita di una REQUEST.
- * Il valore "FIRESTOREVALUE" è quello effettivamente salvato su Firestore.
+ * rappresenta lo stato del ciclo di vita di una richiesta di aiuto.
+ * il valore firestoreValue è quello effettivamente salvato su Firestore
  */
 enum class RequestStatus(val firestoreValue: String) {
     APERTA("aperta"),
@@ -12,12 +12,14 @@ enum class RequestStatus(val firestoreValue: String) {
     ANNULLATA("annullata");
 
     /**
-     * Verifica se la transizione da questo stato a "TARGET" è ammessa dal workflow.
-     * Regole:
-     * - DA APERTA A: presa in carico da un volontario, oppure annullata dall'anziano
-     * - DA PRESA_IN_CARICO A: completata dal volontario, rilasciata (torna aperta), o annullata dall'anziano
-     * - DA COMPLETATA_DAL_VOLONTARIO A: confermata (solo tramite rating di familiare/anziano)
-     * - CONFERMATA / ANNULLATA: stati terminali, nessuna transizione possibile in più
+     * funzione per verificare se la transizione da questo stato a uno stato target è
+     * ammessa dal workflow della richiesta. le regole sono:
+     * - da aperta: si può passare a presa in carico (volontario) o annullata (anziano)
+     * - da presa in carico: si può passare a completata dal volontario, tornare
+     *   aperta (il volontario rinuncia), oppure annullata
+     * - da completata dal volontario: si può passare solo a confermata,
+     *   tramite il rating lasciato da familiare o anziano
+     * - confermata e annullata sono stati terminali: nessuna transizione possibile
      */
     fun canTransitionTo(target: RequestStatus): Boolean = when (this) {
         APERTA -> target == PRESA_IN_CARICO || target == ANNULLATA

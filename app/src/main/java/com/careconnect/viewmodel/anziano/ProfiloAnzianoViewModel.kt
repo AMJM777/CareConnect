@@ -13,50 +13,33 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel del Profilo Anziano (FASE 8): nome, email, ruolo, codice invito
- * e indirizzo, più logout.
- *
- * DATA BINDING (lezione 9): i dati di sola lettura (nome, codice invito)
- * sono esposti come LiveData e legati dall'XML con @{}. Schema visto a
- * lezione: un MutableLiveData privato di appoggio (_campo) + un LiveData
- * pubblico di sola lettura (campo). L'indirizzo è EDITABILE, quindi resta
- * gestito a mano dal Fragment.
- */
+// dati di sola lettura esposti come LiveData e legati dall'XML con data
+// binding; l'indirizzo è editabile e resta gestito dal Fragment
 class ProfiloAnzianoViewModel(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    // Utente caricato: sorgente per salvaIndirizzo() (salvaUtente = .set()
-    // completo, serve l'oggetto User intero, copiato con .copy()).
+    // utente caricato: serve a salvaIndirizzo() per fare .copy() (salvaUtente è un .set() completo)
     private var utenteCaricato: User? = null
 
-    // Codice invito "grezzo", tenuto per la copia negli appunti.
+    // codice invito tenuto per la copia negli appunti
     private var codiceCorrente: String? = null
 
-    // Email: fissa durante la sessione, semplice proprietà (bindabile).
     val email: String? = authRepository.utenteCorrente()?.email
 
-    // ----- Campi di SOLA LETTURA legati dall'XML tramite DataBinding -----
     private val _nome = MutableLiveData("")
     val nome: LiveData<String> = _nome
 
-    // Testo del codice invito: il codice vero, oppure "..." mentre carica.
     private val _codiceInvitoTesto = MutableLiveData("...")
     val codiceInvitoTesto: LiveData<String> = _codiceInvitoTesto
 
-    // Abilita il bottone "Copia" solo quando il codice è davvero pronto.
     private val _copiaAbilitato = MutableLiveData(false)
     val copiaAbilitato: LiveData<Boolean> = _copiaAbilitato
 
-    // Indirizzo con cui pre-riempire il campo UNA volta. Nessun valore
-    // iniziale: il Fragment lo scrive nell'EditText solo quando arriva.
     private val _indirizzoIniziale = MutableLiveData<String>()
     val indirizzoIniziale: LiveData<String> = _indirizzoIniziale
 
-    // ----- Eventi "una tantum" (Toast): restano StateFlow, sono segnali,
-    //       non stato da disegnare. -----
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
@@ -82,13 +65,13 @@ class ProfiloAnzianoViewModel(
         }
     }
 
-    // Riempie i LiveData del profilo: da qui le View legate si aggiornano da sole.
     private fun mostraUtente(utente: User) {
         utenteCaricato = utente
         _nome.value = utente.nome
         _indirizzoIniziale.value = utente.indirizzo ?: ""
     }
 
+    // funzione per ottenere (o creare, se non esiste) il codice invito dell'anziano
     private fun caricaCodiceInvito() {
         val uid = authRepository.utenteCorrente()?.uid ?: return
         viewModelScope.launch {
@@ -107,10 +90,9 @@ class ProfiloAnzianoViewModel(
         _copiaAbilitato.value = true
     }
 
-    /** Codice grezzo da copiare negli appunti (null se non ancora pronto). */
     fun codicePerCopia(): String? = codiceCorrente
 
-    /** Parte dall'utente già in memoria (.copy()): salvaUtente() è un .set() completo. */
+    // funzione per salvare un nuovo indirizzo a partire dall'utente già in memoria
     fun salvaIndirizzo(nuovoIndirizzo: String) {
         val utenteAttuale = utenteCaricato
         if (utenteAttuale == null) {

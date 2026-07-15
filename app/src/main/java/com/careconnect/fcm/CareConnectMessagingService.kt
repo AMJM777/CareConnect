@@ -10,52 +10,39 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 /**
- * FASE 12 — Servizio che riceve i messaggi Firebase Cloud Messaging (FCM).
- *
- * Viene invocato dall'SDK Firebase (anche ad app chiusa) quando arriva una
- * push per questo dispositivo. Qui trasformiamo il messaggio in una notifica
- * visibile, riusando il NotificationHelper condiviso con la Fase 11.
+ * Servizio che riceve i messaggi push da firebase cloud messaging (FCM).
+ * anche quando l'app è chiusa  e li trasforma in notifiche visibili
+ * (riusando il NotificationHelper)
  */
 class CareConnectMessagingService : FirebaseMessagingService() {
 
-    /**
-     * Chiamato quando FCM assegna o rinnova il token di questo dispositivo.
-     * Il token identifica il dispositivo come destinatario delle push: la
-     * Cloud Function (Fase 12b) lo userà per sapere a chi inviare l'SOS.
-     * Per ora lo registriamo nel Log; il salvataggio su Firestore è il prossimo passo.
-     */
+    // Chiamato da Firebase quando genera o rinnova il token di questo dispositivo.
+    // Il token è salvato sul profilo utente per ricevere le push in futuro.
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d(TAG, "Nuovo token FCM: $token")
 
-        // Il token può cambiare mentre l'utente è già loggato: se c'è una
-        // sessione attiva aggiorniamo subito il token sul suo profilo, altrimenti
-        // le push non lo raggiungerebbero più. Se non è loggato non facciamo
-        // nulla: al prossimo login il token verrà salvato comunque (AuthViewModel).
+        // Se l'utente è già loggato aggiorna subito il token sul suo profilo,
+        // altrimenti verrà salvato al prossimo login
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         CoroutineScope(Dispatchers.IO).launch {
             UserRepositoryImpl().aggiornaFcmToken(uid, token)
         }
     }
 
-    /**
-     * Chiamato quando arriva un messaggio con l'app in primo piano, e sempre
-     * per i messaggi di tipo "data". Costruiamo qui la notifica così decidiamo
-     * NOI titolo, testo e soprattutto quale canale usare (conta per l'SOS).
-     */
+     // Chiamato quando arriva un messaggio push, costruisce e mostra la notifica
+
     override fun onMessageReceived(messaggio: RemoteMessage) {
         super.onMessageReceived(messaggio)
 
-        // Un messaggio FCM può avere una parte "notification" (titolo/testo già
-        // pronti) e/o una parte "data" (coppie chiave-valore decise da noi).
-        // Diamo priorità ai dati, con fallback sulla parte notification.
+        // Un messaggio FCM può contenere titolo/testo pronti ("notification")
+        // oppure dati grezzi decisi da noi ("data"): diamo priorità ai dati.
         val dati = messaggio.data
         val titolo = dati["titolo"] ?: messaggio.notification?.title ?: "CareConnect"
         val testo = dati["testo"] ?: messaggio.notification?.body ?: "Hai una nuova notifica"
 
-        // Se il messaggio è marcato come SOS usiamo il canale ad alta importanza,
-        // altrimenti quello generale.
+        // L'SOS usa un canale di notifica ad alta priorità, gli altri messaggi uno normale.
         val canaleId = if (dati["tipo"] == "sos") {
             NotificationHelper.CANALE_SOS_ID
         } else {

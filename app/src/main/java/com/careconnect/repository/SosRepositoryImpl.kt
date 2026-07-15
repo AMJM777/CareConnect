@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
+//implentazione di SosRepository
 class SosRepositoryImpl(
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 ) : SosRepository {
@@ -29,6 +30,7 @@ class SosRepositoryImpl(
             ?: throw NoSuchElementException("Alert non trovato: $alertId")
         val statoAttuale = SosStatus.fromFirestoreValue(statoRaw)
 
+        // un alert chiuso è uno stato terminale
         if (statoAttuale == SosStatus.CHIUSO) {
             throw IllegalStateException("Impossibile modificare un alert già CHIUSO")
         }
@@ -36,6 +38,8 @@ class SosRepositoryImpl(
         docRef.update("stato", nuovoStato.firestoreValue).await()
     }
 
+    // registra un listener realtime su Firestore filtrato per familiareId,
+    // così il familiare vede comparire l'SOS nell'istante in cui viene creato
     override fun osservaAlertPerFamiliare(familiareId: String): Flow<List<SosAlert>> = callbackFlow {
         val listener = collection
             .whereEqualTo("familiareId", familiareId)
@@ -50,8 +54,7 @@ class SosRepositoryImpl(
         awaitClose { listener.remove() }
     }
 
-    // --- Mapping Firestore <-> modello di dominio ---
-
+//funzione di mapping che converte l'alert in una mappa chiave-valore per firestore
     private fun DocumentSnapshot.toSosAlert(): SosAlert? {
         if (!exists()) return null
         val statoRaw = getString("stato") ?: return null

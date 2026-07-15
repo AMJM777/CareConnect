@@ -18,12 +18,6 @@ sealed class NuovaRichiestaUiState {
     data class Errore(val eccezione: Throwable) : NuovaRichiestaUiState()
 }
 
-/**
- * ViewModel della schermata "Nuova richiesta" / "Modifica richiesta".
- * FASE 7: creaRichiesta() ora legge anche il profilo dell'Anziano per
- * denormalizzare nome e indirizzo sulla Request — il Volontario ne avrà
- * bisogno per sapere chi cercare e dove andare quando accetta.
- */
 class NuovaRichiestaViewModel(
     private val requestRepository: RequestRepository,
     private val userRepository: UserRepository
@@ -32,6 +26,8 @@ class NuovaRichiestaViewModel(
     private val _uiState = MutableStateFlow<NuovaRichiestaUiState>(NuovaRichiestaUiState.Idle)
     val uiState: StateFlow<NuovaRichiestaUiState> = _uiState.asStateFlow()
 
+    // funzione per creare una richiesta: legge anche il profilo dell'anziano
+    // per copiare nome e indirizzo sulla Request, che serviranno al volontario
     fun creaRichiesta(autoreId: String, tipo: String, descrizione: String) {
         viewModelScope.launch {
             _uiState.value = NuovaRichiestaUiState.Loading
@@ -41,9 +37,8 @@ class NuovaRichiestaViewModel(
                 return@launch
             }
 
-            // Blocco qui, non dopo: senza indirizzo il volontario che accetta
-            // non saprebbe dove andare. Meglio impedire la richiesta che
-            // crearla incompleta.
+            // senza indirizzo il volontario non saprebbe dove andare: meglio
+            // bloccare qui che creare una richiesta incompleta
             val indirizzo = autore.indirizzo
             if (indirizzo.isNullOrBlank()) {
                 _uiState.value = NuovaRichiestaUiState.Errore(
@@ -69,7 +64,7 @@ class NuovaRichiestaViewModel(
         }
     }
 
-    /** Modalità modifica: tipo/descrizione possono cambiare, autore e indirizzo no. */
+    // funzione per modificare tipo e descrizione di una richiesta esistente
     fun modificaRichiesta(requestId: String, tipo: String, descrizione: String) {
         viewModelScope.launch {
             _uiState.value = NuovaRichiestaUiState.Loading

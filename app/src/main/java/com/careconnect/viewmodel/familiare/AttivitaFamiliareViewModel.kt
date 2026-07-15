@@ -17,13 +17,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel della schermata Attività del Familiare: mostra in tempo reale
- * tutte le richieste dell'anziano collegato (stato attuale + storico) e
- * gestisce la conferma finale con valutazione.
- *
- * FASE 8: aggiunto l'ascolto realtime degli alert SOS per questo familiare.
- */
+// mostra in tempo reale tutte le richieste dell'anziano collegato e gestisce
+// la conferma finale con valutazione, oltre agli alert sos di questo familiare
 class AttivitaFamiliareViewModel(
     private val requestRepository: RequestRepository,
     private val ratingRepository: RatingRepository,
@@ -35,9 +30,7 @@ class AttivitaFamiliareViewModel(
     private val _richieste = MutableStateFlow<List<Request>>(emptyList())
     val richieste: StateFlow<List<Request>> = _richieste.asStateFlow()
 
-    // Solo l'alert ATTIVO più recente: se ce ne fossero più di uno (SOS
-    // premuto più volte senza chiudere il precedente), mostriamo un banner
-    // alla volta, non una lista — più chiaro per chi lo guarda in emergenza.
+    // solo l'alert attivo più recente: se ce ne fosse più di uno si mostra un banner alla volta
     private val _sosAttivo = MutableStateFlow<SosAlert?>(null)
     val sosAttivo: StateFlow<SosAlert?> = _sosAttivo.asStateFlow()
 
@@ -51,6 +44,7 @@ class AttivitaFamiliareViewModel(
         osservaSos()
     }
 
+    // funzione per osservare in tempo reale le richieste dell'anziano collegato a questo familiare
     private fun osservaRichiesteAnziano() {
         val uid = familiareId
         if (uid == null) {
@@ -70,6 +64,7 @@ class AttivitaFamiliareViewModel(
         }
     }
 
+    // funzione per osservare in tempo reale gli alert sos di questo familiare e tenere solo il più recente attivo
     private fun osservaSos() {
         val uid = familiareId ?: return
         viewModelScope.launch {
@@ -81,7 +76,7 @@ class AttivitaFamiliareViewModel(
         }
     }
 
-    /** Chiude l'alert SOS: l'anziano è stato "preso in carico" dal familiare. */
+    // funzione per chiudere l'alert sos: l'anziano è stato preso in carico dal familiare
     fun chiudiSos(alertId: String) {
         viewModelScope.launch {
             sosRepository.aggiornaStato(alertId, SosStatus.CHIUSO).onFailure { errore ->
@@ -90,7 +85,7 @@ class AttivitaFamiliareViewModel(
         }
     }
 
-    /** Conferma il completamento e salva la valutazione (stelle 1..5 + commento facoltativo). */
+    // funzione per confermare il completamento di una richiesta e salvare la valutazione
     fun confermaEValuta(richiesta: Request, stelle: Int, commento: String?) {
         val valutatoreId = familiareId ?: return
         val volontarioId = richiesta.volontarioId ?: return
@@ -105,12 +100,8 @@ class AttivitaFamiliareViewModel(
             )
             ratingRepository.creaRatingEConfermaRichiesta(rating).fold(
                 onSuccess = {
-                    // Rating creato e richiesta confermata: ora ricalcoliamo
-                    // la media del volontario. Se questo secondo passo
-                    // fallisse non mostriamo errore bloccante: il rating è
-                    // già salvato correttamente, non vogliamo confondere
-                    // l'utente facendogli credere che l'operazione sia fallita
-                    // quando in realtà è già andata a buon fine.
+                    // il rating è già salvato: se questo secondo passo fallisse
+                    // non si mostra un errore, per non confondere l'utente
                     userRepository.aggiornaRatingMedio(volontarioId)
                 },
                 onFailure = { errore ->
@@ -120,6 +111,7 @@ class AttivitaFamiliareViewModel(
         }
     }
 
+    // funzione per segnalare che l'errore è stato mostrato e va nascosto
     fun erroreMostrato() {
         _errore.value = null
     }

@@ -26,14 +26,8 @@ import com.careconnect.viewmodel.familiare.ProfiloFamiliareViewModel
 import com.careconnect.viewmodel.familiare.ProfiloFamiliareViewModelFactory
 import kotlinx.coroutines.launch
 
-/**
- * Profilo del Familiare (FASE 6): mostra il proprio nome e quello
- * dell'anziano seguito, più il logout.
- *
- * DATA BINDING (lezione 9): le due TextView sono legate interamente
- * dall'XML con @{viewModel.campo}; basta collegare il ViewModel al binding
- * e impostare il lifecycleOwner. Il Fragment non riempie più nessuna View.
- */
+// profilo del familiare: nome proprio e dell'anziano seguito, più logout.
+// entrambe le TextView sono legate dall'XML con data binding
 class ProfiloFamiliareFragment : Fragment() {
 
     private var _binding: FragmentProfiloFamiliareBinding? = null
@@ -68,6 +62,7 @@ class ProfiloFamiliareFragment : Fragment() {
         osservaErrori()
     }
 
+    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un Toast
     private fun osservaErrori() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -90,17 +85,13 @@ class ProfiloFamiliareFragment : Fragment() {
             .show()
     }
 
+    // funzione che esegue il logout e riporta l'utente al flusso di autenticazione
     private fun eseguiLogout() {
-        // Il logout passa dal condiviso AuthViewModel (resetta anche
-        // sessionCache e AuthUiState).
         authViewModel.logout()
 
         val navHostFragmentPrincipale = requireActivity().supportFragmentManager
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navControllerPrincipale = navHostFragmentPrincipale.navController
-
-        // Svuota tutto lo stack principale fino alla radice (inclusa) e
-        // riparte dal login, in modo deterministico (non con popUpTo(0)).
         val opzioni = navOptions {
             popUpTo(navControllerPrincipale.graph.id) { inclusive = true }
         }

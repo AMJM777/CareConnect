@@ -1,39 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Grafo di navigazione per il flusso di autenticazione: login, registrazione,
-     e la schermata di completamento profilo per il primo accesso Google.
-     È un grafo "annidato": verrà incluso dentro il grafo principale
-     dell'app (che aggiungerò con le home per ruolo), così resta
-     leggibile e isolato come singola unità logica. -->
+<!-- grafo annidato per il flusso di autenticazione con login, registrazione e completamento profilo -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_auth"
     app:startDestination="@id/loginFragment">
 
+    <!-- schermata iniziale di accesso all'app -->
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.careconnect.ui.auth.LoginFragment"
         android:label=""
         tools:layout="@layout/fragment_login">
 
+        <!-- azione per navigare verso la creazione di un nuovo account -->
         <action
             android:id="@+id/action_login_to_registrazione"
             app:destination="@id/registrazioneFragment" />
 
+        <!-- azione per completare i dati dopo il primo login con account google -->
         <action
             android:id="@+id/action_login_to_completaProfiloGoogle"
             app:destination="@id/completaProfiloGoogleFragment" />
 
     </fragment>
 
+    <!-- schermata per la registrazione classica tramite email e password -->
     <fragment
         android:id="@+id/registrazioneFragment"
         android:name="com.careconnect.ui.auth.RegistrazioneFragment"
         android:label="Registrati"
         tools:layout="@layout/fragment_registrazione">
 
-        <!-- popUpTo + popUpToInclusive: torna a Login "pulendo" Registrazione
-             dallo stack, così il tasto Indietro da Login non riporta qui. -->
+        <!-- azione per tornare al login pulendo lo stack di navigazione in modo da non creare loop -->
         <action
             android:id="@+id/action_registrazione_to_login"
             app:destination="@id/loginFragment"
@@ -42,6 +41,7 @@
 
     </fragment>
 
+    <!-- schermata per definire il ruolo al primo accesso con google, la navigazione in uscita è gestita via codice -->
     <fragment
         android:id="@+id/completaProfiloGoogleFragment"
         android:name="com.careconnect.ui.auth.CompletaProfiloGoogleFragment"

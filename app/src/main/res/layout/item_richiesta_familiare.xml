@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- contenitore radice obbligatorio per abilitare il data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Card della richiesta vista dal Familiare. -->
+    <!-- card della singola richiesta vista dal familiare con margini di distanziamento -->
     <com.google.android.material.card.MaterialCardView
         style="@style/CareConnect.Card"
         android:layout_width="match_parent"
@@ -11,6 +12,7 @@
         android:layout_marginEnd="@dimen/spacing_small"
         android:layout_marginTop="@dimen/spacing_small">
 
+        <!-- layout interno che organizza verticalmente i dettagli della richiesta -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +36,7 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
 
-            <!-- Stato "a pillola". Colore per stato: nel prossimo step. -->
+            <!-- indicatore a pillola per evidenziare lo stato di avanzamento -->
             <TextView
                 android:id="@+id/statoText"
                 style="@style/CareConnect.StatusChip"
@@ -43,7 +45,7 @@
                 android:layout_marginTop="@dimen/spacing_small"
                 tools:text="Completata, in attesa di conferma" />
 
-            <!-- Stessa logica del corrispettivo Anziano. -->
+            <!-- nome del volontario, cliccabile per aprirne il profilo, visibile solo se in carico o completata -->
             <TextView
                 android:id="@+id/volontarioNomeText"
                 android:layout_width="wrap_content"
@@ -65,6 +67,7 @@
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="04/07/2026 10:15" />
 
+            <!-- bottone per confermare la chiusura dell'attività e lasciare un feedback al volontario -->
             <Button
                 android:id="@+id/confermaButton"
                 style="@style/Widget.Material3.Button.TextButton"

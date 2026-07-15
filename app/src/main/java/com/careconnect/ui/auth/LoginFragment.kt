@@ -27,18 +27,14 @@ import androidx.navigation.fragment.findNavController
 import com.careconnect.ui.auth.navigaAllaHomePerRuolo
 import com.careconnect.util.SessionCache
 
-/**
- * Schermata di login (email/password + Google).
- * Usa lo stesso AuthViewModel di RegistrazioneFragment: activityViewModels()
- * lo scopa alla Activity (unica nell'app), non serve un NavGraph per condividerlo.
- * TODO Fase 3: valutare passaggio a navGraphViewModels() quando esiste il grafo
- * di navigazione, per uno scoping più stretto al solo flusso di autenticazione.
- */
+//schermata di login (email/password + Google).
+
 class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
+    // stesso AuthViewModel di RegistrazioneFragment, condiviso tramite l'Activity
     private val viewModel: AuthViewModel by activityViewModels {
         AuthViewModelFactory(AuthRepositoryImpl(), UserRepositoryImpl(), SessionCache(requireContext()))
     }
@@ -70,20 +66,13 @@ class LoginFragment : Fragment() {
         osservaStatoAutenticazione()
     }
 
-    /**
-     * Apre il selettore account di sistema (Credential Manager) e, se l'utente
-     * ne sceglie uno, passa l'ID token ottenuto al ViewModel per completare
-     * il login su Firebase. Vive nel Fragment (non nel ViewModel) perché
-     * Credential Manager richiede il Context dell'Activity per mostrare la UI.
-     */
+    // funzione per aprire il selettore account Google e passare il token al ViewModel
     private fun avviaLoginGoogle() {
         val credentialManager = CredentialManager.create(requireContext())
 
-        // Richiede specificamente credenziali Google (non password salvate o altro)
+        // Richiede specificamente credenziali Google
         val googleIdOption = GetGoogleIdOption.Builder()
             .setServerClientId(getString(R.string.default_web_client_id))
-            // false = mostra anche account non ancora usati con questa app,
-            // non solo quelli già "autorizzati" in passato
             .setFilterByAuthorizedAccounts(false)
             .build()
 
@@ -103,21 +92,16 @@ class LoginFragment : Fragment() {
                 viewModel.loginConGoogle(googleIdTokenCredential.idToken)
 
             } catch (e: GetCredentialCancellationException) {
-                // L'utente ha chiuso il selettore senza scegliere nulla:
-                // non è un errore, semplicemente non facciamo nulla e il
-                // form resta nello stato in cui era (Idle).
+                // utente che chiude il selettore senza scegliere: non è un errore
 
             } catch (e: Exception) {
-                // Qualunque altro problema (es. nessun account Google sul
-                // dispositivo, problemi di configurazione): lo trattiamo
-                // come un vero errore, mostrato tramite lo stesso AuthUiState
-                // usato per gli errori di login email/password.
                 binding.errorText.text = e.message ?: getString(R.string.login_generic_error)
                 binding.errorText.visibility = View.VISIBLE
             }
         }
     }
 
+    // funzione per osservare lo stato del ViewModel e aggiornare la UI di conseguenza.
     private fun osservaStatoAutenticazione() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

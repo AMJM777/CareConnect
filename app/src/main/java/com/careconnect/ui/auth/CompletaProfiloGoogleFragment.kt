@@ -23,25 +23,20 @@ import com.careconnect.ui.auth.navigaAllaHomePerRuolo
 import com.careconnect.util.SessionCache
 
 /**
- * Schermata mostrata solo al primo accesso con Google, quando Firebase Auth
+ * schermata mostrata solo al primo accesso con Google, quando Firebase Auth
  * ha già le credenziali ma il profilo Firestore non esiste ancora.
- * Raccoglie nome (pre-compilato da Google, se disponibile) e ruolo,
- * poi chiama AuthViewModel.completaRegistrazioneGoogle() per salvarli.
+ * raccoglie nome e ruolo, poi chiama AuthViewModel.completaRegistrazioneGoogle() per salvarli.
  */
 class CompletaProfiloGoogleFragment : Fragment() {
 
     private var _binding: FragmentCompletaProfiloGoogleBinding? = null
     private val binding get() = _binding!!
 
-    // Stesso AuthViewModel di Login/Registrazione: lo stato RichiestaRuoloGoogle
-    // che ci ha portato qui vive già in questa istanza condivisa.
     private val viewModel: AuthViewModel by activityViewModels {
         AuthViewModelFactory(AuthRepositoryImpl(), UserRepositoryImpl(), SessionCache(requireContext()))
     }
 
-    // Evita di sovrascrivere il testo digitato dall'utente ogni volta che
-    // arriva un nuovo stato (es. quando passa a Loading dopo il click):
-    // pre-compiliamo il nome una sola volta.
+    // evita di sovrascrivere il testo digitato dall'utente ogni volta che arriva un nuovo stato
     private var nomeGiaPrecompilato = false
 
     override fun onCreateView(
@@ -62,7 +57,7 @@ class CompletaProfiloGoogleFragment : Fragment() {
 
         osservaStatoAutenticazione()
     }
-
+    // funzione per validare il form e chiedere al ViewModel di completare la registrazione
     private fun onCompletaClick() {
         val nome = binding.nomeInput.text.toString().trim()
         val ruolo = ruoloSelezionato()
@@ -80,7 +75,7 @@ class CompletaProfiloGoogleFragment : Fragment() {
 
         viewModel.completaRegistrazioneGoogle(nome, ruolo!!)
     }
-
+    // funzione per leggere quale RadioButton è selezionato e mapparlo sull'enum UserRole
     private fun ruoloSelezionato(): UserRole? = when (binding.ruoloRadioGroup.checkedRadioButtonId) {
         R.id.ruoloAnzianoRadio -> UserRole.ANZIANO
         R.id.ruoloVolontarioRadio -> UserRole.VOLONTARIO
@@ -88,11 +83,13 @@ class CompletaProfiloGoogleFragment : Fragment() {
         else -> null
     }
 
+    // funzione per mostrare un messaggio di errore di validazione locale (non da Firebase)
     private fun mostraErroreLocale(messaggio: String) {
         binding.errorText.text = messaggio
         binding.errorText.visibility = View.VISIBLE
     }
 
+    // funzione per osservare lo stato di autenticazione esposto dal ViewModel e reagire ai suoi cambiamenti
     private fun osservaStatoAutenticazione() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -100,13 +97,11 @@ class CompletaProfiloGoogleFragment : Fragment() {
             }
         }
     }
-
+    // funzione che aggiorna la UI in base allo stato corrente (es. loading)
     private fun aggiornaUi(stato: AuthUiState) {
         binding.loadingIndicator.visibility =
             if (stato is AuthUiState.Loading) View.VISIBLE else View.GONE
 
-        // Pre-compila il nome una sola volta, quando arriviamo per la prima
-        // volta in questo stato con un nome fornito da Google.
         if (stato is AuthUiState.RichiestaRuoloGoogle && !nomeGiaPrecompilato) {
             stato.utente.nome?.let { binding.nomeInput.setText(it) }
             nomeGiaPrecompilato = true

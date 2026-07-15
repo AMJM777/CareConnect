@@ -25,11 +25,7 @@ import com.careconnect.viewmodel.anziano.DashboardAnzianoViewModel
 import com.careconnect.viewmodel.anziano.DashboardAnzianoViewModelFactory
 import kotlinx.coroutines.launch
 
-/**
- * Home dell'Anziano (FASE 8, ridisegnata): solo 2 pulsanti — "Nuova
- * richiesta" (naviga al Fragment esistente, invariato) e "SOS" (avvisa i
- * familiari collegati e apre il compositore verso il 112).
- */
+// home dell'Anziano: solo due pulsanti, "Nuova richiesta" e "SOS"
 class DashboardAnzianoFragment : Fragment() {
 
     private var _binding: FragmentDashboardAnzianoBinding? = null
@@ -62,12 +58,7 @@ class DashboardAnzianoFragment : Fragment() {
         osservaSosInviato()
     }
 
-    /**
-     * Conferma prima di inviare: un tap accidentale non deve avvisare i
-     * familiari né aprire il compositore verso il 112. Costa un secondo
-     * in una vera emergenza, ma evita falsi allarmi — stesso principio già
-     * usato per logout/annulla/rilascia in questo progetto.
-     */
+    // chiede conferma prima di inviare: un tap accidentale non deve scattare l'SOS.
     private fun mostraConfermaSos() {
         AlertDialog.Builder(requireContext())
             .setTitle("Contattare i soccorsi?")
@@ -77,23 +68,24 @@ class DashboardAnzianoFragment : Fragment() {
             .show()
     }
 
+    // funzione che avvisa i familiari e apre il compositore telefonico verso il 112
     private fun avviaSos() {
-        // Avvisiamo i familiari SUBITO, senza aspettare che l'utente chiuda
-        // il compositore: in un'emergenza, prima lo sanno, meglio è.
+        //avvisa i familiari subito, senza aspettare la chiamata
         viewModel.inviaSos()
 
-        // ACTION_DIAL, non ACTION_CALL: apre il compositore, l'utente
-        // conferma la chiamata. Nessun permesso runtime richiesto.
+        // ACTION_DIAL apre il compositore, l'utente conferma la chiamata:
+        // nessun permesso runtime richiesto
         try {
             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:112"))
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            // Caso limite (es. alcuni emulatori senza app telefono): non
-            // deve far crashare l'app, i familiari sono comunque avvisati.
+            // caso limite (es. alcuni emulatori senza app telefono): non
+            // fa crashare l'app, i familiari sono comunque avvisati
             Toast.makeText(requireContext(), "Nessuna app per chiamare trovata sul dispositivo", Toast.LENGTH_LONG).show()
         }
     }
 
+    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un Toast
     private fun osservaErrori() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -107,6 +99,7 @@ class DashboardAnzianoFragment : Fragment() {
         }
     }
 
+    // funzione per osservare la conferma di invio SOS e mostrare un Toast
     private fun osservaSosInviato() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

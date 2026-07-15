@@ -23,16 +23,8 @@ import com.careconnect.viewmodel.auth.SplashViewModel
 import com.careconnect.viewmodel.auth.SplashViewModelFactory
 import kotlinx.coroutines.launch
 
-/**
- * Vero startDestination del grafo principale. Non è una schermata con cui
- * l'utente interagisce: appare solo per il tempo necessario a
- * SplashViewModel per decidere se mostrare il login o saltare direttamente
- * alla home del ruolo corretto (auto-login).
- *
- * Non usa activityViewModels(): a differenza di AuthViewModel, questo
- * ViewModel serve solo qui, una volta sola all'avvio, quindi lo scope
- * di default (legato al Fragment stesso) va bene.
- */
+// startDestination del grafo principale: decide se mostrare il login o
+// saltare direttamente alla home del ruolo corretto (auto-login)
 class SplashFragment : Fragment() {
 
     private var _binding: FragmentSplashBinding? = null
@@ -60,6 +52,7 @@ class SplashFragment : Fragment() {
         osservaStato()
     }
 
+    // funzione per osservare lo stato del ViewModel e navigare di conseguenza
     private fun osservaStato() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -71,14 +64,11 @@ class SplashFragment : Fragment() {
     private fun reagisciAStato(stato: SplashUiState) {
         when (stato) {
             is SplashUiState.Verifica -> {
-                // Controllo ancora in corso (fallback su Firestore): non facciamo
-                // nulla, la ProgressBar del layout resta visibile.
+                // controllo ancora in corso: si aspetta, la ProgressBar resta visibile
             }
 
             is SplashUiState.VaiAlLogin -> {
-                // popUpTo(splashFragment, inclusive = true): la Splash sparisce
-                // dal back stack, altrimenti il tasto Indietro dal login
-                // riporterebbe l'utente su una schermata vuota.
+                // rimuove la Splash dallo stack: da qui il tasto Indietro non deve tornarci
                 val opzioni = navOptions {
                     popUpTo(R.id.splashFragment) { inclusive = true }
                 }
@@ -86,12 +76,8 @@ class SplashFragment : Fragment() {
             }
 
             is SplashUiState.VaiAllaHome -> {
-                // Non riusiamo navigaAllaHomePerRuolo(): quella funzione fa
-                // popUpTo(nav_graph_auth), corretto quando si arriva da
-                // Login/Registrazione. Da qui invece dobbiamo rimuovere la
-                // Splash stessa dal back stack, altrimenti il tasto Indietro
-                // dalla home ci farebbe rimbalzare su una Splash che
-                // ri-naviga subito di nuovo alla home.
+                // stessa logica di navigaAllaHomePerRuolo(), ma rimuove la Splash
+                // (non il grafo auth) dallo stack, dato che si arriva da qui e non dal login.
                 val destinazione = when (stato.ruolo) {
                     UserRole.ANZIANO -> R.id.homeAnzianoFragment
                     UserRole.VOLONTARIO -> R.id.homeVolontarioFragment

@@ -26,6 +26,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.appcompat.widget.Toolbar
 
+// schermata unica per creare una nuova richiesta o modificarne una esistente
+// (la modalità dipende dagli argomenti ricevuti, vedi leggiArgomentiModalita())
 class NuovaRichiestaFragment : Fragment() {
 
     private var _binding: FragmentNuovaRichiestaBinding? = null
@@ -35,6 +37,7 @@ class NuovaRichiestaFragment : Fragment() {
         NuovaRichiestaViewModelFactory(RequestRepositoryImpl(), UserRepositoryImpl())
     }
 
+    // null in modalità creazione, valorizzato in modalità modifica
     private var requestIdInModifica: String? = null
 
     override fun onCreateView(
@@ -51,11 +54,8 @@ class NuovaRichiestaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Tastiera: diamo allo scroll (la root del layout) un padding in basso
-        // pari all'altezza della tastiera quando compare. Serve perché in
-        // edge-to-edge la finestra NON si ridimensiona da sola: senza questo,
-        // la tastiera coprirebbe i campi. Con il padding, il campo attivo può
-        // scorrere sopra la tastiera.
+        // padding in basso pari all'altezza della tastiera: senza questo,
+        // in edge-to-edge la tastiera coprirebbe i campi
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val tastiera = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             v.updatePadding(bottom = tastiera)
@@ -74,11 +74,7 @@ class NuovaRichiestaFragment : Fragment() {
         osservaStato()
     }
 
-    /**
-     * FASE 7: hint diverso per tipo, con un esempio concreto di cosa
-     * scrivere — soluzione leggera per far sì che l'Anziano sia più
-     * preciso, invece di costruire una vera chat con il Volontario.
-     */
+    // hint diverso per tipo, con un esempio concreto di cosa scrivere
     private fun aggiornaHintDescrizione(checkedId: Int) {
         binding.descrizioneInput.hint = when (checkedId) {
             R.id.tipoSpesaRadio ->
@@ -92,15 +88,14 @@ class NuovaRichiestaFragment : Fragment() {
         }
     }
 
+    // funzione che legge gli argomenti di navigazione ed entra in modalità "modifica", se presenti
     private fun leggiArgomentiModalita() {
         val requestId = arguments?.getString(ARG_REQUEST_ID) ?: return
         val tipoEsistente = arguments?.getString(ARG_TIPO) ?: ""
         val descrizioneEsistente = arguments?.getString(ARG_DESCRIZIONE) ?: ""
 
         requestIdInModifica = requestId
-        // In modifica cambiamo il titolo della Toolbar del ruolo (in creazione
-        // resta "Nuova richiesta", impostato dalla label di navigazione). Così
-        // la barra indica la modalità senza doppioni in pagina.
+        // in modifica cambia il titolo della Toolbar del ruolo, per distinguere le due modalità
         requireActivity().findViewById<Toolbar>(R.id.anzianoToolbar)?.title = "Modifica richiesta"
         binding.inviaButton.text = "Salva modifiche"
 
@@ -118,6 +113,7 @@ class NuovaRichiestaFragment : Fragment() {
 
         binding.descrizioneInput.setText(descrizioneEsistente)
     }
+    // funzione che valida il form e, a seconda della modalità, crea o modifica la richiesta
 
     private fun onInviaClick() {
         val descrizione = binding.descrizioneInput.text.toString().trim()
@@ -147,6 +143,7 @@ class NuovaRichiestaFragment : Fragment() {
         }
     }
 
+    // funzione per leggere quale RadioButton del tipo è selezionato (con testo libero per "Altro")
     private fun tipoSelezionato(): String? = when (binding.tipoRadioGroup.checkedRadioButtonId) {
         R.id.tipoSpesaRadio -> "spesa"
         R.id.tipoBollettaRadio -> "bolletta"
@@ -163,6 +160,7 @@ class NuovaRichiestaFragment : Fragment() {
         binding.errorText.visibility = View.VISIBLE
     }
 
+    // funzione per osservare lo stato del ViewModel e aggiornare la UI di conseguenza
     private fun osservaStato() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -172,14 +170,12 @@ class NuovaRichiestaFragment : Fragment() {
     }
 
     private fun aggiornaUi(stato: NuovaRichiestaUiState) {
-        // Mostra la rotella solo durante il caricamento.
+        // Mostra la rotella solo durante il caricamento
         val inCaricamento = stato is NuovaRichiestaUiState.Loading
         binding.loadingIndicator.visibility = if (inCaricamento) View.VISIBLE else View.GONE
 
-        // Durante il caricamento disabilitiamo il bottone "Invia": su reti
-        // lente l'utente vedrebbe la rotella girare e potrebbe premere di
-        // nuovo, creando richieste duplicate. Bloccando il bottone finché
-        // l'operazione non finisce, evitiamo invii doppi.
+        // disabilita "Invia" durante il caricamento: evita invii doppi se
+        // l'utente preme di nuovo prima che l'operazione finisca
         binding.inviaButton.isEnabled = !inCaricamento
 
         if (stato is NuovaRichiestaUiState.Errore) {

@@ -15,15 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel della schermata "Richieste disponibili": mostra in tempo reale
- * tutte le richieste APERTA e gestisce l'azione "Prendi in carico".
- *
- * FASE 7: prendiInCarico() ora legge anche il proprio nome da UserRepository
- * prima di chiamare aggiornaStato(), per scrivere volontarioNome sulla
- * Request (Opzione B: il repository resta "puro", legge/scrive solo
- * "requests", il ViewModel orchestra la lettura da "users").
- */
+// mostra in tempo reale tutte le richieste aperte e gestisce "prendi in carico"
+// legge anche il proprio nome prima di aggiornare lo stato, per scrivere volontarioNome sulla richiesta
 class RichiesteDisponibiliViewModel(
     private val requestRepository: RequestRepository,
     private val userRepository: UserRepository,
@@ -40,6 +33,7 @@ class RichiesteDisponibiliViewModel(
     private val _errorePresaInCarico = MutableStateFlow<String?>(null)
     val errorePresaInCarico: StateFlow<String?> = _errorePresaInCarico.asStateFlow()
 
+    // funzione per prendere in carico una richiesta: legge il proprio nome e poi aggiorna lo stato
     fun prendiInCarico(requestId: String) {
         val volontarioId = authRepository.utenteCorrente()?.uid
         if (volontarioId == null) {
@@ -48,8 +42,6 @@ class RichiesteDisponibiliViewModel(
         }
 
         viewModelScope.launch {
-            // Una sola lettura in più rispetto a prima: il nome del volontario
-            // stesso, che ci serve solo per denormalizzarlo sulla Request.
             val volontario = userRepository.getUtente(volontarioId).getOrElse {
                 _errorePresaInCarico.value = it.message ?: "Impossibile leggere il tuo profilo"
                 return@launch
@@ -61,7 +53,7 @@ class RichiesteDisponibiliViewModel(
                 nuovoVolontarioId = volontarioId,
                 nuovoVolontarioNome = volontario.nome
             ).fold(
-                onSuccess = { /* la UI si aggiorna da sola: osservaRichiesteAperte è realtime */ },
+                onSuccess = { /* la ui si aggiorna da sola: flow realtime */ },
                 onFailure = { errore ->
                     _errorePresaInCarico.value = errore.message ?: "Impossibile prendere in carico la richiesta"
                 }

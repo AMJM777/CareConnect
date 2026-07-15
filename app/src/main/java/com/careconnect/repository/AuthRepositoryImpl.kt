@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
+// implementazione di AuthRepository
 class AuthRepositoryImpl(
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 ) : AuthRepository {
@@ -58,10 +59,7 @@ class AuthRepositoryImpl(
     override fun logout() {
         firebaseAuth.signOut()
     }
-
+//funzione che coverte l'utente Firebase nel modello del dominio AuthUser
     private fun FirebaseUser.toAuthUser(): AuthUser =
-    // displayName è popolato automaticamente da Firebase dopo un
-    // login Google (viene dal profilo dell'account Google), resta
-        // null per la registrazione email/password.
         AuthUser(uid = uid, email = email, nome = displayName)
 }

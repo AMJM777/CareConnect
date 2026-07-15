@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Gli id devono coincidere ESATTAMENTE con gli id delle destinazioni in
-     nav_graph_volontario.xml. Icone di sistema, stesso stile "placeholder
-     grafico" già usato in bottom_nav_anziano.xml. -->
+<!-- voci della bottom navigation per il ruolo volontario -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item

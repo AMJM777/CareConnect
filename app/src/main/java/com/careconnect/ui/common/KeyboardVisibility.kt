@@ -7,18 +7,9 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 
 /**
- * Nasconde [bottomNav] mentre la tastiera è aperta e la rimostra quando si
- * chiude.
- *
- * Perché NON usiamo gli insets della tastiera: sulla nostra app la root usa
- * fitsSystemWindows (che "consuma" gli insets) e la finestra si ridimensiona
- * quando compare la tastiera (in quel caso l'altezza della tastiera misurata
- * dagli insets è 0). Quindi qui rileviamo la tastiera in modo diretto e
- * sempre affidabile: confrontiamo l'area visibile della finestra con
- * l'altezza totale dello schermo. Se in basso "manca" più del 15% dello
- * schermo, è la tastiera (valori piccoli sono solo la barra di navigazione).
- *
- * Il listener si rimuove da solo quando la vista del Fragment viene distrutta.
+ * funzione per nascondere bottomNav mentre la tastiera è aperta e rimostrarla quando si chiude.
+ * in questa app la root usa fitsSystemWindows e la finestra si ridimensiona quando compare
+ * la tastiera
  */
 fun nascondiBottomNavQuandoTastieraAperta(
     root: View,
@@ -34,8 +25,7 @@ fun nascondiBottomNavQuandoTastieraAperta(
         val tastieraAperta = spazioMancanteInBasso > altezzaSchermo * 0.15
         val nuovaVisibilita = if (tastieraAperta) View.GONE else View.VISIBLE
 
-        // Cambio la visibilità solo se serve davvero: evita relayout inutili
-        // (questo listener scatta a ogni passata di layout).
+        // Cambio la visibilità solo se serve : evita relayout inutili
         if (bottomNav.visibility != nuovaVisibilita) {
             bottomNav.visibility = nuovaVisibilita
         }

@@ -15,12 +15,8 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel della schermata "Le mie richieste": mostra la lista in tempo
- * reale e gestisce l'azione "Annulla" (aggiornaStato -> ANNULLATA).
- * "requestRepository" ora è salvato come proprietà della classe (prima era
- * un parametro usato solo una volta): serve anche per annullaRichiesta().
- */
+// mostra in tempo reale le richieste dell'anziano e gestisce l'azione "annulla"
+
 class MieRichiesteViewModel(
     private val requestRepository: RequestRepository,
     authRepository: AuthRepository
@@ -42,12 +38,11 @@ class MieRichiesteViewModel(
         )
     }
 
-    // Messaggio di errore da mostrare come Toast, se l'annullamento fallisce.
-    // null = nessun errore da mostrare. Il Fragment lo resetta a null dopo
-    // averlo mostrato, per non rimostrarlo a ogni ricomposizione della UI.
+    // null = nessun errore da mostrare. il Fragment lo resetta dopo averlo mostrato
     private val _erroreAnnullamento = MutableStateFlow<String?>(null)
     val erroreAnnullamento: StateFlow<String?> = _erroreAnnullamento.asStateFlow()
 
+    // funzione per annullare una richiesta
     fun annullaRichiesta(requestId: String) {
         viewModelScope.launch {
             requestRepository.aggiornaStato(requestId, RequestStatus.ANNULLATA).fold(
@@ -59,6 +54,7 @@ class MieRichiesteViewModel(
         }
     }
 
+    // funzione per segnalare che l'errore è stato mostrato e va nascosto
     fun erroreMostrato() {
         _erroreAnnullamento.value = null
     }

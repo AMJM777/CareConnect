@@ -29,19 +29,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 
-/**
- * Schermata Profilo del Volontario: nome, email, ruolo, valutazione,
- * descrizione modificabile, e logout.
- *
- * DATA BINDING (lezione 9): nome/email/valutazione sono legati direttamente
- * dall'XML tramite @{viewModel.campo}. Per farlo bastano due righe dopo
- * l'inflate: binding.viewModel = viewModel e binding.lifecycleOwner =
- * viewLifecycleOwner (così il binding osserva i LiveData e aggiorna le
- * TextView da solo). Il Fragment non ha più codice per riempirle a mano.
- *
- * FIX (invariato): il logout passa dal condiviso AuthViewModel, non da un
- * logout() locale, per non lasciare lo stato di autenticazione "sporco".
- */
+// profilo del volontario: nome, email, ruolo, valutazione, descrizione
+// modificabile, logout. nome/email/valutazione sono legati dall'XML con data binding.
 class ProfiloVolontarioFragment : Fragment() {
 
     private var _binding: FragmentProfiloVolontarioBinding? = null
@@ -51,10 +40,8 @@ class ProfiloVolontarioFragment : Fragment() {
         ProfiloVolontarioViewModelFactory(UserRepositoryImpl(), AuthRepositoryImpl())
     }
 
-    // Stesso AuthViewModel condiviso usato da Login/Registrazione e dagli
-    // altri due ruoli: activityViewModels() garantisce che sia la STESSA
-    // istanza, quindi il logout() qui resetta lo stato che LoginFragment
-    // osserva davvero.
+    // stesso AuthViewModel condiviso di login/registrazione: garantisce che
+    // sia la stessa istanza, così il logout resetta lo stato osservato altrove.
     private val authViewModel: AuthViewModel by activityViewModels {
         AuthViewModelFactory(
             AuthRepositoryImpl(),
@@ -71,11 +58,7 @@ class ProfiloVolontarioFragment : Fragment() {
         _binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_profilo_volontario, container, false
         )
-        // Colleghiamo il ViewModel al layout: da qui le espressioni @{} nel
-        // file XML possono leggere i suoi LiveData.
         binding.viewModel = viewModel
-        // Diamo al binding un "proprietario del ciclo di vita": senza questo
-        // le TextView legate a LiveData NON si aggiornerebbero da sole.
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -83,9 +66,7 @@ class ProfiloVolontarioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Tastiera: padding in basso pari all'altezza della tastiera, così il
-        // campo bio può salire sopra di essa (stesso meccanismo di Nuova
-        // richiesta).
+        // padding in basso pari all'altezza della tastiera, così il campo bio può salire sopra.
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val tastiera = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             v.updatePadding(bottom = tastiera)
@@ -101,14 +82,14 @@ class ProfiloVolontarioFragment : Fragment() {
         osservaBioSalvata()
     }
 
-    // La bio è un campo EDITABILE: non la leghiamo in due vie, la scriviamo
-    // nell'EditText una sola volta quando il profilo è caricato.
+    // la bio è un campo editabile: viene scritta nell'EditText una sola volta, al caricamento.
     private fun preRiempiBio() {
         viewModel.bioIniziale.observe(viewLifecycleOwner) { bio ->
             binding.bioEditText.setText(bio)
         }
     }
 
+    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un Toast.
     private fun osservaErrori() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -122,6 +103,7 @@ class ProfiloVolontarioFragment : Fragment() {
         }
     }
 
+    // funzione per osservare la conferma di salvataggio della bio e mostrare un Toast.
     private fun osservaBioSalvata() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -144,17 +126,14 @@ class ProfiloVolontarioFragment : Fragment() {
             .show()
     }
 
+    // funzione che esegue il logout e riporta l'utente al flusso di autenticazione.
     private fun eseguiLogout() {
-        // Il logout passa dal condiviso AuthViewModel (resetta anche
-        // sessionCache e AuthUiState).
         authViewModel.logout()
 
         val navHostFragmentPrincipale = requireActivity().supportFragmentManager
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navControllerPrincipale = navHostFragmentPrincipale.navController
 
-        // Svuota tutto lo stack principale fino alla radice (inclusa) e
-        // riparte dal login, in modo deterministico (non con popUpTo(0)).
         val opzioni = navOptions {
             popUpTo(navControllerPrincipale.graph.id) { inclusive = true }
         }

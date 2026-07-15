@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- contenitore radice obbligatorio per abilitare il data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Card della richiesta presa in carico (Volontario). -->
+    <!-- card della richiesta presa in carico dal volontario con margini di distanziamento -->
     <com.google.android.material.card.MaterialCardView
         style="@style/CareConnect.Card"
         android:layout_width="match_parent"
@@ -11,6 +12,7 @@
         android:layout_marginEnd="@dimen/spacing_small"
         android:layout_marginTop="@dimen/spacing_small">
 
+        <!-- layout interno che organizza verticalmente i dettagli e le azioni -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +36,7 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
 
-            <!-- Visibile solo qui (dopo l'accettazione), non nelle disponibili. -->
+            <!-- nome dell'autore della richiesta, visibile al volontario solo dopo aver accettato l'incarico -->
             <TextView
                 android:id="@+id/autoreNomeText"
                 android:layout_width="wrap_content"
@@ -45,6 +47,7 @@
                 android:textColor="@color/care_primary_dark"
                 tools:text="Da: Maria Rossi" />
 
+            <!-- indirizzo dell'autore per permettere al volontario di raggiungerlo fisicamente -->
             <TextView
                 android:id="@+id/autoreIndirizzoText"
                 android:layout_width="wrap_content"
@@ -54,7 +57,7 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="Via Roma 12, Milano" />
 
-            <!-- Stato "a pillola". Colore per stato: nel prossimo step. -->
+            <!-- indicatore a pillola per mostrare lo stato attuale della richiesta -->
             <TextView
                 android:id="@+id/statoText"
                 style="@style/CareConnect.StatusChip"
@@ -72,6 +75,7 @@
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="04/07/2026 10:15" />
 
+            <!-- contenitore orizzontale per i bottoni di gestione della richiesta -->
             <LinearLayout
                 android:id="@+id/azioniContainer"
                 android:layout_width="wrap_content"
@@ -79,6 +83,7 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="@dimen/spacing_small">
 
+                <!-- bottone per segnalare di aver concluso positivamente l'attività -->
                 <Button
                     android:id="@+id/completaButton"
                     style="@style/Widget.Material3.Button.TextButton"
@@ -87,6 +92,7 @@
                     android:text="Segna come completata"
                     android:textColor="@color/care_primary_dark" />
 
+                <!-- bottone per rinunciare all'incarico e far tornare la richiesta tra quelle disponibili -->
                 <Button
                     android:id="@+id/rilasciaButton"
                     style="@style/Widget.Material3.Button.TextButton"
