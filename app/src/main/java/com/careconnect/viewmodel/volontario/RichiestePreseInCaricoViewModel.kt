@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -30,11 +31,15 @@ class RichiestePreseInCaricoViewModel(
             emptyFlow()
         }
 
-        flowRichieste.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+        // ordinate per data di creazione decrescente: vedi commento in
+        // RichiesteDisponibiliViewModel, stesso motivo (query senza orderBy).
+        flowRichieste
+            .map { lista -> lista.sortedByDescending { it.timestampCreazione.seconds } }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
     }
 
     private val _errore = MutableStateFlow<String?>(null)

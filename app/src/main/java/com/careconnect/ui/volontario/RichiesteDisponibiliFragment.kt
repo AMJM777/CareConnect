@@ -53,6 +53,11 @@ class RichiesteDisponibiliFragment : Fragment() {
 
         binding.richiesteRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.richiesteRecyclerView.adapter = adapter
+        // la query non ha orderBy (per non richiedere un indice composito): l'ordine
+        // dei documenti può cambiare da uno snapshot all'altro. Con l'item animator di
+        // default, notifyDataSetChanged() su una riga che "cambia posizione" scatena
+        // un'animazione di dissolvenza che la mostra vuota per un istante: la disabilitiamo.
+        binding.richiesteRecyclerView.itemAnimator = null
 
         osservaRichieste()
         osservaErrori()

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -31,24 +32,44 @@ class MieRichiesteViewModel(
             emptyFlow()
         }
 
-        flowRichieste.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+        // ordinate per data di creazione decrescente: vedi commento in
+        // RichiesteDisponibiliViewModel, stesso motivo (query senza orderBy).
+        flowRichieste
+            .map { lista -> lista.sortedByDescending { it.timestampCreazione.seconds } }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
     }
 
     // null = nessun errore da mostrare. il Fragment lo resetta dopo averlo mostrato
     private val _erroreAnnullamento = MutableStateFlow<String?>(null)
     val erroreAnnullamento: StateFlow<String?> = _erroreAnnullamento.asStateFlow()
 
-    // funzione per annullare una richiesta
+    // funzione per annullare una richiesta già presa in carico: transizione di
+    // stato (Update), NON una Delete. Si conserva lo storico perché un
+    // volontario è già coinvolto.
     fun annullaRichiesta(requestId: String) {
         viewModelScope.launch {
             requestRepository.aggiornaStato(requestId, RequestStatus.ANNULLATA).fold(
                 onSuccess = { /* la UI si aggiorna da sola: osservaRichiestePerAnziano è realtime */ },
                 onFailure = { errore ->
                     _erroreAnnullamento.value = errore.message ?: "Impossibile annullare la richiesta"
+                }
+            )
+        }
+    }
+
+    // funzione per eliminare definitivamente una richiesta ancora APERTA (vera
+    // Delete): nessun volontario l'ha mai vista/accettata, quindi non c'è
+    // storico da preservare.
+    fun eliminaRichiesta(requestId: String) {
+        viewModelScope.launch {
+            requestRepository.eliminaRichiesta(requestId).fold(
+                onSuccess = { /* la UI si aggiorna da sola: osservaRichiestePerAnziano è realtime */ },
+                onFailure = { errore ->
+                    _erroreAnnullamento.value = errore.message ?: "Impossibile eliminare la richiesta"
                 }
             )
         }

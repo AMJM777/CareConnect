@@ -33,6 +33,16 @@ interface RequestRepository {
         nuovaDescrizione: String
     ): Result<Unit>
 
+    /**
+     * funzione per eliminare definitivamente una richiesta (vera Delete, non
+     * una transizione di stato). Permessa solo se la richiesta è ancora
+     * APERTA: se un volontario l'ha già presa in carico c'è storico da
+     * conservare, quindi si usa aggiornaStato(ANNULLATA) invece di questa.
+     * La vera barriera è la security rule Firestore, questo controllo è solo
+     * difesa aggiuntiva lato app.
+     */
+    suspend fun eliminaRichiesta(requestId: String): Result<Unit>
+
     /** Stream in tempo reale delle richieste con stato APERTA, per il volontario */
     fun osservaRichiesteAperte(): Flow<List<Request>>
 

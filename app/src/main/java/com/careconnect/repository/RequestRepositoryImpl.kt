@@ -102,6 +102,21 @@ class RequestRepositoryImpl(
         ).await()
     }
 
+    override suspend fun eliminaRichiesta(requestId: String): Result<Unit> = runCatching {
+        val docRef = collection.document(requestId)
+        val attuale = docRef.get().await().toRequest()
+            ?: throw NoSuchElementException("Richiesta non trovata: $requestId")
+
+        if (attuale.stato != RequestStatus.APERTA) {
+            throw IllegalStateException(
+                "Impossibile eliminare: la richiesta non è più APERTA (stato attuale: ${attuale.stato}). " +
+                    "Usa aggiornaStato(ANNULLATA) per conservarne lo storico."
+            )
+        }
+
+        docRef.delete().await()
+    }
+
     override fun osservaRichiesteAperte(): Flow<List<Request>> = callbackFlow {
         val listener = collection
             .whereEqualTo("stato", RequestStatus.APERTA.firestoreValue)

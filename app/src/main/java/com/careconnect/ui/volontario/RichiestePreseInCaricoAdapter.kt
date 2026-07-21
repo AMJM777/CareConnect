@@ -3,6 +3,7 @@ package com.careconnect.ui.volontario
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.careconnect.databinding.ItemRichiestaIncaricoBinding
 import com.careconnect.model.Request
@@ -10,19 +11,19 @@ import com.careconnect.model.RequestStatus
 import java.text.SimpleDateFormat
 import java.util.Locale
 import androidx.core.content.ContextCompat
+import com.careconnect.ui.common.RichiestaDiffCallback
 import com.careconnect.ui.common.StatoRichiestaColori
 
 /**
  * adapter della lista "Le mie richieste prese in carico". due azioni per
  * riga ("Segna come completata" e "Rilascia"), entrambe passate come lambda
  * dal Fragment: l'Adapter non parla mai con ViewModel/Repository.
+ * ListAdapter + DiffUtil (vedi RichiesteDisponibiliAdapter per il motivo).
  */
 class RichiestePreseInCaricoAdapter(
     private val onCompletaClick: (Request) -> Unit,
     private val onRilasciaClick: (Request) -> Unit
-) : RecyclerView.Adapter<RichiestePreseInCaricoAdapter.RichiestaViewHolder>() {
-
-    private var richieste: List<Request> = emptyList()
+) : ListAdapter<Request, RichiestePreseInCaricoAdapter.RichiestaViewHolder>(RichiestaDiffCallback) {
 
     inner class RichiestaViewHolder(val binding: ItemRichiestaIncaricoBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -36,7 +37,7 @@ class RichiestePreseInCaricoAdapter(
 
     // funzione che collega i dati di una richiesta alla riga corrispondente della lista.
     override fun onBindViewHolder(holder: RichiestaViewHolder, position: Int) {
-        val richiesta = richieste[position]
+        val richiesta = getItem(position)
 
         holder.binding.tipoText.text = richiesta.tipo.replaceFirstChar { it.uppercase() }
         holder.binding.descrizioneText.text = richiesta.descrizione
@@ -62,12 +63,10 @@ class RichiestePreseInCaricoAdapter(
         holder.binding.rilasciaButton.setOnClickListener { onRilasciaClick(richiesta) }
     }
 
-    override fun getItemCount(): Int = richieste.size
-
-    // funzione per sostituire la lista mostrata e aggiornare la RecyclerView.
+    // funzione per sostituire la lista mostrata: submitList() calcola il diff
+    // in background e aggiorna la RecyclerView solo dove serve
     fun aggiornaLista(nuovaLista: List<Request>) {
-        richieste = nuovaLista
-        notifyDataSetChanged()
+        submitList(nuovaLista)
     }
 
     // funzione per tradurre lo stato della richiesta in un'etichetta leggibile per l'utente.

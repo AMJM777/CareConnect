@@ -2,21 +2,25 @@ package com.careconnect.ui.volontario
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.careconnect.databinding.ItemRichiestaDisponibileBinding
 import com.careconnect.model.Request
+import com.careconnect.ui.common.RichiestaDiffCallback
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 // adapter della lista "Richieste disponibili": solo tipo/descrizione/data
 // e il bottone "Prendi in carico". niente autoreNome/autoreIndirizzo: sono
 // visibili a tutti i volontari prima dell'accettazione, mostrarli sarebbe
-// un problema di privacy
+// un problema di privacy.
+// ListAdapter + DiffUtil (RichiestaDiffCallback) invece di
+// RecyclerView.Adapter + notifyDataSetChanged(): così RecyclerView anima
+// solo le righe davvero aggiunte/rimosse/spostate, invece di ridisegnare
+// tutto a ogni snapshot (causa delle righe che apparivano vuote).
 class RichiesteDisponibiliAdapter(
     private val onPrendiInCaricoClick: (Request) -> Unit
-) : RecyclerView.Adapter<RichiesteDisponibiliAdapter.RichiestaViewHolder>() {
-
-    private var richieste: List<Request> = emptyList()
+) : ListAdapter<Request, RichiesteDisponibiliAdapter.RichiestaViewHolder>(RichiestaDiffCallback) {
 
     inner class RichiestaViewHolder(val binding: ItemRichiestaDisponibileBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -30,7 +34,7 @@ class RichiesteDisponibiliAdapter(
 
     // funzione che collega i dati di una richiesta alla riga corrispondente della lista
     override fun onBindViewHolder(holder: RichiestaViewHolder, position: Int) {
-        val richiesta = richieste[position]
+        val richiesta = getItem(position)
 
         holder.binding.tipoText.text = richiesta.tipo.replaceFirstChar { it.uppercase() }
         holder.binding.descrizioneText.text = richiesta.descrizione
@@ -39,12 +43,10 @@ class RichiesteDisponibiliAdapter(
         holder.binding.prendiInCaricoButton.setOnClickListener { onPrendiInCaricoClick(richiesta) }
     }
 
-    override fun getItemCount(): Int = richieste.size
-
-    // funzione per sostituire la lista mostrata e aggiornare la RecyclerView
+    // funzione per sostituire la lista mostrata: submitList() calcola il diff
+    // in background e aggiorna la RecyclerView solo dove serve
     fun aggiornaLista(nuovaLista: List<Request>) {
-        richieste = nuovaLista
-        notifyDataSetChanged()
+        submitList(nuovaLista)
     }
 
     private fun formattaData(data: java.util.Date): String {

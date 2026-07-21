@@ -21,6 +21,7 @@ import com.careconnect.viewmodel.anziano.MieRichiesteViewModelFactory
 import kotlinx.coroutines.launch
 import androidx.navigation.fragment.findNavController
 import com.careconnect.ui.common.mostraProfiloVolontario
+import com.careconnect.model.RequestStatus
 
 // schermata "Le mie richieste": lista in tempo reale + azioni "Modifica"
 // (solo se APERTA) e "Annulla" (APERTA o PRESA_IN_CARICO)
@@ -45,7 +46,7 @@ class MieRichiesteFragment : Fragment() {
             findNavController().navigate(R.id.nuovaRichiestaFragment, argomenti)
         },
         onAnnullaClick = { richiesta ->
-            mostraConfermaAnnullamento(richiesta.id)
+            mostraConfermaAnnullamento(richiesta.id, richiesta.stato)
         },
         onVolontarioClick = { volontarioId -> mostraProfiloVolontario(volontarioId) }
     )
@@ -65,19 +66,34 @@ class MieRichiesteFragment : Fragment() {
 
         binding.richiesteRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.richiesteRecyclerView.adapter = adapter
+        // vedi commento in RichiesteDisponibiliFragment: query senza orderBy,
+        // disabilitiamo l'item animator per evitare righe che appaiono vuote
+        // durante il riordino tra uno snapshot e l'altro.
+        binding.richiesteRecyclerView.itemAnimator = null
 
         osservaRichieste()
         osservaErroriAnnullamento()
     }
 
-    // chiede conferma prima di annullare: azione irreversibile, un tap
-    // accidentale non deve cancellare la richiesta senza accorgersene
-    private fun mostraConfermaAnnullamento(requestId: String) {
+    // chiede conferma prima di annullare/eliminare: azione irreversibile, un
+    // tap accidentale non deve far perdere la richiesta senza accorgersene.
+    // Se è ancora APERTA nessun volontario l'ha mai vista: si elimina
+    // davvero (Delete). Se è già PRESA_IN_CARICO si preserva lo storico
+    // passando ad ANNULLATA (Update), perché un volontario è coinvolto.
+    private fun mostraConfermaAnnullamento(requestId: String, stato: RequestStatus) {
+        val eliminaDavvero = stato == RequestStatus.APERTA
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
-            .setTitle("Annullare la richiesta?")
-            .setMessage("Questa azione non si può annullare.")
-            .setPositiveButton("Sì, annulla") { _, _ ->
-                viewModel.annullaRichiesta(requestId)
+            .setTitle(if (eliminaDavvero) "Eliminare la richiesta?" else "Annullare la richiesta?")
+            .setMessage(
+                if (eliminaDavvero) "Questa azione non si può annullare: la richiesta verrà eliminata definitivamente."
+                else "Questa azione non si può annullare."
+            )
+            .setPositiveButton(if (eliminaDavvero) "Sì, elimina" else "Sì, annulla") { _, _ ->
+                if (eliminaDavvero) {
+                    viewModel.eliminaRichiesta(requestId)
+                } else {
+                    viewModel.annullaRichiesta(requestId)
+                }
             }
             .setNegativeButton("No", null)
             .show()

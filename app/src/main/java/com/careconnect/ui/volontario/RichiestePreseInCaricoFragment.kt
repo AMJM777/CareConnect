@@ -59,6 +59,10 @@ class RichiestePreseInCaricoFragment : Fragment() {
 
         binding.richiesteRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.richiesteRecyclerView.adapter = adapter
+        // vedi commento in RichiesteDisponibiliFragment: query senza orderBy,
+        // disabilitiamo l'item animator per evitare righe che appaiono vuote
+        // durante il riordino tra uno snapshot e l'altro.
+        binding.richiesteRecyclerView.itemAnimator = null
 
         osservaRichieste()
         osservaErrori()

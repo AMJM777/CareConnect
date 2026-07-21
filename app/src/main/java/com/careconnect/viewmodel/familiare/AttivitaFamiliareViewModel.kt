@@ -59,7 +59,9 @@ class AttivitaFamiliareViewModel(
                 return@launch
             }
             requestRepository.osservaRichiestePerAnziano(anzianoId).collect { lista ->
-                _richieste.value = lista
+                // ordinate per data di creazione decrescente: vedi commento in
+                // RichiesteDisponibiliViewModel, stesso motivo (query senza orderBy).
+                _richieste.value = lista.sortedByDescending { it.timestampCreazione.seconds }
             }
         }
     }

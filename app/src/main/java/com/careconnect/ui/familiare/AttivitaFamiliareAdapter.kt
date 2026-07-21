@@ -3,6 +3,7 @@ package com.careconnect.ui.familiare
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.careconnect.databinding.ItemRichiestaFamiliareBinding
 import com.careconnect.model.Request
@@ -10,17 +11,17 @@ import com.careconnect.model.RequestStatus
 import java.text.SimpleDateFormat
 import java.util.Locale
 import androidx.core.content.ContextCompat
+import com.careconnect.ui.common.RichiestaDiffCallback
 import com.careconnect.ui.common.StatoRichiestaColori
 
 // adapter della lista "Attività" del familiare: mostra le richieste
 // dell'anziano seguito, con "Conferma" visibile solo su quelle completate
 // dal volontario e in attesa di conferma.
+// ListAdapter + DiffUtil (vedi RichiesteDisponibiliAdapter per il motivo).
 class AttivitaFamiliareAdapter(
     private val onConfermaClick: (Request) -> Unit,
     private val onVolontarioClick: (String) -> Unit
-) : RecyclerView.Adapter<AttivitaFamiliareAdapter.RichiestaViewHolder>() {
-
-    private var richieste: List<Request> = emptyList()
+) : ListAdapter<Request, AttivitaFamiliareAdapter.RichiestaViewHolder>(RichiestaDiffCallback) {
 
     inner class RichiestaViewHolder(val binding: ItemRichiestaFamiliareBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -34,7 +35,7 @@ class AttivitaFamiliareAdapter(
 
     // funzione che collega i dati di una richiesta alla riga corrispondente della lista
     override fun onBindViewHolder(holder: RichiestaViewHolder, position: Int) {
-        val richiesta = richieste[position]
+        val richiesta = getItem(position)
 
         holder.binding.tipoText.text = richiesta.tipo.replaceFirstChar { it.uppercase() }
         holder.binding.descrizioneText.text = richiesta.descrizione
@@ -64,12 +65,10 @@ class AttivitaFamiliareAdapter(
         holder.binding.confermaButton.setOnClickListener { onConfermaClick(richiesta) }
     }
 
-    override fun getItemCount(): Int = richieste.size
-
-    // funzione per sostituire la lista mostrata e aggiornare la RecyclerView
+    // funzione per sostituire la lista mostrata: submitList() calcola il diff
+    // in background e aggiorna la RecyclerView solo dove serve
     fun aggiornaLista(nuovaLista: List<Request>) {
-        richieste = nuovaLista
-        notifyDataSetChanged()
+        submitList(nuovaLista)
     }
 
     // funzione per tradurre lo stato della richiesta in un'etichetta leggibile
