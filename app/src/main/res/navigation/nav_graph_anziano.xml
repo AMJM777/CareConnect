@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- grafo di navigazione interno per la sezione anziano con le destinazioni della bottom bar e schermate figlie -->
+<!-- grafo di navigazione interno per la sezione anziano con le destinazioni della bottom bar, schermata di modifica raggiunta da "le mie richieste" -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_anziano"
-    app:startDestination="@id/dashboardAnzianoFragment">
+    app:startDestination="@id/nuovaRichiestaHomeFragment">
 
-    <!-- schermata principale con il riepilogo per l'assistito -->
+    <!-- HOME del ruolo: form "Nuova richiesta" diretto + banner "in corso" + SOS -->
     <fragment
-        android:id="@+id/dashboardAnzianoFragment"
-        android:name="com.careconnect.ui.anziano.DashboardAnzianoFragment"
-        android:label="Home" />
+        android:id="@+id/nuovaRichiestaHomeFragment"
+        android:name="com.careconnect.ui.anziano.NuovaRichiestaHomeFragment"
+        android:label="Nuova richiesta" />
 
-    <!-- schermata riutilizzabile sia per creare una nuova richiesta che per modificarne una esistente -->
+    <!-- MODIFICA di una richiesta esistente (raggiunta da "Le mie richieste") -->
     <fragment
         android:id="@+id/nuovaRichiestaFragment"
         android:name="com.careconnect.ui.anziano.NuovaRichiestaFragment"
-        android:label="Nuova richiesta" />
+        android:label="Modifica richiesta" />
 
-    <!-- schermata per visualizzare l'elenco e lo stato delle proprie richieste -->
+    <!-- elenco e stato delle proprie richieste -->
     <fragment
         android:id="@+id/mieRichiesteFragment"
         android:name="com.careconnect.ui.anziano.MieRichiesteFragment"
         android:label="Le mie richieste" />
 
-    <!-- schermata per gestire i dati personali e il codice di condivisione con i familiari -->
+    <!-- dati personali e codice di condivisione con i familiari -->
     <fragment
         android:id="@+id/profiloAnzianoFragment"
         android:name="com.careconnect.ui.anziano.ProfiloAnzianoFragment"

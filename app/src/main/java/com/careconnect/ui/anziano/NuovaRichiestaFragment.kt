@@ -14,9 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.careconnect.R
 import com.careconnect.databinding.FragmentNuovaRichiestaBinding
-import com.careconnect.repository.AuthRepositoryImpl
 import com.careconnect.repository.RequestRepositoryImpl
-import com.careconnect.repository.UserRepositoryImpl
 import com.careconnect.viewmodel.anziano.NuovaRichiestaUiState
 import com.careconnect.viewmodel.anziano.NuovaRichiestaViewModel
 import com.careconnect.viewmodel.anziano.NuovaRichiestaViewModelFactory
@@ -26,18 +24,17 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.appcompat.widget.Toolbar
 
-// schermata unica per creare una nuova richiesta o modificarne una esistente
-// (la modalità dipende dagli argomenti ricevuti, vedi leggiArgomentiModalita())
+// schermata per  modificare una richiesta esistente
 class NuovaRichiestaFragment : Fragment() {
 
     private var _binding: FragmentNuovaRichiestaBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: NuovaRichiestaViewModel by viewModels {
-        NuovaRichiestaViewModelFactory(RequestRepositoryImpl(), UserRepositoryImpl())
+        NuovaRichiestaViewModelFactory(RequestRepositoryImpl())
     }
 
-    // null in modalità creazione, valorizzato in modalità modifica
+    // valorizzato in modalità modifica leggendo gli argomenti di navigazipne
     private var requestIdInModifica: String? = null
 
     override fun onCreateView(
@@ -74,6 +71,7 @@ class NuovaRichiestaFragment : Fragment() {
         osservaStato()
     }
 
+
     // hint diverso per tipo, con un esempio concreto di cosa scrivere
     private fun aggiornaHintDescrizione(checkedId: Int) {
         binding.descrizioneInput.hint = when (checkedId) {
@@ -88,14 +86,14 @@ class NuovaRichiestaFragment : Fragment() {
         }
     }
 
-    // funzione che legge gli argomenti di navigazione ed entra in modalità "modifica", se presenti
+    // funzione che legge gli argomenti di navigazione ed entra in modalità "modifica" inserendo i dati esistenti
     private fun leggiArgomentiModalita() {
         val requestId = arguments?.getString(ARG_REQUEST_ID) ?: return
         val tipoEsistente = arguments?.getString(ARG_TIPO) ?: ""
         val descrizioneEsistente = arguments?.getString(ARG_DESCRIZIONE) ?: ""
 
         requestIdInModifica = requestId
-        // in modifica cambia il titolo della Toolbar del ruolo, per distinguere le due modalità
+        // titolo della Toolbar del ruolo coerente con la modalità
         requireActivity().findViewById<Toolbar>(R.id.anzianoToolbar)?.title = "Modifica richiesta"
         binding.inviaButton.text = "Salva modifiche"
 
@@ -130,17 +128,14 @@ class NuovaRichiestaFragment : Fragment() {
             return
         }
 
+        // questa schermata serve solo alla modifica: l'id deve esserci sempre
         val idInModifica = requestIdInModifica
-        if (idInModifica != null) {
-            viewModel.modificaRichiesta(idInModifica, tipo!!, descrizione)
-        } else {
-            val autoreId = AuthRepositoryImpl().utenteCorrente()?.uid
-            if (autoreId == null) {
-                mostraErroreLocale("Sessione scaduta, effettua di nuovo il login")
-                return
-            }
-            viewModel.creaRichiesta(autoreId, tipo!!, descrizione)
+        if (idInModifica == null) {
+            mostraErroreLocale("Richiesta non valida")
+            return
         }
+
+        viewModel.modificaRichiesta(idInModifica, tipo!!, descrizione)
     }
 
     // funzione per leggere quale RadioButton del tipo è selezionato (con testo libero per "Altro")
@@ -183,8 +178,7 @@ class NuovaRichiestaFragment : Fragment() {
         }
 
         if (stato is NuovaRichiestaUiState.Successo) {
-            val messaggio = if (requestIdInModifica != null) "Richiesta aggiornata" else "Richiesta creata"
-            Toast.makeText(requireContext(), messaggio, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Richiesta aggiornata", Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
         }
     }

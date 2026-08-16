@@ -76,11 +76,17 @@ Il resto → in secondo piano, sotto **Backlog**, con ordine deciso da me.
 - **Design System:** non più parte del T0. La grafica la gestisce l'utente con skill
   dedicate quando lo riterrà necessario (vedi nota in "Priorità").
 
-### 18–22 ago · T1 — Home Anziano 🔴
-- Home = form **"Nuova richiesta" diretto**.
-- **Bottom nav** a 3 voci: *Nuova richiesta* (home) · *Le mie richieste* · *Profilo*.
-- **Banner "richiesta in corso"** in cima al form (per non nascondere lo stato dietro al form).
-- Rifinitura accessibilità: contrasto WCAG, target ≥ 56dp, testo scalabile, TTS sugli elementi chiave.
+### 18–22 ago · T1 — Home Anziano ✅ COMPLETATO (16 ago)
+- ✅ Home = form **"Nuova richiesta" diretto** (nuovo `NuovaRichiestaHomeFragment` +
+  `NuovaRichiestaHomeViewModel`, una schermata/un ViewModel).
+- ✅ **Bottom nav** a 3 voci: *Nuova richiesta* (home) · *Le mie richieste* · *Profilo*.
+- ✅ **Banner "richiesta in corso"** in cima al form: acceso solo se ci sono richieste
+  attive (aperta/presa in carico/completata), tap → "Le mie richieste".
+- ✅ **SOS** ricollocato in fondo alla Home (interni ridisegnati in T2).
+- ✅ Split **creazione/modifica**: `NuovaRichiestaFragment` resta solo per la modifica.
+- ✅ Accessibilità: target ≥ 56dp, testo scalabile (`sp`), contrasto palette esistente.
+- ⏭️ **TTS rimandato a T2** (deciso con l'utente): si introduce dove serve davvero, con l'SOS.
+- Testato end-to-end su dispositivo fisico (11 punti di verifica ok).
 
 ### 23–27 ago · T2 — SOS ripensato 🔴
 - **Doppio trigger, stesso percorso di codice:** pulsante SOS rosso ben visibile + scuotimento

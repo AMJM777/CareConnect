@@ -1,12 +1,44 @@
 # Project State — CareConnect
 
-**Ultimo aggiornamento:** 12 luglio 2026 (sessione "Rifinitura Layout + DataBinding dichiarativo": **Fase 13 completata**. Consolidate le due voci di punteggio a rischio — Layout (3/3) e DataBinding+ViewModel (3/3). Verificate nel codice tutte e 9 le voci della griglia d'esame. Chiusi tutti i bug §10 ancora aperti (barra corta Home, A3 tastiera, A4 bottom bar, freccia Accedi, tema chiaro). Segnate come completate anche Fase 11 (Background Task) e Fase 12 (FCM), verificate nel codice. Vedi `HANDOFF_4_Fase13_Rifinitura_Completata.md`. §2/§4/§9/§10 aggiornati)
+**Ultimo aggiornamento:** 16 agosto 2026 (TESI — **T1 "Home Anziano" completato**: Home ridisegnata come form "Nuova richiesta" diretto + banner "richiesta in corso" realtime + SOS ricollocato; split creazione/modifica; nuovi `NuovaRichiestaHomeFragment`/`NuovaRichiestaHomeViewModel`; rimossi `DashboardAnziano*`. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
+> **Precedente:** 12 luglio 2026 (sessione "Rifinitura Layout + DataBinding dichiarativo": **Fase 13 completata**. Consolidate le due voci di punteggio a rischio — Layout (3/3) e DataBinding+ViewModel (3/3). Verificate nel codice tutte e 9 le voci della griglia d'esame. Chiusi tutti i bug §10 ancora aperti (barra corta Home, A3 tastiera, A4 bottom bar, freccia Accedi, tema chiaro). Segnate come completate anche Fase 11 (Background Task) e Fase 12 (FCM), verificate nel codice. Vedi `HANDOFF_4_Fase13_Rifinitura_Completata.md`. §2/§4/§9/§10 aggiornati)
 > **Precedente:** 8 luglio 2026 (sessione "Bugfix navigazione + Restyling grafico": risolti A1 navigazione/tasto Indietro, A2 contrasto, A6 logout; revisione grafica — palette agganciata al tema, bottom bar viola, card richieste, dashboard Anziano, restyling dei 3 profili. Vedi `HANDOFF_2_Stato_e_Prossimi_Passi.md`)
 > **Precedente:** 7 luglio 2026 (Fasi 9 e 10 completate — Sistema rating + Security Rules; aggiunta §10 bug dispositivo fisico)
 **Scadenza consegna progetto:** 17 luglio 2026
 
 > Questo file va aggiornato da Claude solo su richiesta esplicita dell'utente ("aggiorna il Project State").
 > Dopo ogni aggiornamento, l'utente deve ricaricare manualmente il file nel Project di Claude per renderlo persistente.
+
+---
+
+## 0bis. TESI — Aggiornamenti post-esame
+
+> Sezione che raccoglie le modifiche fatte nella finestra tesi (dal 16 agosto 2026),
+> distinte dal lavoro d'esame (Fasi 0–14, baseline consegnata). Piano attivo in `Roadmap_Tesi.md`.
+
+### T1 — Home Anziano (16 agosto 2026) ✅
+- **Home = form "Nuova richiesta" diretto.** Nuova schermata `NuovaRichiestaHomeFragment`
+  + `NuovaRichiestaHomeViewModel` (un ViewModel di schermata che riunisce tre compiti:
+  creazione richiesta, banner "richiesta in corso", SOS). Sostituisce la vecchia Home a
+  2 pulsanti (`DashboardAnzianoFragment`).
+- **Banner "richiesta in corso":** `StateFlow` realtime da `osservaRichiestePerAnziano`,
+  filtrato agli stati non terminali (APERTA / PRESA_IN_CARICO / COMPLETATA_DAL_VOLONTARIO);
+  visibile solo se non vuoto; tap → tab "Le mie richieste".
+- **Split creazione/modifica:** `NuovaRichiestaFragment` + `NuovaRichiestaViewModel` restano
+  SOLO per la modifica (rimossa `creaRichiesta` e la dipendenza `userRepository` non più usata;
+  factory semplificata a `RequestRepository`).
+- **SOS** ricollocato in fondo alla Home (logica invariata: un alert per ogni familiare
+  collegato + `ACTION_DIAL` verso il 112). Interni (scuotimento / TTS / countdown) previsti in T2.
+- **Navigazione:** `nav_graph_anziano` startDestination → `nuovaRichiestaHomeFragment`;
+  `bottom_nav_anziano` prima voce "Nuova richiesta"; `HomeAnzianoFragment` AppBarConfiguration
+  aggiornata al nuovo id.
+- **Accessibilità:** target ≥ 56dp, testo in `sp`, palette esistente. **TTS rimandato a T2**
+  (deciso con l'utente).
+- **File rimossi:** `DashboardAnzianoFragment.kt`, `DashboardAnzianoViewModel.kt`,
+  `fragment_dashboard_anziano.xml`.
+- **Grafica:** la personalizzazione visiva della Home e dell'intera interfaccia Anziano è
+  rimandata (l'utente la gestirà con skill grafiche dedicate).
+- Testato end-to-end su dispositivo fisico (11 punti di verifica ok).
 
 ---
 

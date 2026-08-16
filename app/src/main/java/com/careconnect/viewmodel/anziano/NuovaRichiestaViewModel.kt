@@ -18,53 +18,15 @@ sealed class NuovaRichiestaUiState {
     data class Errore(val eccezione: Throwable) : NuovaRichiestaUiState()
 }
 
-class NuovaRichiestaViewModel(
-    private val requestRepository: RequestRepository,
-    private val userRepository: UserRepository
+// ViewModel della schermata di MODIFICA di una richiesta esistente
+class NuovaRichiestaViewModel (
+    private val requestRepository: RequestRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<NuovaRichiestaUiState>(NuovaRichiestaUiState.Idle)
     val uiState: StateFlow<NuovaRichiestaUiState> = _uiState.asStateFlow()
 
-    // funzione per creare una richiesta: legge anche il profilo dell'anziano
-    // per copiare nome e indirizzo sulla Request, che serviranno al volontario
-    fun creaRichiesta(autoreId: String, tipo: String, descrizione: String) {
-        viewModelScope.launch {
-            _uiState.value = NuovaRichiestaUiState.Loading
-
-            val autore = userRepository.getUtente(autoreId).getOrElse {
-                _uiState.value = NuovaRichiestaUiState.Errore(it)
-                return@launch
-            }
-
-            // senza indirizzo il volontario non saprebbe dove andare: meglio
-            // bloccare qui che creare una richiesta incompleta
-            val indirizzo = autore.indirizzo
-            if (indirizzo.isNullOrBlank()) {
-                _uiState.value = NuovaRichiestaUiState.Errore(
-                    IllegalStateException(
-                        "Imposta prima il tuo indirizzo dalla Home: serve al volontario per sapere dove venire"
-                    )
-                )
-                return@launch
-            }
-
-            val nuovaRichiesta = Request(
-                autoreId = autoreId,
-                autoreNome = autore.nome,
-                autoreIndirizzo = indirizzo,
-                tipo = tipo,
-                descrizione = descrizione
-            )
-
-            requestRepository.creaRichiesta(nuovaRichiesta).fold(
-                onSuccess = { id -> _uiState.value = NuovaRichiestaUiState.Successo(id) },
-                onFailure = { errore -> _uiState.value = NuovaRichiestaUiState.Errore(errore) }
-            )
-        }
-    }
-
-    // funzione per modificare tipo e descrizione di una richiesta esistente
+    // modifica tipo e descrizione di una richiesta esistente (permesso solo se APERTA)
     fun modificaRichiesta(requestId: String, tipo: String, descrizione: String) {
         viewModelScope.launch {
             _uiState.value = NuovaRichiestaUiState.Loading
@@ -78,13 +40,12 @@ class NuovaRichiestaViewModel(
 }
 
 class NuovaRichiestaViewModelFactory(
-    private val requestRepository: RequestRepository,
-    private val userRepository: UserRepository
+    private val requestRepository: RequestRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NuovaRichiestaViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return NuovaRichiestaViewModel(requestRepository, userRepository) as T
+            return NuovaRichiestaViewModel(requestRepository) as T
         }
         throw IllegalArgumentException("ViewModel sconosciuto: ${modelClass.name}")
     }

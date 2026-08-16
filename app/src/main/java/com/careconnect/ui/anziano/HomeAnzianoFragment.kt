@@ -54,7 +54,7 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
         val toolbar = view.findViewById<Toolbar>(R.id.anzianoToolbar)
 
         // solo la Home è "di primo livello": lì la freccia non compare
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.dashboardAnzianoFragment))
+        appBarConfiguration = AppBarConfiguration(setOf(R.id.nuovaRichiestaHomeFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 
