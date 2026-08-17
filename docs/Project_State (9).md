@@ -1,6 +1,7 @@
 # Project State — CareConnect
 
-**Ultimo aggiornamento:** 16 agosto 2026 (TESI — **T1 "Home Anziano" completato**: Home ridisegnata come form "Nuova richiesta" diretto + banner "richiesta in corso" realtime + SOS ricollocato; split creazione/modifica; nuovi `NuovaRichiestaHomeFragment`/`NuovaRichiestaHomeViewModel`; rimossi `DashboardAnziano*`. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
+**Ultimo aggiornamento:** 17 agosto 2026 (TESI — **T2 "SOS ripensato" completato**: doppio trigger (bottone rosso + scuotimento accelerometro) sullo stesso percorso; overlay di conferma translucido con countdown 5→0, voce TTS "Sto per chiamare aiuto" + conteggio, e ANNULLA grande; a fine countdown `inviaSos()` (→ push FCM esistente) + `ACTION_DIAL` 112; scuotimento solo ad app aperta. Nuovi `TtsHelper`, `ShakeDetector`, `ConfermaSosDialogFragment`. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
+> **Precedente:** 16 agosto 2026 (TESI — **T1 "Home Anziano" completato**: Home ridisegnata come form "Nuova richiesta" diretto + banner "richiesta in corso" realtime + SOS ricollocato; split creazione/modifica; nuovi `NuovaRichiestaHomeFragment`/`NuovaRichiestaHomeViewModel`; rimossi `DashboardAnziano*`. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
 > **Precedente:** 12 luglio 2026 (sessione "Rifinitura Layout + DataBinding dichiarativo": **Fase 13 completata**. Consolidate le due voci di punteggio a rischio — Layout (3/3) e DataBinding+ViewModel (3/3). Verificate nel codice tutte e 9 le voci della griglia d'esame. Chiusi tutti i bug §10 ancora aperti (barra corta Home, A3 tastiera, A4 bottom bar, freccia Accedi, tema chiaro). Segnate come completate anche Fase 11 (Background Task) e Fase 12 (FCM), verificate nel codice. Vedi `HANDOFF_4_Fase13_Rifinitura_Completata.md`. §2/§4/§9/§10 aggiornati)
 > **Precedente:** 8 luglio 2026 (sessione "Bugfix navigazione + Restyling grafico": risolti A1 navigazione/tasto Indietro, A2 contrasto, A6 logout; revisione grafica — palette agganciata al tema, bottom bar viola, card richieste, dashboard Anziano, restyling dei 3 profili. Vedi `HANDOFF_2_Stato_e_Prossimi_Passi.md`)
 > **Precedente:** 7 luglio 2026 (Fasi 9 e 10 completate — Sistema rating + Security Rules; aggiunta §10 bug dispositivo fisico)
@@ -39,6 +40,35 @@
 - **Grafica:** la personalizzazione visiva della Home e dell'intera interfaccia Anziano è
   rimandata (l'utente la gestirà con skill grafiche dedicate).
 - Testato end-to-end su dispositivo fisico (11 punti di verifica ok).
+
+### T2 — SOS ripensato (17 agosto 2026) ✅
+- **Doppio trigger, stesso percorso di codice:** bottone SOS rosso + **scuotimento** del telefono
+  (accelerometro) confluiscono nello stesso overlay di conferma via `avviaFlussoSos()`.
+- **Overlay di conferma robusto** (`ConfermaSosDialogFragment`): `DialogFragment` a tutto schermo
+  con tema translucido (`CareConnect.Dialog.Sos`, la Home resta intravista sotto), countdown
+  **5→0** in un cerchio rosso, tasto **ANNULLA** enorme (96dp). `isCancelable = false`: si esce
+  solo con ANNULLA. Il conteggio è un job legato a `onStart()/onStop()`: uscendo dall'app si ferma
+  e riprende dal numero rimasto → **nessuna chiamata in background** (bug trovato e corretto in test).
+- **Voce (TTS):** nuovo `TtsHelper` riusabile (init asincrono, italiano, coda pre-init,
+  `interrompi()` per la pausa, `chiudi()` per lo shutdown). Legge "Sto per chiamare aiuto" + il
+  conteggio "5, 4, 3, 2, 1". (TTS era stato rimandato da T1.)
+- **Scuotimento (`ShakeDetector`):** ascolta l'accelerometro e richiede più "strattoni" ravvicinati
+  (soglia 2.7g, 3 strattoni in 1.5s, cooldown 3s) per distinguere uno scuotimento voluto da un
+  urto singolo; legato al lifecycle della Home (`onResume/onPause`). Nessun permesso runtime.
+- **Fine countdown:** l'overlay comunica l'esito alla Home via **Fragment Result**; la Home chiama
+  `viewModel.inviaSos()` (un `SosAlert` per familiare → **push FCM** dalla Cloud Function
+  `notificaSosAlFamiliare`, già esistente) + `ACTION_DIAL` 112. **ANNULLA prima dello zero non
+  scrive nulla** (nessun falso allarme ai familiari — decisione presa con l'utente).
+- **Backend invariato:** repository, modelli, Cloud Function e banner in-app al familiare erano già
+  pronti (Fasi 8/12); T2 ha lavorato solo sul livello trigger + conferma.
+- **v1: scuotimento solo ad app aperta.** Il background (app chiusa) richiede un Foreground Service
+  ed è **rimandato come estensione prioritaria** post-T3 (vedi `Roadmap_Tesi.md` → Backlog).
+- **File nuovi:** `util/TtsHelper.kt`, `util/ShakeDetector.kt`, `ui/anziano/ConfermaSosDialogFragment.kt`,
+  `layout/dialog_conferma_sos.xml`, `drawable/bg_cerchio_sos.xml`, stile `CareConnect.Dialog.Sos`
+  in `styles.xml`. **File modificato:** `NuovaRichiestaHomeFragment.kt` (rimosso il vecchio
+  AlertDialog di conferma; aggiunti `ShakeDetector` + listener del Fragment Result).
+- Testato su dispositivo fisico (doppio trigger, voce, ANNULLA, chiamata, push al familiare,
+  pausa/ripresa in background, rotazione).
 
 ---
 

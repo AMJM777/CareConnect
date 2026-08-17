@@ -88,13 +88,17 @@ Il resto → in secondo piano, sotto **Backlog**, con ordine deciso da me.
 - ⏭️ **TTS rimandato a T2** (deciso con l'utente): si introduce dove serve davvero, con l'SOS.
 - Testato end-to-end su dispositivo fisico (11 punti di verifica ok).
 
-### 23–27 ago · T2 — SOS ripensato 🔴
-- **Doppio trigger, stesso percorso di codice:** pulsante SOS rosso ben visibile + scuotimento
-  (accelerometro). Accanto: *"Oppure scuoti il telefono se sei in pericolo"*.
-- **Conferma robusta:** TTS "Sto per chiamare aiuto" + **countdown 5→0** + tasto **ANNULLA** enorme.
-- **Fine countdown:** `ACTION_DIAL` verso **112** (apre il compositore, nessun permesso runtime) +
-  **notifica in-app al familiare** (già presente dalla baseline) + push FCM.
-- **v1:** scuotimento attivo **solo ad app aperta** (background = estensione futura, richiede Service).
+### 23–27 ago · T2 — SOS ripensato ✅ COMPLETATO (17 ago)
+- ✅ **Doppio trigger, stesso percorso di codice:** pulsante SOS rosso + scuotimento
+  (`ShakeDetector`, accelerometro), confluiscono nello stesso overlay via `avviaFlussoSos()`.
+- ✅ **Conferma robusta:** overlay translucido `ConfermaSosDialogFragment` (countdown 5→0 in un
+  cerchio rosso + **ANNULLA** enorme) + voce `TtsHelper` ("Sto per chiamare aiuto" + conteggio).
+  Il conteggio è legato a `onStart/onStop`: si ferma uscendo dall'app, niente chiamate in background.
+- ✅ **Fine countdown:** `inviaSos()` (un `SosAlert` per familiare → push FCM già esistente) +
+  `ACTION_DIAL` verso **112**. ANNULLA prima dello zero non scrive nulla (nessun falso allarme).
+- ✅ **v1:** scuotimento **solo ad app aperta**. Background (app chiusa) → **estensione prioritaria**
+  post-blocchi (richiede Foreground Service, vedi Backlog).
+- Testato end-to-end su dispositivo fisico. Dettaglio in `Project_State` §0bis (T2).
 
 ### 28 ago–1 set · T3 — Chat Anziano ↔ Volontario 🔴
 *Il blocco più a rischio: nuova collezione + regole + realtime + safeguarding.*
@@ -122,6 +126,15 @@ cresce in parallelo al documento — non garantito dentro la finestra.
 
 Solo se avanza tempo, o in parallelo al documento di tesi. Ordinato per rapporto valore-tesi/sforzo
 e sinergia:
+
+> 🔴 **Prima priorità dopo i blocchi pianificati (decisa con l'utente):** **scuotimento SOS in
+> background** — estensione di T2. Un **Foreground Service** che tiene attivo l'accelerometro anche
+> ad app chiusa (con notifica permanente), così lo scuotimento fa scattare l'SOS anche fuori
+> dall'app. Non tocca la logica SOS esistente né la grafica: cambia solo *dove vive* il sensore.
+> Limite da dichiarare in tesi: gli OEM aggressivi (Xiaomi/Huawei/Samsung in risparmio energetico)
+> possono uccidere il service in background → affidabilità non garantita al 100%. Le voci numerate
+> qui sotto restano "il resto" e vengono dopo.
+
 1. **Geolocalizzazione** — già costruita all'esame e ritirata → basso costo di ripristino, alto valore
    reale (matching per vicinanza, cosa che un ente vero apprezza).
 2. **Dashboard familiare arricchita** — frequenza richieste, tempi medi; rafforza il tema "supervisione".
@@ -166,7 +179,8 @@ Ipotesi: come funzione del ruolo **Volontario**.
 ## Decisioni ancora aperte
 
 1. **Chat:** collezione separata vs sotto-collezione della richiesta; livello di visibilità per il garante.
-2. **Scuotimento in background** (serve Service) sì/no — per ora **no**.
+2. **Scuotimento in background** (serve Foreground Service): **deciso SÌ**, come estensione
+   **prioritaria** da fare dopo i blocchi pianificati (T3 + eventuali). In v1 resta solo ad app aperta.
 3. **Servizi sanitari:** funzione (non-clinica) sotto Volontario vs solo capitolo prospettive.
 4. **Ordine fine del backlog** (modificabile).
 

@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -26,13 +25,13 @@ import com.careconnect.repository.AuthRepositoryImpl
 import com.careconnect.repository.RequestRepositoryImpl
 import com.careconnect.repository.SosRepositoryImpl
 import com.careconnect.repository.UserRepositoryImpl
+import com.careconnect.util.ShakeDetector
 import com.careconnect.viewmodel.anziano.NuovaRichiestaHomeViewModel
 import com.careconnect.viewmodel.anziano.NuovaRichiestaHomeViewModelFactory
 import com.careconnect.viewmodel.anziano.NuovaRichiestaUiState
 import kotlinx.coroutines.launch
 
-// Home dell'Anziano: form per CREARE una richiesta + banner "richiesta in corso"
-// + SOS
+// Home dell'Anziano: form per CREARE una richiesta + banner "richiesta in corso" + SOS
 class NuovaRichiestaHomeFragment : Fragment() {
 
     private var _binding: FragmentNuovaRichiestaHomeBinding? = null
@@ -46,6 +45,9 @@ class NuovaRichiestaHomeFragment : Fragment() {
             AuthRepositoryImpl()
         )
     }
+
+    // rilevatore di scuotimento: secondo trigger dell'SOS, oltre al bottone
+    private lateinit var shakeDetector: ShakeDetector
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,7 +78,19 @@ class NuovaRichiestaHomeFragment : Fragment() {
         }
 
         binding.inviaButton.setOnClickListener { onInviaClick() }
-        binding.sosButton.setOnClickListener { mostraConfermaSos() }
+        binding.sosButton.setOnClickListener { avviaFlussoSos() }
+
+        // secondo trigger: lo scuotimento apre lo STESSO overlay di conferma
+        shakeDetector = ShakeDetector(requireContext()) { avviaFlussoSos() }
+
+        // riceve l'esito dell'overlay: se confermato (fine countdown), fa partire l'SOS
+        childFragmentManager.setFragmentResultListener(
+            ConfermaSosDialogFragment.RICHIESTA_KEY, viewLifecycleOwner
+        ) { _, bundle ->
+            if (bundle.getBoolean(ConfermaSosDialogFragment.RISULTATO_CONFERMATO)) {
+                eseguiSos()
+            }
+        }
 
         // tap sul banner -> tab "Le mie richieste"
         binding.bannerInCorso.setOnClickListener {
@@ -90,6 +104,17 @@ class NuovaRichiestaHomeFragment : Fragment() {
         osservaCreazione()
         osservaBanner()
         osservaSos()
+    }
+
+    // lo scuotimento e' attivo solo quando la Home e' in primo piano (v1: no background)
+    override fun onResume() {
+        super.onResume()
+        shakeDetector.avvia()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        shakeDetector.ferma()
     }
 
     // hint diverso per tipo, con un esempio concreto di cosa scrivere
@@ -150,7 +175,6 @@ class NuovaRichiestaHomeFragment : Fragment() {
         binding.descrizioneInput.text?.clear()
         binding.errorText.visibility = View.GONE
     }
-
 
     // stato della CREAZIONE richiesta
     private fun osservaCreazione() {
@@ -226,18 +250,16 @@ class NuovaRichiestaHomeFragment : Fragment() {
         }
     }
 
-    // chiede conferma prima di inviare: un tap accidentale non deve scattare l'SOS
-    private fun mostraConfermaSos() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Contattare i soccorsi?")
-            .setMessage("Si aprirà la chiamata al 112 e i tuoi familiari saranno avvisati subito.")
-            .setPositiveButton("Sì, SOS") { _, _ -> avviaSos() }
-            .setNegativeButton("Annulla", null)
-            .show()
+    // apre l'overlay di conferma (countdown + voce). Stesso percorso per bottone
+    // e scuotimento. Guardia: non apre due overlay contemporaneamente.
+    private fun avviaFlussoSos() {
+        if (childFragmentManager.findFragmentByTag(TAG_CONFERMA_SOS) != null) return
+        ConfermaSosDialogFragment.nuova().show(childFragmentManager, TAG_CONFERMA_SOS)
     }
 
-    // avvisa i familiari e apre il compositore telefonico verso il 112
-    private fun avviaSos() {
+    // eseguito SOLO a fine countdown: avvisa i familiari (-> push automatica) e
+    // apre il compositore telefonico verso il 112
+    private fun eseguiSos() {
         viewModel.inviaSos()
         try {
             val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:112"))
@@ -254,5 +276,9 @@ class NuovaRichiestaHomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        const val TAG_CONFERMA_SOS = "conferma_sos_dialog"
     }
 }

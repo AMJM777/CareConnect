@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#CC000000"
+    android:padding="24dp">
+
+    <!-- titolo grande e ad alto contrasto -->
+    <TextView
+        android:id="@+id/titoloSos"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Sto per chiamare aiuto"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="48dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- sottotitolo esplicativo -->
+    <TextView
+        android:id="@+id/sottotitoloSos"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Chiamo il 112 tra"
+        android:textColor="#DDFFFFFF"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/titoloSos"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- cerchio rosso con il numero del countdown al centro -->
+    <TextView
+        android:id="@+id/countdownText"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:background="@drawable/bg_cerchio_sos"
+        android:gravity="center"
+        android:text="5"
+        android:textColor="@color/white"
+        android:textSize="120sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- tasto ANNULLA enorme, facile da centrare in un momento di panico -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/annullaButton"
+        android:layout_width="0dp"
+        android:layout_height="96dp"
+        android:text="ANNULLA"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@color/care_sos"
+        app:backgroundTint="@color/white"
+        app:cornerRadius="20dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
