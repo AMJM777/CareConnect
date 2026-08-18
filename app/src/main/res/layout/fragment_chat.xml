@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/care_background">
+
+        <!-- intestazione: con chi sto parlando -->
+        <TextView
+            android:id="@+id/intestazioneChat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/spacing_medium"
+            android:textSize="@dimen/text_size_body"
+            android:textStyle="bold"
+            android:textColor="@color/care_on_surface"
+            android:background="@color/care_surface"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Conversazione con Maria Rossi" />
+
+        <!-- avviso di trasparenza: mostrato ai partecipanti (anziano/volontario),
+             nascosto al garante. Reso visibile nel Fragment. -->
+        <TextView
+            android:id="@+id/avvisoTrasparenza"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/spacing_small"
+            android:textSize="14sp"
+            android:textColor="@color/care_on_surface_variant"
+            android:background="@color/care_primary_container"
+            android:text="Se un familiare di riferimento è collegato all'anziano, può leggere questa conversazione."
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/intestazioneChat"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible" />
+
+        <!-- lista messaggi -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/messaggiRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/spacing_small"
+            app:layout_constraintTop_toBottomOf="@id/avvisoTrasparenza"
+            app:layout_constraintBottom_toTopOf="@id/barraInvio"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- messaggio mostrato quando non c'e' ancora nessun messaggio -->
+        <TextView
+            android:id="@+id/emptyStateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nessun messaggio. Scrivi per iniziare."
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface_variant"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/avvisoTrasparenza"
+            app:layout_constraintBottom_toTopOf="@id/barraInvio"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- barra di invio: campo testo + bottone Invia -->
+        <LinearLayout
+            android:id="@+id/barraInvio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_small"
+            android:background="@color/care_surface"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <EditText
+                android:id="@+id/messaggioInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="@dimen/touch_target_min"
+                android:hint="Scrivi un messaggio"
+                android:textSize="@dimen/text_size_body"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLines="4"
+                android:importantForAutofill="no"
+                tools:ignore="Autofill,LabelFor" />
+
+            <Button
+                android:id="@+id/inviaButton"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginStart="@dimen/spacing_small"
+                android:text="Invia"
+                android:textSize="@dimen/text_size_button" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

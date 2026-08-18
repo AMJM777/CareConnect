@@ -22,7 +22,8 @@ import com.careconnect.ui.common.StatoRichiestaColori
  */
 class RichiestePreseInCaricoAdapter(
     private val onCompletaClick: (Request) -> Unit,
-    private val onRilasciaClick: (Request) -> Unit
+    private val onRilasciaClick: (Request) -> Unit,
+    private val onChatClick: (Request) -> Unit
 ) : ListAdapter<Request, RichiestePreseInCaricoAdapter.RichiestaViewHolder>(RichiestaDiffCallback) {
 
     inner class RichiestaViewHolder(val binding: ItemRichiestaIncaricoBinding) :
@@ -58,6 +59,13 @@ class RichiestePreseInCaricoAdapter(
         val puoAgire = richiesta.stato == RequestStatus.PRESA_IN_CARICO
         holder.binding.completaButton.visibility = if (puoAgire) View.VISIBLE else View.GONE
         holder.binding.rilasciaButton.visibility = if (puoAgire) View.VISIBLE else View.GONE
+
+        // la chat è raggiungibile mentre la richiesta è presa in carico
+        // (si scrive) e anche dopo, completata, in sola lettura (storico).
+        val mostraChat = richiesta.stato == RequestStatus.PRESA_IN_CARICO ||
+            richiesta.stato == RequestStatus.COMPLETATA_DAL_VOLONTARIO
+        holder.binding.chatButton.visibility = if (mostraChat) View.VISIBLE else View.GONE
+        holder.binding.chatButton.setOnClickListener { onChatClick(richiesta) }
 
         holder.binding.completaButton.setOnClickListener { onCompletaClick(richiesta) }
         holder.binding.rilasciaButton.setOnClickListener { onRilasciaClick(richiesta) }

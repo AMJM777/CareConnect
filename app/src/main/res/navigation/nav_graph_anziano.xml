@@ -29,4 +29,9 @@
         android:name="com.careconnect.ui.anziano.ProfiloAnzianoFragment"
         android:label="Profilo" />
 
+    <!-- schermata chat con il volontario di una richiesta presa in carico -->
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.careconnect.ui.chat.ChatFragment"
+        android:label="Chat" />
 </navigation>

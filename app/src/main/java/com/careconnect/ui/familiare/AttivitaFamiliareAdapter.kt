@@ -20,7 +20,8 @@ import com.careconnect.ui.common.StatoRichiestaColori
 // ListAdapter + DiffUtil (vedi RichiesteDisponibiliAdapter per il motivo).
 class AttivitaFamiliareAdapter(
     private val onConfermaClick: (Request) -> Unit,
-    private val onVolontarioClick: (String) -> Unit
+    private val onVolontarioClick: (String) -> Unit,
+    private val onChatClick: (Request) -> Unit
 ) : ListAdapter<Request, AttivitaFamiliareAdapter.RichiestaViewHolder>(RichiestaDiffCallback) {
 
     inner class RichiestaViewHolder(val binding: ItemRichiestaFamiliareBinding) :
@@ -57,6 +58,14 @@ class AttivitaFamiliareAdapter(
         } else {
             holder.binding.volontarioNomeText.visibility = View.GONE
         }
+
+        // "Vedi chat" (sola lettura) c'è quando esiste una conversazione:
+        // dalla presa in carico in poi, anche a lavoro completato/confermato
+        val esisteChat = richiesta.stato == RequestStatus.PRESA_IN_CARICO ||
+            richiesta.stato == RequestStatus.COMPLETATA_DAL_VOLONTARIO ||
+            richiesta.stato == RequestStatus.CONFERMATA
+        holder.binding.chatButton.visibility = if (esisteChat) View.VISIBLE else View.GONE
+        holder.binding.chatButton.setOnClickListener { onChatClick(richiesta) }
 
         // "Conferma" ha senso solo quando il volontario ha già segnato la
         // richiesta come completata: tocca al familiare confermarla e valutare

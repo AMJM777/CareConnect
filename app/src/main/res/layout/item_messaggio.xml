@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- riga di un messaggio: la bolla si allinea a destra (mio) o sinistra (altro) -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/spacing_small"
+        android:paddingEnd="@dimen/spacing_small"
+        android:paddingTop="@dimen/spacing_small">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/bollaCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_medium">
+
+                <!-- nome del mittente: visibile solo nella vista del garante,
+                     dove serve distinguere anziano e volontario -->
+                <TextView
+                    android:id="@+id/mittenteNomeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_small"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/care_primary_dark"
+                    android:visibility="gone"
+                    tools:text="Maria Rossi"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/testoMessaggio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    tools:text="Sono sotto casa, arrivo tra cinque minuti" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/spacing_small">
+
+                    <TextView
+                        android:id="@+id/oraMessaggio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/care_on_surface_variant"
+                        tools:text="10:15" />
+
+                    <!-- lettura vocale: visibile solo lato Anziano, sui messaggi ricevuti -->
+                    <Button
+                        android:id="@+id/ascoltaButton"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_small"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:text="Ascolta"
+                        android:textColor="@color/care_primary_dark"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</layout>

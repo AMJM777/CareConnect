@@ -48,7 +48,8 @@ class MieRichiesteFragment : Fragment() {
         onAnnullaClick = { richiesta ->
             mostraConfermaAnnullamento(richiesta.id, richiesta.stato)
         },
-        onVolontarioClick = { volontarioId -> mostraProfiloVolontario(volontarioId) }
+        onVolontarioClick = { volontarioId -> mostraProfiloVolontario(volontarioId) },
+        onChatClick = { richiesta -> apriChat(richiesta) }
     )
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -97,6 +98,22 @@ class MieRichiesteFragment : Fragment() {
             }
             .setNegativeButton("No", null)
             .show()
+    }
+
+    // apre la chat con il volontario della richiesta. Lato anziano la lettura
+    // vocale (TTS) è attiva. Se la richiesta non è più presa in carico, la
+    // chat è in sola lettura (storico), coerente con le security rules.
+    private fun apriChat(richiesta: com.careconnect.model.Request) {
+        val soloLettura = richiesta.stato != RequestStatus.PRESA_IN_CARICO
+        val argomenti = androidx.core.os.bundleOf(
+            com.careconnect.ui.chat.ChatFragment.ARG_REQUEST_ID to richiesta.id,
+            com.careconnect.ui.chat.ChatFragment.ARG_ANZIANO_ID to richiesta.autoreId,
+            com.careconnect.ui.chat.ChatFragment.ARG_VOLONTARIO_ID to (richiesta.volontarioId ?: ""),
+            com.careconnect.ui.chat.ChatFragment.ARG_ALTRO_NOME to (richiesta.volontarioNome ?: ""),
+            com.careconnect.ui.chat.ChatFragment.ARG_MOSTRA_ASCOLTO to true,
+            com.careconnect.ui.chat.ChatFragment.ARG_SOLO_LETTURA to soloLettura
+        )
+        findNavController().navigate(R.id.chatFragment, argomenti)
     }
 
     // funzione per osservare la lista di richieste e aggiornare la RecyclerView

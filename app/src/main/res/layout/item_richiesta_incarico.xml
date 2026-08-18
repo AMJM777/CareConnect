@@ -75,28 +75,42 @@
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="04/07/2026 10:15" />
 
-            <!-- contenitore orizzontale per i bottoni di gestione della richiesta -->
+            <!-- contenitore orizzontale per i bottoni di gestione della richiesta.
+                 larghezza piena + peso uguale sui tre bottoni: si dividono lo
+                 spazio in parti uguali e non vengono mai tagliati sugli schermi. -->
             <LinearLayout
                 android:id="@+id/azioniContainer"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="@dimen/spacing_small">
+
+                <!-- apre la chat con l'anziano della richiesta -->
+                <Button
+                    android:id="@+id/chatButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Chat"
+                    android:textColor="@color/care_primary_dark" />
 
                 <!-- bottone per segnalare di aver concluso positivamente l'attività -->
                 <Button
                     android:id="@+id/completaButton"
                     style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Segna come completata"
+                    android:text="Completa"
                     android:textColor="@color/care_primary_dark" />
 
                 <!-- bottone per rinunciare all'incarico e far tornare la richiesta tra quelle disponibili -->
                 <Button
                     android:id="@+id/rilasciaButton"
                     style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="Rilascia"
                     android:textColor="@color/care_error" />

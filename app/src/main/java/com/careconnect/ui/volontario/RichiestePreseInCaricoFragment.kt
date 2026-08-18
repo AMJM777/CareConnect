@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.careconnect.R
 import com.careconnect.databinding.FragmentRichiestePreseInCaricoBinding
@@ -40,6 +41,9 @@ class RichiestePreseInCaricoFragment : Fragment() {
         },
         onRilasciaClick = { richiesta ->
             mostraConfermaRilascio(richiesta.id)
+        },
+        onChatClick = { richiesta ->
+            apriChat(richiesta)
         }
     )
 
@@ -79,6 +83,21 @@ class RichiestePreseInCaricoFragment : Fragment() {
             }
             .setNegativeButton("No", null)
             .show()
+    }
+
+    // apre la chat sulla richiesta. Se non è più presa in carico la chat
+    // è in sola lettura (storico), coerente con le security rules.
+    private fun apriChat(richiesta: com.careconnect.model.Request) {
+        val soloLettura = richiesta.stato != com.careconnect.model.RequestStatus.PRESA_IN_CARICO
+        val argomenti = androidx.core.os.bundleOf(
+            com.careconnect.ui.chat.ChatFragment.ARG_REQUEST_ID to richiesta.id,
+            com.careconnect.ui.chat.ChatFragment.ARG_ANZIANO_ID to richiesta.autoreId,
+            com.careconnect.ui.chat.ChatFragment.ARG_VOLONTARIO_ID to (richiesta.volontarioId ?: ""),
+            com.careconnect.ui.chat.ChatFragment.ARG_ALTRO_NOME to richiesta.autoreNome,
+            com.careconnect.ui.chat.ChatFragment.ARG_MOSTRA_ASCOLTO to false,
+            com.careconnect.ui.chat.ChatFragment.ARG_SOLO_LETTURA to soloLettura
+        )
+        findNavController().navigate(R.id.chatFragment, argomenti)
     }
 
     // funzione per osservare la lista di richieste esposta dal ViewModel e aggiornare la RecyclerView.

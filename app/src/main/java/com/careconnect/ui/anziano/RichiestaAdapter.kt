@@ -18,9 +18,10 @@ import com.careconnect.ui.common.StatoRichiestaColori
 // bottoni "Modifica" e "Annulla" e il nome del volontario, se presente.
 // ListAdapter + DiffUtil (vedi RichiesteDisponibiliAdapter per il motivo).
 class RichiesteAdapter(
-    private val onModificaClick: (Request) -> Unit,
-    private val onAnnullaClick: (Request) -> Unit,
-    private val onVolontarioClick: (String) -> Unit
+private val onModificaClick: (Request) -> Unit,
+private val onAnnullaClick: (Request) -> Unit,
+private val onVolontarioClick: (String) -> Unit,
+private val onChatClick: (Request) -> Unit
 ) : ListAdapter<Request, RichiesteAdapter.RichiestaViewHolder>(RichiestaDiffCallback) {
 
     inner class RichiestaViewHolder(val binding: ItemRichiestaBinding) :
@@ -67,6 +68,13 @@ class RichiesteAdapter(
         holder.binding.annullaButton.visibility =
             if (puoAnnullare) View.VISIBLE else View.GONE
 
+
+        // chat col volontario: attiva mentre presa in carico (si scrive) e
+        // dopo, completata, in sola lettura (storico).
+        val mostraChat = richiesta.stato == RequestStatus.PRESA_IN_CARICO ||
+                richiesta.stato == RequestStatus.COMPLETATA_DAL_VOLONTARIO
+        holder.binding.chatButton.visibility = if (mostraChat) View.VISIBLE else View.GONE
+        holder.binding.chatButton.setOnClickListener { onChatClick(richiesta) }
         holder.binding.modificaButton.setOnClickListener { onModificaClick(richiesta) }
         holder.binding.annullaButton.setOnClickListener { onAnnullaClick(richiesta) }
     }

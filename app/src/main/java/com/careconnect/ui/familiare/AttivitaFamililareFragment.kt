@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.careconnect.R
 import com.careconnect.databinding.FragmentAttivitaFamiliareBinding
@@ -47,8 +48,26 @@ class AttivitaFamiliareFragment : Fragment() {
 
     private val adapter = AttivitaFamiliareAdapter(
         onConfermaClick = { richiesta -> mostraDialogValutazione(richiesta) },
-        onVolontarioClick = { volontarioId -> mostraProfiloVolontario(volontarioId) }
+        onVolontarioClick = { volontarioId -> mostraProfiloVolontario(volontarioId) },
+        onChatClick = { richiesta -> apriChat(richiesta) }
     )
+
+    // apre la chat dell'assistito in SOLA LETTURA (safeguarding): il garante
+    // legge la conversazione tra il suo assistito e il volontario, non scrive.
+    private fun apriChat(richiesta: Request) {
+        val argomenti = androidx.core.os.bundleOf(
+            com.careconnect.ui.chat.ChatFragment.ARG_REQUEST_ID to richiesta.id,
+            com.careconnect.ui.chat.ChatFragment.ARG_ANZIANO_ID to richiesta.autoreId,
+            com.careconnect.ui.chat.ChatFragment.ARG_VOLONTARIO_ID to (richiesta.volontarioId ?: ""),
+            com.careconnect.ui.chat.ChatFragment.ARG_ANZIANO_NOME to richiesta.autoreNome,
+            com.careconnect.ui.chat.ChatFragment.ARG_VOLONTARIO_NOME to (richiesta.volontarioNome ?: "Volontario"),
+            com.careconnect.ui.chat.ChatFragment.ARG_TITOLO to
+                "Chat: ${richiesta.autoreNome} · ${richiesta.volontarioNome ?: "Volontario"}",
+            com.careconnect.ui.chat.ChatFragment.ARG_MOSTRA_ASCOLTO to false,
+            com.careconnect.ui.chat.ChatFragment.ARG_SOLO_LETTURA to true
+        )
+        findNavController().navigate(R.id.chatFragment, argomenti)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

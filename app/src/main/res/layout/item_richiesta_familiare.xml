@@ -67,6 +67,16 @@
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="04/07/2026 10:15" />
 
+            <!-- apre in sola lettura la chat tra l'anziano e il volontario (safeguarding) -->
+            <Button
+                android:id="@+id/chatButton"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:text="Vedi chat"
+                android:textColor="@color/care_primary_dark" />
+
             <!-- bottone per confermare la chiusura dell'attività e lasciare un feedback al volontario -->
             <Button
                 android:id="@+id/confermaButton"

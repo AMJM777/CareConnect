@@ -75,6 +75,15 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="@dimen/spacing_small">
 
+                <!-- apre la chat con il volontario della richiesta -->
+                <Button
+                    android:id="@+id/chatButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chat"
+                    android:textColor="@color/care_primary_dark" />
+
                 <Button
                     android:id="@+id/modificaButton"
                     style="@style/Widget.Material3.Button.TextButton"
