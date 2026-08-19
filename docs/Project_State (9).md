@@ -70,6 +70,56 @@
 - Testato su dispositivo fisico (doppio trigger, voce, ANNULLA, chiamata, push al familiare,
   pausa/ripresa in background, rotazione).
 
+### T3 — Chat integrata Anziano ↔ Volontario (18–19 agosto 2026) ✅ (verifica multi-profilo rimandata)
+- **Nuova collezione `messaggi`** (top-level, non sotto-collezione della richiesta). Ogni messaggio
+  denormalizza `requestId`, `anzianoId`, `volontarioId` (partecipanti) + `mittenteId`, `testo`,
+  `timestamp`. La denormalizzazione serve a tre cose senza query extra: security rules, query del
+  garante, e Cloud Function push. Scelta motivata: coerenza con il pattern "un repository per
+  collezione" e con i `callbackFlow` filtrati per campo già usati (SOS/Request).
+- **Repository:** `MessageRepository` / `MessageRepositoryImpl` — `inviaMessaggio()` +
+  `osservaMessaggiPerRichiesta(requestId, campoUtente, uidUtente)` con `callbackFlow` realtime,
+  senza `orderBy` (ordinamento nel ViewModel, come il resto del codice → nessun indice composito).
+- **UI condivisa a 3 ruoli:** una sola `ChatFragment` + `ChatViewModel` + `ChatAdapter`
+  (`ui/chat/`, `viewmodel/chat/`), con due destinazioni per grafo (anziano/volontario) + una per il
+  familiare. Lato **anziano** semplificato con lettura vocale (riuso `TtsHelper`, pulsante "Ascolta"
+  sui messaggi ricevuti). Lato **volontario** standard. Ingresso dalle righe di "Le mie richieste"
+  (anziano) e "Prese in carico" (volontario), visibile da `PRESA_IN_CARICO` in poi.
+- **Ciclo di vita della chat:** scrittura consentita **solo mentre `PRESA_IN_CARICO`**; sugli stati
+  successivi la chat diventa **sola lettura** (storico, barra di invio nascosta) — imposto sia in UI
+  (`ARG_SOLO_LETTURA`) sia dalle rules.
+- **Safeguarding — garante in sola lettura + trasparenza:** il familiare collegato apre la chat
+  dell'assistito da "Attività" (pulsante "Vedi chat"), in sola lettura, con i messaggi distinti per
+  ruolo (nome sopra la bolla, anziano a destra / volontario a sinistra, colori diversi). Ai **due
+  partecipanti** compare un **avviso di trasparenza** ("un familiare di riferimento può leggere questa
+  conversazione"); al garante no. È il punto che rende difendibile il contatto diretto tra persona
+  vulnerabile e volontario: trasparenza dichiarata, non sorveglianza occulta.
+- **Security rules `messaggi`** (pubblicate in console): helper `getRichiesta()`,
+  `messaggioCoerente()`, `partecipanteOGarante()`. **Create** solo da un partecipante, solo se la
+  richiesta è `presa_in_carico` e i campi denormalizzati combaciano con la richiesta padre (anti
+  spoofing). **Read** ai due partecipanti + familiare collegato (`msg.anzianoId ==
+  getAnzianoCollegato(uid)`). **Update/Delete = false**: messaggi immutabili → log di audit integro.
+- **Decisione tecnica chiave (rules-not-filters):** su una query in `list` Firestore blocca l'intera
+  richiesta se *potrebbe* restituire un documento non leggibile. Quindi la query deve **vincolare lo
+  stesso campo controllato dalla regola**: anziano/volontario filtrano il proprio campo partecipante,
+  il garante filtra `anzianoId == assistito`. (Bug trovato e corretto in test: prima si filtrava solo
+  `requestId` → `PERMISSION_DENIED`.)
+- **Notifiche push:** nuova Cloud Function `notificaNuovoMessaggio` (`functions/index.js`, gemella di
+  `notificaSosAlFamiliare`): a ogni nuovo messaggio calcola il destinatario (il partecipante diverso
+  dal mittente), legge il suo `fcmToken` e invia una push sul canale **generale** (`tipo="messaggio"`,
+  gestito dal `CareConnectMessagingService` esistente — lato Android nessuna modifica). Testata: la
+  notifica arriva anche a telefono bloccato.
+- **File nuovi:** `model/Message.kt`, `repository/MessageRepository.kt` + `MessageRepositoryImpl.kt`,
+  `ui/chat/ChatFragment.kt` + `ChatAdapter.kt` + `MessaggioDiffCallback.kt`,
+  `viewmodel/chat/ChatViewModel.kt`, `layout/fragment_chat.xml` + `item_messaggio.xml`.
+  **Modificati:** i tre nav graph, gli adapter/fragment/item di richieste (anziano/volontario/familiare)
+  per il pulsante Chat, `functions/index.js`.
+- **Grafica rimandata:** la resa visiva della chat (in tutte le viste) e il pulsante Chat NON fanno
+  parte di T3; sono raccolti in una **fase grafica finale separata** (vedi §9 e `Roadmap_Tesi.md`),
+  da affrontare dopo aver installato una skill grafica dedicata.
+- **Testato:** percorso felice a due lati (realtime, TTS, sola lettura dopo completamento, garante in
+  sola lettura, push a telefono bloccato). **Rimandati** i test negativi multi-profilo delle rules
+  (volontario non assegnato, accessi negati) per mancanza di profili di prova: da svolgere più avanti.
+
 ---
 
 ## 1. Descrizione del progetto
@@ -226,6 +276,14 @@ sosAlerts/{alertId}
   - stato: String ("attivo" | "visto" | "chiuso")   → enum SosStatus
   - messaggio: String?
   - timestampCreazione: Timestamp
+
+messaggi/{messaggioId}                # T3 — chat anziano ↔ volontario, legata a una richiesta
+  - requestId: String                 (la richiesta a cui appartiene la conversazione)
+  - anzianoId: String                 (denormalizzato: autore della richiesta)
+  - volontarioId: String              (denormalizzato: volontario assegnato)
+  - mittenteId: String                (uid di chi ha scritto: anzianoId oppure volontarioId)
+  - testo: String
+  - timestamp: Timestamp
 ```
 
 **Workflow stati `Request` (enum `RequestStatus.canTransitionTo`):**

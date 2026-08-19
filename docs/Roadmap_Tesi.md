@@ -100,25 +100,89 @@ Il resto → in secondo piano, sotto **Backlog**, con ordine deciso da me.
   post-blocchi (richiede Foreground Service, vedi Backlog).
 - Testato end-to-end su dispositivo fisico. Dettaglio in `Project_State` §0bis (T2).
 
-### 28 ago–1 set · T3 — Chat Anziano ↔ Volontario 🔴
-*Il blocco più a rischio: nuova collezione + regole + realtime + safeguarding.*
-- **Modello dati:** collezione messaggi (dedicata o sotto-collezione della richiesta) + **security
-  rules dedicate**.
-- **Realtime** via `Flow` / `callbackFlow` (coerente con l'architettura repository esistente).
-- **UI** chat semplificata e accessibile lato Anziano (testo grande, TTS lettura messaggi); standard
-  lato Volontario.
-- 🔴 **Safeguarding:** valutare **visibilità/log della chat per il garante** (contatto diretto tra
-  persona vulnerabile e volontario — è ciò che rende la feature difendibile e utile a un ente reale).
+### 28 ago–1 set · T3 — Chat Anziano ↔ Volontario ✅ COMPLETATO (18–19 ago)
+*Era il blocco più a rischio: nuova collezione + regole + realtime + safeguarding. Consegnato in anticipo.*
+- ✅ **Modello dati:** collezione top-level `messaggi` (scelta motivata vs sotto-collezione) +
+  **security rules dedicate** pubblicate (create solo dai partecipanti e solo se `presa_in_carico`;
+  read partecipanti + garante; update/delete = false → messaggi immutabili).
+- ✅ **Realtime** via `callbackFlow` (coerente con SOS/Request). Decisione tecnica emersa in test:
+  le rules non sono filtri → la query deve vincolare il campo controllato dalla regola.
+- ✅ **UI** chat condivisa a 3 ruoli: lato Anziano semplificata con **TTS** (riuso `TtsHelper`),
+  lato Volontario standard, lato Garante in sola lettura.
+- ✅ **Safeguarding:** il garante (familiare collegato) legge la chat dell'assistito in **sola
+  lettura** + **avviso di trasparenza** ai due partecipanti. È il punto che rende la feature
+  difendibile per un ente reale.
+- ✅ **Notifiche:** push FCM via nuova Cloud Function `notificaNuovoMessaggio` (gemella dell'SOS),
+  testata anche a telefono bloccato. Lato Android nessuna modifica (canale generale già presente).
+- ⏭️ **Rimandati:** test negativi multi-profilo delle rules (volontario non assegnato, accessi negati)
+  per mancanza di profili di prova. Dettaglio completo in `Project_State` §0bis (T3).
 
-### 2 set · Rifinitura + buffer + documento
-- Test su dispositivo fisico, fix, verifica lifecycle/rotazione.
-- Screenshot **prima/dopo** dell'interfaccia Anziano.
+> **Grafica della chat (tutte le viste) + evidenza del pulsante Chat:** NON fanno parte di T3.
+> Confluiscono nella **fase grafica finale** (vedi Backlog), che l'utente affronterà per ultima,
+> dopo aver installato una skill grafica dedicata per scelte mirate.
+
+### 23–27 ago · T4 — Scuotimento SOS in background (Foreground Service) 🔴
+- Estensione di T2: un **Foreground Service** tiene attivo l'accelerometro anche ad app chiusa
+  (notifica permanente), così lo scuotimento fa scattare l'SOS anche fuori dall'app. Non tocca la
+  logica SOS né la grafica: cambia solo *dove vive* il sensore. Limite da dichiarare in tesi: gli OEM
+  aggressivi (Xiaomi/Huawei/Samsung in risparmio energetico) possono uccidere il service →
+  affidabilità non garantita al 100%. → consigliato **Opus, ragionamento alto**.
+
+### 28 ago · T5 — Stelle nel profilo Volontario
+- Mostrare il `ratingMedio` (già calcolato) come **stelline** nel profilo del volontario, al posto del
+  placeholder. Feature piccola, dati già disponibili. → **Sonnet**.
+
+### 29 ago · T6 — Vista "i miei garanti collegati" (Anziano)
+- Nel profilo Anziano, elenco dei familiari collegati al suo codice invito (oggi l'anziano non ha
+  visibilità su chi si è collegato). Piccola, tema trasparenza/accessibilità. → **Sonnet**.
+
+### 30 ago–1 set · T7 — Pagina "Servizi sanitari a domicilio" (informativa nazionale)
+Schermata **condivisa di sola informazione** (una UI riusata), che *indica canali ufficiali* e **non
+eroga prestazioni**. Contenuto in schede (con **lettura vocale TTS** lato Anziano):
+- **Emergenze:** 112 (NUE) / 118 — coerente con l'SOS già esistente.
+- **Cure non urgenti:** **116117** — continuità assistenziale (ex guardia medica), h24, gratuito,
+  multilingua.
+- **Assistenza Domiciliare Integrata (ADI):** cos'è (medico/infermiere/riabilitazione a casa, gratuita,
+  rientra nei LEA del SSN) e come si attiva (richiesta tramite il **medico di base**). L'ADI presuppone
+  un supporto familiare → si lega al ruolo del familiare nell'app. È il canale giusto per prestazioni
+  cliniche (es. una puntura): la fa l'infermiere ADI, non il volontario.
+- **Collocazione (decisa con l'utente):** presente in **tutti e tre i profili** — Anziano (con TTS),
+  Familiare e Volontario — con una **sola schermata condivisa** riusata. È informazione generica
+  nazionale, quindi nessun problema di privacy. *(Opzione da valutare: limitarla ad Anziano +
+  Familiare, se sul Volontario risultasse poco pertinente.)*
+- Info generica nazionale → **nessun dato personale, nessuna responsabilità clinica**. Contenuto statico
+  e stabile (numeri/servizi cambiano di rado): manutenzione quasi nulla; realizzabile come schede
+  statiche (eventuale piccola collezione Firestore se un domani si vorranno aggiornare da remoto).
+  → **Sonnet**. Fonti: ADI (LeggiOggi, Medicasa), 116117 (ASL Roma 1, Wikipedia) — vedi `Project_State`.
+
+### 2–3 set · Rifinitura tecnica + documento + test finali (chiusura tecnica entro il 3 set)
+- Test su dispositivo fisico, fix, verifica lifecycle/rotazione dei blocchi T4–T7.
+- **Test negativi delle rules di T3** (ex "buffer post-T3", spostato qui, tra gli ultimi): volontario
+  non assegnato, accessi negati — da fare quando ci saranno più profili di prova.
+- Screenshot **prima/dopo** delle schermate toccate.
 - Aggiornare `Project_State.md` e questa roadmap.
 
-**Nota realistica (spirito critico):** i 4 blocchi prioritari sono già un carico pieno e sano per
-~2,5 settimane. Se qualcosa slitta, il candidato naturale da comprimere/spostare è parte della
-**chat (T3)**, che è la più ampia. Il backlog sotto è realisticamente *stretch* o materiale che
-cresce in parallelo al documento — non garantito dentro la finestra.
+### Fase GRAFICA — separata (~4–8 set, 4–5 giorni indicativi)
+Ultima fase, **a sé**, dopo l'installazione di una skill grafica dedicata; slide escluse (le gestisce
+l'utente in parallelo). Punti raccolti fin qui (da ampliare mano a mano):
+- **Chat in tutte le viste** (anziano, volontario, garante): bolle, colori/contrasto, distinzione
+  mittenti, intestazione, avviso di trasparenza, barra di invio, accessibilità testo grande.
+- **Pulsante Chat più riconoscibile** (lato volontario e anziano).
+- **Chat in sola lettura senza messaggi:** NON mostrare "Scrivi per iniziare" (invito valido solo a
+  chat attiva); eventualmente un testo neutro o nulla.
+- **Home Anziano — grafica dedicata:** palette e bottoni più sofisticati/usabili per la terza età, con
+  riferimenti a studi su colori/contrasto/dimensione dei target (materiale utile anche al capitolo HCI).
+
+> **Sviluppi futuri — da dimostrare / dire nella discussione di laurea (implementazione MOLTO opzionale):**
+> geolocalizzazione (matching per vicinanza), dashboard familiare arricchita, percorsi guidati (HCI),
+> "guida ai servizi locali" (spesa/farmacia a domicilio, curata dall'ente e/o suggerita dal volontario,
+> per non chiudere l'anziano in una bolla digitale). Sono materiale di **discussione per la laurea**,
+> non impegni di sviluppo.
+> **Azione per la tesi:** contattare un ente di volontariato per anziani (es. **Comunità di
+> Sant'Egidio**) per sapere se hanno già supporti informatici/tecnologici per queste attività, così da
+> **rafforzare in sede di discussione** il posizionamento "app a supporto di enti già esistenti".
+> **Posizionamento (fermo):** anche quando l'app è usata da un ente, la **supervisione del familiare
+> resta e non è soppiantata dall'ente**.
 
 ---
 
@@ -127,7 +191,8 @@ cresce in parallelo al documento — non garantito dentro la finestra.
 Solo se avanza tempo, o in parallelo al documento di tesi. Ordinato per rapporto valore-tesi/sforzo
 e sinergia:
 
-> 🔴 **Prima priorità dopo i blocchi pianificati (decisa con l'utente):** **scuotimento SOS in
+> 🔴 **Prima priorità dopo i blocchi pianificati (decisa con l'utente) — ora PROMOSSO a T4 (pianificato, vedi sopra):**
+> **scuotimento SOS in
 > background** — estensione di T2. Un **Foreground Service** che tiene attivo l'accelerometro anche
 > ad app chiusa (con notifica permanente), così lo scuotimento fa scattare l'SOS anche fuori
 > dall'app. Non tocca la logica SOS esistente né la grafica: cambia solo *dove vive* il sensore.
@@ -139,7 +204,7 @@ e sinergia:
    reale (matching per vicinanza, cosa che un ente vero apprezza).
 2. **Dashboard familiare arricchita** — frequenza richieste, tempi medi; rafforza il tema "supervisione".
 3. **Percorsi guidati** (tutorial assistenza digitale) — forte sinergia col tema HCI/accessibilità.
-4. **Vista "i miei garanti collegati"** (Anziano) — piccola, trasparenza/accessibilità.
+4. **Vista "i miei garanti collegati"** (Anziano) — piccola, trasparenza/accessibilità. *(→ PROMOSSO a T6, pianificato.)*
 5. **Immagine profilo** — richiede Firebase **Storage** + permessi + rules Storage (nuova dipendenza):
    valore medio, costo maggiore.
 6. **Multilingua** — valore reale (anziani stranieri/badanti) ma i18n è ampia; eventualmente parziale.
@@ -152,7 +217,7 @@ e sinergia:
 
 - **Profilo Volontario — valutazione a stelle:** mostrare il `ratingMedio` come
   **stelline** nel profilo del Volontario (oggi è un placeholder). Feature piccola:
-  i dati (`ratingMedio`) sono già calcolati e disponibili.
+  i dati (`ratingMedio`) sono già calcolati e disponibili. *(→ PROMOSSO a T5, pianificato.)*
 - **Home Anziano — grafica dedicata:** nella ridefinizione della Home (T1) curare
   anche l'aspetto visivo — palette e bottoni più **sofisticati, usabili e adatti a
   un'utenza anziana**, possibilmente con riferimenti a studi su colori/contrasto/
@@ -178,7 +243,8 @@ Ipotesi: come funzione del ruolo **Volontario**.
 
 ## Decisioni ancora aperte
 
-1. **Chat:** collezione separata vs sotto-collezione della richiesta; livello di visibilità per il garante.
+1. ~~**Chat:** collezione separata vs sotto-collezione della richiesta; livello di visibilità per il garante.~~
+   ✅ **CHIUSA (T3):** collezione top-level `messaggi`; garante in **sola lettura** + avviso di trasparenza.
 2. **Scuotimento in background** (serve Foreground Service): **deciso SÌ**, come estensione
    **prioritaria** da fare dopo i blocchi pianificati (T3 + eventuali). In v1 resta solo ad app aperta.
 3. **Servizi sanitari:** funzione (non-clinica) sotto Volontario vs solo capitolo prospettive.
@@ -198,3 +264,12 @@ primo passo = **Design System**.
   sull'emulatore, annotato nella vecchia roadmap).
 - Non lasciare che un agente riscriva blocchi grossi: alla discussione va difesa **ogni riga**.
 - Le date sono **target**, con il 2 set come buffer; **T3 (chat)** è il blocco da comprimere se si slitta.
+
+NOTA MODELLI
+Modello e impegno, per tipo di task (da impostare nella nuova chat):
+
+Task complesse / architetturali / di sicurezza — Foreground Service SOS, security rules, qualsiasi cosa tocchi lifecycle o GDPR: Opus, ragionamento alto (come T3).
+Task medie — ripristino geolocalizzazione, dashboard familiare: Opus, ragionamento medio (o Sonnet alto).
+Task piccole e meccaniche — stelle nel profilo volontario, viste di sola lettura: Sonnet, medio (più veloce ed economico, sufficiente).
+Fase grafica finale (dopo la skill): Sonnet per l'implementazione, Opus solo se serve ragionare sul design.
+Scrittura/ricerca del documento di tesi: Opus (o Cowork per i documenti lunghi).
