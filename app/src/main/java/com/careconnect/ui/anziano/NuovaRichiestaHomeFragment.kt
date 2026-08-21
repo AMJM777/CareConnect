@@ -25,6 +25,10 @@ import com.careconnect.repository.AuthRepositoryImpl
 import com.careconnect.repository.RequestRepositoryImpl
 import com.careconnect.repository.SosRepositoryImpl
 import com.careconnect.repository.UserRepositoryImpl
+import androidx.appcompat.app.AlertDialog
+import com.careconnect.sos.SosShakeService
+import com.careconnect.util.OverlaySosPermesso
+import com.careconnect.util.ProtezioneSosPrefs
 import com.careconnect.util.ShakeDetector
 import com.careconnect.viewmodel.anziano.NuovaRichiestaHomeViewModel
 import com.careconnect.viewmodel.anziano.NuovaRichiestaHomeViewModelFactory
@@ -48,6 +52,9 @@ class NuovaRichiestaHomeFragment : Fragment() {
 
     // rilevatore di scuotimento: secondo trigger dell'SOS, oltre al bottone
     private lateinit var shakeDetector: ShakeDetector
+
+    // preferenza opt-out della protezione SOS in background (T4)
+    private val protezionePrefs by lazy { ProtezioneSosPrefs(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -104,12 +111,51 @@ class NuovaRichiestaHomeFragment : Fragment() {
         osservaCreazione()
         osservaBanner()
         osservaSos()
+
+        // se la protezione in background e' attiva (default), assicura che il
+        // Foreground Service sia in esecuzione e chiedi (una volta sola) il
+        // permesso che fa aprire la conferma direttamente, senza notifica da toccare.
+        if (protezionePrefs.isAttiva()) {
+            SosShakeService.avvia(requireContext())
+            chiediPermessoFullScreenUnaVolta()
+        }
     }
 
-    // lo scuotimento e' attivo solo quando la Home e' in primo piano (v1: no background)
+    // Se manca il permesso "Compari sopra le altre app", lo chiede UNA sola volta
+    // portando l'utente alle impostazioni. Con il permesso, lo scuotimento apre
+    // subito l'overlay in ogni situazione, senza notifica intermedia da toccare.
+    private fun chiediPermessoFullScreenUnaVolta() {
+        if (OverlaySosPermesso.concesso(requireContext())) return
+        if (protezionePrefs.permessoFullScreenGiaChiesto()) return
+        protezionePrefs.segnaPermessoFullScreenChiesto()
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Attiva l'apertura automatica")
+            .setMessage(
+                "Per far comparire subito la richiesta di aiuto quando scuoti il " +
+                    "telefono — anche fuori dall'app o a schermo bloccato — concedi a " +
+                    "CareConnect il permesso \"Compari sopra le altre app\"."
+            )
+            .setPositiveButton("Vai alle impostazioni") { _, _ ->
+                try {
+                    startActivity(OverlaySosPermesso.intentImpostazioni(requireContext()))
+                } catch (e: ActivityNotFoundException) {
+                    // alcuni dispositivi non hanno questa schermata: si ignora
+                }
+            }
+            .setNegativeButton("Più tardi", null)
+            .show()
+    }
+
+    // Coordinamento anti-doppia-rilevazione: se la protezione in background e'
+    // attiva, il rilevatore vive nel Service (che copre anche l'app aperta),
+    // quindi qui NON ne avviamo un secondo. Se e' disattivata, la Home usa il
+    // proprio rilevatore come in T2 (solo ad app aperta).
     override fun onResume() {
         super.onResume()
-        shakeDetector.avvia()
+        if (!protezionePrefs.isAttiva()) {
+            shakeDetector.avvia()
+        }
     }
 
     override fun onPause() {

@@ -121,12 +121,23 @@ Il resto → in secondo piano, sotto **Backlog**, con ordine deciso da me.
 > Confluiscono nella **fase grafica finale** (vedi Backlog), che l'utente affronterà per ultima,
 > dopo aver installato una skill grafica dedicata per scelte mirate.
 
-### 23–27 ago · T4 — Scuotimento SOS in background (Foreground Service) 🔴
-- Estensione di T2: un **Foreground Service** tiene attivo l'accelerometro anche ad app chiusa
-  (notifica permanente), così lo scuotimento fa scattare l'SOS anche fuori dall'app. Non tocca la
-  logica SOS né la grafica: cambia solo *dove vive* il sensore. Limite da dichiarare in tesi: gli OEM
-  aggressivi (Xiaomi/Huawei/Samsung in risparmio energetico) possono uccidere il service →
-  affidabilità non garantita al 100%. → consigliato **Opus, ragionamento alto**.
+### 23–27 ago · T4 — Scuotimento SOS in background (Foreground Service) ✅ COMPLETATO (21 ago)
+- ✅ **`SosShakeService`** (Foreground Service `specialUse`) tiene attivo l'accelerometro anche ad app
+  chiusa, con notifica permanente discreta. Riusa lo stesso `ShakeDetector` di T2.
+- ✅ **Sensore accelerometro wake-up** (con fallback): eventi anche a schermo spento **senza wake lock**
+  → nessun costo batteria da CPU sempre sveglia.
+- ✅ **`ConfermaSosActivity`** a tutto schermo: riusa layout, countdown/TTS/ANNULLA e la stessa
+  `inviaSos()` di T2 (**logica SOS non duplicata**); appare anche a telefono bloccato.
+- ✅ **Apertura diretta dell'overlay** anche fuori dall'app a schermo sbloccato, via permesso
+  **"Compari sopra le altre app"** (`SYSTEM_ALERT_WINDOW`, chiesto una volta); la notifica full-screen
+  resta solo come fallback. Risolve il caso in cui, da sbloccato fuori dall'app, Android non lascia a
+  un'app in background aprire una Activity.
+- ✅ **Sempre attiva di default (opt-out):** toggle "Protezione SOS" nel Profilo Anziano; il logout la
+  ferma. Coordinamento anti-doppia-rilevazione tra Service e Home (`CareConnectApp.inPrimoPiano`).
+- Limiti dichiarati in tesi: OEM aggressivi possono uccidere il service (affidabilità non 100%);
+  device senza sensore wake-up → rilevazione ridotta in sospensione profonda; `SYSTEM_ALERT_WINDOW` è
+  permesso sensibile, qui giustificato. **Non incluso** (scelta): persistenza dopo reboot.
+- Testato end-to-end su dispositivo fisico. Dettaglio in `Project_State` §0bis (T4).
 
 ### 28 ago · T5 — Stelle nel profilo Volontario
 - Mostrare il `ratingMedio` (già calcolato) come **stelline** nel profilo del volontario, al posto del
@@ -245,8 +256,9 @@ Ipotesi: come funzione del ruolo **Volontario**.
 
 1. ~~**Chat:** collezione separata vs sotto-collezione della richiesta; livello di visibilità per il garante.~~
    ✅ **CHIUSA (T3):** collezione top-level `messaggi`; garante in **sola lettura** + avviso di trasparenza.
-2. **Scuotimento in background** (serve Foreground Service): **deciso SÌ**, come estensione
-   **prioritaria** da fare dopo i blocchi pianificati (T3 + eventuali). In v1 resta solo ad app aperta.
+2. ~~**Scuotimento in background** (serve Foreground Service): deciso SÌ, estensione prioritaria.~~
+   ✅ **CHIUSA (T4, 21 ago):** `SosShakeService` sempre attivo (opt-out), sensore wake-up,
+   `ConfermaSosActivity` a tutto schermo, apertura diretta via `SYSTEM_ALERT_WINDOW`. Reboot escluso.
 3. **Servizi sanitari:** funzione (non-clinica) sotto Volontario vs solo capitolo prospettive.
 4. **Ordine fine del backlog** (modificabile).
 

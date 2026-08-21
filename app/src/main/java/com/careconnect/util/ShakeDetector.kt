@@ -16,7 +16,8 @@ class ShakeDetector(
     private val sensorManager =
         context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val accelerometro: Sensor? =
-        sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER, true)
+            ?: sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
     // istanti (ms) degli "strattoni" recenti sopra soglia: servono a distinguere
     // uno scuotimento voluto (piu' strattoni ravvicinati) da un urto singolo

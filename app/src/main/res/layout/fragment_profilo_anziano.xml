@@ -166,6 +166,41 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- scheda protezione SOS in background (T4): interruttore opt-out -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/CareConnect.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Protezione SOS"
+                        android:textSize="@dimen/text_size_body"
+                        android:textStyle="bold"
+                        android:textColor="@color/care_on_surface" />
+
+                    <!-- interruttore grande e con testo: mai solo il colore a dire lo stato -->
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/protezioneSosSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:minHeight="56dp"
+                        android:text="Chiedi aiuto scuotendo il telefono, anche con l'app chiusa"
+                        android:textSize="@dimen/text_size_body"
+                        android:textColor="@color/care_on_surface" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- bottone rosso di disconnessione dall'account -->
             <Button
                 android:id="@+id/logoutButton"

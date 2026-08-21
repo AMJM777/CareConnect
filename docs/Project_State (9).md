@@ -1,6 +1,7 @@
 # Project State — CareConnect
 
-**Ultimo aggiornamento:** 17 agosto 2026 (TESI — **T2 "SOS ripensato" completato**: doppio trigger (bottone rosso + scuotimento accelerometro) sullo stesso percorso; overlay di conferma translucido con countdown 5→0, voce TTS "Sto per chiamare aiuto" + conteggio, e ANNULLA grande; a fine countdown `inviaSos()` (→ push FCM esistente) + `ACTION_DIAL` 112; scuotimento solo ad app aperta. Nuovi `TtsHelper`, `ShakeDetector`, `ConfermaSosDialogFragment`. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
+**Ultimo aggiornamento:** 21 agosto 2026 (TESI — **T4 "Scuotimento SOS in background" completato**: nuovo `SosShakeService` (Foreground Service `specialUse`) che tiene attivo l'accelerometro anche ad app chiusa; `ShakeDetector` ora usa il sensore accelerometro **wake-up** (con fallback) → niente wake lock, funziona a schermo spento; la conferma diventa una `ConfermaSosActivity` a tutto schermo (riusa layout + countdown/TTS + `inviaSos()` di T2, **logica SOS non duplicata**); lo scuotimento apre l'overlay **direttamente** grazie al permesso **"Compari sopra le altre app"** (`SYSTEM_ALERT_WINDOW`, richiesto una volta), con la notifica full-screen come solo fallback; protezione **sempre attiva di default (opt-out)** via toggle nel Profilo, con coordinamento anti-doppia-rilevazione tra Service e Home. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
+> **Precedente:** 17 agosto 2026 (TESI — **T2 "SOS ripensato" completato**: doppio trigger (bottone rosso + scuotimento accelerometro) sullo stesso percorso; overlay di conferma translucido con countdown 5→0, voce TTS "Sto per chiamare aiuto" + conteggio, e ANNULLA grande; a fine countdown `inviaSos()` (→ push FCM esistente) + `ACTION_DIAL` 112; scuotimento solo ad app aperta. Nuovi `TtsHelper`, `ShakeDetector`, `ConfermaSosDialogFragment`. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
 > **Precedente:** 16 agosto 2026 (TESI — **T1 "Home Anziano" completato**: Home ridisegnata come form "Nuova richiesta" diretto + banner "richiesta in corso" realtime + SOS ricollocato; split creazione/modifica; nuovi `NuovaRichiestaHomeFragment`/`NuovaRichiestaHomeViewModel`; rimossi `DashboardAnziano*`. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
 > **Precedente:** 12 luglio 2026 (sessione "Rifinitura Layout + DataBinding dichiarativo": **Fase 13 completata**. Consolidate le due voci di punteggio a rischio — Layout (3/3) e DataBinding+ViewModel (3/3). Verificate nel codice tutte e 9 le voci della griglia d'esame. Chiusi tutti i bug §10 ancora aperti (barra corta Home, A3 tastiera, A4 bottom bar, freccia Accedi, tema chiaro). Segnate come completate anche Fase 11 (Background Task) e Fase 12 (FCM), verificate nel codice. Vedi `HANDOFF_4_Fase13_Rifinitura_Completata.md`. §2/§4/§9/§10 aggiornati)
 > **Precedente:** 8 luglio 2026 (sessione "Bugfix navigazione + Restyling grafico": risolti A1 navigazione/tasto Indietro, A2 contrasto, A6 logout; revisione grafica — palette agganciata al tema, bottom bar viola, card richieste, dashboard Anziano, restyling dei 3 profili. Vedi `HANDOFF_2_Stato_e_Prossimi_Passi.md`)
@@ -119,6 +120,56 @@
 - **Testato:** percorso felice a due lati (realtime, TTS, sola lettura dopo completamento, garante in
   sola lettura, push a telefono bloccato). **Rimandati** i test negativi multi-profilo delle rules
   (volontario non assegnato, accessi negati) per mancanza di profili di prova: da svolgere più avanti.
+
+### T4 — Scuotimento SOS in background (21 agosto 2026) ✅
+- **Obiettivo:** estendere il trigger "scuotimento" di T2 anche ad app chiusa. Non cambia la *logica*
+  SOS né la grafica: cambia solo *dove vive il sensore* (dal Fragment a un Foreground Service).
+- **`SosShakeService` (Foreground Service):** riusa lo stesso `ShakeDetector` di T2, mostra una
+  **notifica permanente discreta** (canale a bassa importanza `careconnect_servizio_sos`) e resta vivo
+  ad app chiusa. `foregroundServiceType="specialUse"` (obbligatorio su targetSdk 34+): scelta motivata
+  perché nessuna categoria predefinita descrive un accelerometro-per-SOS. `START_STICKY` per il
+  riavvio best-effort. Avviato/fermato via action `START`/`STOP` (metodi statici `avvia()/ferma()`).
+- **Sensore wake-up:** `ShakeDetector` ora richiede `getDefaultSensor(TYPE_ACCELEROMETER, wakeUp=true)`
+  con **fallback** al sensore normale. Consegna eventi anche in sospensione profonda **senza wake lock**
+  → nessun costo batteria da CPU sempre sveglia. Retrocompatibile con T2 (foreground identico).
+- **`ConfermaSosActivity` (conferma a tutto schermo):** apre lo **stesso** `dialog_conferma_sos.xml` e
+  riusa la **stessa** logica countdown+TTS+ANNULLA di `ConfermaSosDialogFragment`; a fine countdown
+  riusa la **stessa** `inviaSos()` del `NuovaRichiestaHomeViewModel` (nessuna duplicazione della logica
+  SOS). `showWhenLocked`/`turnScreenOn` per apparire anche a telefono bloccato; tema translucido
+  dedicato `Theme.CareConnect.ConfermaSos`. Punto chiave: **non chiude subito** dopo `inviaSos()` ma
+  attende `sosInviato`/`erroreSos`, altrimenti `finish()` cancellerebbe il `viewModelScope` e la
+  scrittura Firestore in corso.
+- **Apertura diretta dell'overlay (nodo risolto):** da schermo **sbloccato fuori dall'app** Android non
+  lascia a un'app in background aprire una Activity (la full-screen intent diventerebbe una notifica da
+  toccare). Risolto col permesso **"Compari sopra le altre app"** (`SYSTEM_ALERT_WINDOW`), che esenta
+  dall'"background activity start": il Service apre l'overlay **direttamente** se l'app è in primo piano
+  **o** se il permesso è concesso (`Settings.canDrawOverlays`); la **notifica full-screen** resta solo
+  come fallback (schermo bloccato senza permesso). Permesso chiesto **una volta** (dialog dalla Home e al
+  riattivare il toggle), gestito da `OverlaySosPermesso` (file ancora `FullScreenSosPermesso.kt`, da
+  rinominare).
+- **Attivazione — sempre attiva (opt-out):** preferenza `ProtezioneSosPrefs` (default **ON**); toggle
+  "Protezione SOS" nel **Profilo Anziano** che avvia/ferma il Service; il **logout lo ferma**. Il Service
+  parte da `NuovaRichiestaHomeFragment` quando la protezione è attiva.
+- **Coordinamento anti-doppia-rilevazione:** con protezione **ON** il rilevatore vive **solo** nel
+  Service (copre anche l'app aperta, via `CareConnectApp.inPrimoPiano`); la Home **non** avvia il proprio
+  `ShakeDetector`. Con protezione **OFF** si torna al comportamento T2 (rilevatore nel Fragment, solo ad
+  app aperta). Il primo piano è tracciato da `ActivityLifecycleCallbacks` in `CareConnectApp`.
+- **File nuovi:** `sos/SosShakeService.kt`, `ui/anziano/ConfermaSosActivity.kt`,
+  `util/ProtezioneSosPrefs.kt`, `util/OverlaySosPermesso` (nel file `FullScreenSosPermesso.kt`).
+  **Modificati:** `AndroidManifest.xml` (permessi FOREGROUND_SERVICE(+SPECIAL_USE), USE_FULL_SCREEN_INTENT,
+  SYSTEM_ALERT_WINDOW; dichiarazioni Service + Activity), `util/ShakeDetector.kt` (wake-up),
+  `util/NotificationHelper.kt` (canale servizio + notifica permanente + id conferma), `CareConnectApp.kt`
+  (tracking primo piano), `NuovaRichiestaHomeFragment.kt` (avvio Service + coordinamento + prompt permesso),
+  `ProfiloAnzianoFragment.kt` + `fragment_profilo_anziano.xml` (toggle), `styles.xml` (tema Activity).
+- **Limiti dichiarati in tesi:** OEM aggressivi (Xiaomi/Huawei/Samsung in risparmio energetico) possono
+  uccidere il Service → affidabilità non garantita al 100%; dispositivi senza accelerometro wake-up →
+  rilevazione ridotta in sospensione profonda (fallback); `SYSTEM_ALERT_WINDOW` è permesso "sensibile"
+  (verificato da Google Play), qui giustificato dall'apertura di una conferma d'emergenza concessa
+  esplicitamente dall'utente. **Non incluso** (scelta): persistenza dopo il riavvio del telefono
+  (nessun `BootReceiver`).
+- Testato su dispositivo fisico: scuotimento ad app aperta, sulla home del telefono (sbloccato) e a
+  schermo bloccato → overlay diretto; ANNULLA non invia; fine countdown → familiari avvisati + 112;
+  nessuna doppia conferma; toggle nel Profilo accende/spegne la notifica permanente.
 
 ---
 
@@ -412,11 +463,16 @@ messaggi/{messaggioId}                # T3 — chat anziano ↔ volontario, lega
 
 ## 8. Prossimo step consigliato
 
-**Fasi 9 e 10 completate.** Il prossimo lavoro va fatto in una **nuova chat**: la chat attuale ha accumulato moltissimo contesto di debug delle Security Rules (in particolare l'anomalia del `get()` cross-document nel Rules Playground) non più rilevante.
+> Nota: il testo d'esame di questa sezione (bug dispositivo, Fasi 9–12) è **superato** — quei blocchi
+> sono conclusi. Lo storico resta in §10 e in `docs/archivio/`.
 
-**Priorità immediata (PRIMA della rifinitura estetica e delle Fasi 11-12):** sistemare i **bug del dispositivo fisico** raccolti in §10, emersi testando l'app sul Samsung SM-A546B (Android 13). Il più grave è il cluster di **navigazione/tasto Indietro** (A1 in §10): la freccia Indietro funziona una volta sola, e in alcuni casi porta al login o addirittura alla schermata di un altro ruolo. Esiste un documento di handoff dedicato (`HANDOFF_Bug_Dispositivo_Fisico.md`) pronto da incollare in una chat nuova.
+**Contesto tesi:** T1, T2, T3 e **T4** completati (vedi §0bis). Il prossimo blocco pianificato in
+`Roadmap_Tesi.md` è **T5 — Stelle nel profilo Volontario**: mostrare il `ratingMedio` (già calcolato)
+come **stelline** al posto del placeholder. Feature piccola, dati già disponibili → **Sonnet, medio**.
 
-Dopo i bug: completare il **percorso felice sull'app** per validare definitivamente le Security Rules (checklist nel documento di handoff, sezione B), poi procedere con Fase 11 (Background Task) e Fase 12 (Notifiche push FCM).
+A seguire: **T6** (vista "i miei garanti collegati" nel profilo Anziano) e **T7** (pagina informativa
+"Servizi sanitari a domicilio"), poi la **fase grafica finale** separata. Aprire T5 preferibilmente in
+una **nuova chat** (questa ha accumulato il contesto di T4).
 
 ## 9. Backlog — idee rimandate (non fanno parte del piano d'esame attuale)
 

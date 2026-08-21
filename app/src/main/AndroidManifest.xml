@@ -4,6 +4,15 @@
 
     <!-- permesso per mostrare notifiche tramite workmanager e fcm, da richiedere a runtime per android 13+ -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Foreground Service per lo scuotimento SOS anche ad app chiusa (T4) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- tipo "specialUse", è obbligatorio su targetSdk 34+ per dichiarare a cosa serve il service -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- permette di aprire la conferma SOS a tutto schermo mentre l'app è chiusa/bloccata -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <!-- "Compari sopra le altre app": autorizza ad aprire la conferma SOS direttamente
+         (overlay) anche a schermo sbloccato fuori dall'app, senza notifica intermedia -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:name=".CareConnectApp"
@@ -40,6 +49,29 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="careconnect_generale" />
+
+        <!-- Service in foreground che tiene attivo l'accelerometro anche ad app chiusa,
+     exported="false": lo avvia solo l'app -->
+        <service
+            android:name=".sos.SosShakeService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Rilevamento scuotimento per allarme SOS di un utente anziano, anche ad app chiusa" />
+        </service>
+
+        <!-- Schermata di conferma SOS aperta dal service via full-screen-intent
+             showWhenLocked/turnScreenOn: appare anche a telefono bloccato/schermo spento
+             excludeFromRecents + singleInstance: non resta nei recenti e non se ne aprono due. -->
+        <activity
+            android:name=".ui.anziano.ConfermaSosActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.CareConnect.ConfermaSos" />
 
     </application>
 

@@ -22,6 +22,9 @@ import com.careconnect.R
 import com.careconnect.databinding.FragmentProfiloAnzianoBinding
 import com.careconnect.repository.AuthRepositoryImpl
 import com.careconnect.repository.UserRepositoryImpl
+import com.careconnect.sos.SosShakeService
+import com.careconnect.util.OverlaySosPermesso
+import com.careconnect.util.ProtezioneSosPrefs
 import com.careconnect.util.SessionCache
 import com.careconnect.viewmodel.anziano.ProfiloAnzianoViewModel
 import com.careconnect.viewmodel.anziano.ProfiloAnzianoViewModelFactory
@@ -51,6 +54,9 @@ class ProfiloAnzianoFragment : Fragment() {
     private val viewModel: ProfiloAnzianoViewModel by viewModels {
         ProfiloAnzianoViewModelFactory(UserRepositoryImpl(), AuthRepositoryImpl())
     }
+
+    // preferenza opt-out della protezione SOS in background (T4)
+    private val protezionePrefs by lazy { ProtezioneSosPrefs(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,6 +90,52 @@ class ProfiloAnzianoFragment : Fragment() {
         preRiempiIndirizzo()
         osservaErrori()
         osservaIndirizzoSalvato()
+        configuraProtezioneSwitch()
+    }
+
+    // interruttore della protezione SOS in background (T4): stato iniziale dalla
+    // preferenza (default acceso) e, a ogni cambio, avvia/ferma il Foreground Service.
+    private fun configuraProtezioneSwitch() {
+        binding.protezioneSosSwitch.isChecked = protezionePrefs.isAttiva()
+        binding.protezioneSosSwitch.setOnCheckedChangeListener { _, attiva ->
+            protezionePrefs.setAttiva(attiva)
+            if (attiva) {
+                SosShakeService.avvia(requireContext())
+                Toast.makeText(
+                    requireContext(),
+                    "Protezione attiva: scuoti il telefono per chiedere aiuto",
+                    Toast.LENGTH_SHORT
+                ).show()
+                chiediPermessoFullScreenSeManca()
+            } else {
+                SosShakeService.ferma(requireContext())
+                Toast.makeText(requireContext(), "Protezione disattivata", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // Se manca il permesso "Compari sopra le altre app", porta l'utente alle
+    // impostazioni per concederlo. Con il permesso, lo scuotimento apre subito
+    // l'overlay in ogni situazione, senza una notifica intermedia da toccare.
+    private fun chiediPermessoFullScreenSeManca() {
+        if (OverlaySosPermesso.concesso(requireContext())) return
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Attiva l'apertura automatica")
+            .setMessage(
+                "Per far comparire subito la richiesta di aiuto quando scuoti il " +
+                    "telefono — anche fuori dall'app o a schermo bloccato — concedi a " +
+                    "CareConnect il permesso \"Compari sopra le altre app\"."
+            )
+            .setPositiveButton("Vai alle impostazioni") { _, _ ->
+                try {
+                    startActivity(OverlaySosPermesso.intentImpostazioni(requireContext()))
+                } catch (e: android.content.ActivityNotFoundException) {
+                    // alcuni dispositivi non hanno questa schermata: si ignora
+                }
+            }
+            .setNegativeButton("Più tardi", null)
+            .show()
     }
 
     // l'indirizzo è un campo editabile: viene scritto nell'EditText una sola volta, al caricamento
@@ -142,6 +194,10 @@ class ProfiloAnzianoFragment : Fragment() {
     }
     // funzione che esegue il logout e riporta l'utente al flusso di autenticazione
     private fun eseguiLogout() {
+        // uscendo dall'account si ferma anche la protezione SOS in background:
+        // non ha senso tenere attivo il sensore per un utente non più loggato.
+        SosShakeService.ferma(requireContext())
+
         // passa dal condiviso AuthViewModel: resetta anche sessionCache e AuthUiState.
         authViewModel.logout()
 
