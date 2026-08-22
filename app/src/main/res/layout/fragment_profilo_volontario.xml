@@ -9,6 +9,7 @@
         <variable
             name="viewModel"
             type="com.careconnect.viewmodel.volontario.ProfiloVolontarioViewModel" />
+        <import type="android.view.View" />
     </data>
 
     <!-- vista scorrevole per evitare che la tastiera nasconda i campi durante la digitazione -->
@@ -71,7 +72,7 @@
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="mario.rossi@email.com" />
 
-            <!-- scheda riepilogativa delle valutazioni ricevute -->
+            <!-- scheda valutazioni ricevute -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/CareConnect.Card"
                 android:layout_width="match_parent"
@@ -91,16 +92,33 @@
                         android:textStyle="bold"
                         android:textColor="@color/care_on_surface" />
 
-                    <!-- testo della valutazione gestito in tempo reale dal viewmodel -->
+                    <!-- mostrato solo senza voto; con un voto restano le stelle -->
                     <TextView
                         android:id="@+id/ratingText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_small"
-                        android:text="@{viewModel.valutazione}"
+                        android:text="Non ancora valutato"
                         android:textSize="@dimen/text_size_body"
                         android:textColor="@color/care_on_surface_variant"
-                        tools:text="Valutazione: non ancora valutato" />
+                        android:visibility="@{viewModel.haValutazione ? View.GONE : View.VISIBLE}" />
+
+                    <!-- stelle in sola lettura -->
+                    <RatingBar
+                        android:id="@+id/ratingBar"
+                        style="?android:attr/ratingBarStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:isIndicator="true"
+                        android:numStars="5"
+                        android:stepSize="0.5"
+                        android:rating="@{viewModel.ratingStelle}"
+                        android:progressTint="@color/care_accent"
+                        android:secondaryProgressTint="@color/care_accent"
+                        android:progressBackgroundTint="@color/care_outline"
+                        android:contentDescription="@{viewModel.valutazione}"
+                        android:visibility="@{viewModel.haValutazione ? View.VISIBLE : View.GONE}" />
 
                 </LinearLayout>
 

@@ -40,6 +40,10 @@ class ProfiloAnzianoViewModel(
     private val _indirizzoIniziale = MutableLiveData<String>()
     val indirizzoIniziale: LiveData<String> = _indirizzoIniziale
 
+    // nomi dei familiari/garanti collegati all'anziano (sola lettura)
+    private val _garanti = MutableLiveData<List<String>>(emptyList())
+    val garanti: LiveData<List<String>> = _garanti
+
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
@@ -69,6 +73,21 @@ class ProfiloAnzianoViewModel(
         utenteCaricato = utente
         _nome.value = utente.nome
         _indirizzoIniziale.value = utente.indirizzo ?: ""
+        caricaGaranti(utente.familiariCollegatiIds)
+    }
+
+    // recupera il nome di ogni familiare collegato a partire dalla lista di uid.
+    // il documento User su Firestore non contiene l'email, quindi si mostra il solo nome.
+    private fun caricaGaranti(ids: List<String>) {
+        if (ids.isEmpty()) {
+            _garanti.value = emptyList()
+            return
+        }
+        viewModelScope.launch {
+            _garanti.value = ids.mapNotNull { id ->
+                userRepository.getUtente(id).getOrNull()?.nome?.takeIf { it.isNotBlank() }
+            }
+        }
     }
 
     // funzione per ottenere (o creare, se non esiste) il codice invito dell'anziano

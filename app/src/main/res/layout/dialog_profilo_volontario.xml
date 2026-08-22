@@ -23,7 +23,20 @@
         android:layout_marginTop="@dimen/spacing_small"
         android:textSize="@dimen/text_size_body"
         android:textColor="@color/care_primary_dark"
-        tools:text="Valutazione: 4.5 / 5" />
+        tools:text="Non ancora valutato" />
+
+    <RatingBar
+        android:id="@+id/profiloRatingBar"
+        style="?android:attr/ratingBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_small"
+        android:isIndicator="true"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:progressTint="@color/care_accent"
+        android:secondaryProgressTint="@color/care_accent"
+        android:progressBackgroundTint="@color/care_outline" />
 
     <TextView
         android:id="@+id/profiloBioText"

@@ -139,13 +139,33 @@ Il resto → in secondo piano, sotto **Backlog**, con ordine deciso da me.
   permesso sensibile, qui giustificato. **Non incluso** (scelta): persistenza dopo reboot.
 - Testato end-to-end su dispositivo fisico. Dettaglio in `Project_State` §0bis (T4).
 
-### 28 ago · T5 — Stelle nel profilo Volontario
-- Mostrare il `ratingMedio` (già calcolato) come **stelline** nel profilo del volontario, al posto del
-  placeholder. Feature piccola, dati già disponibili. → **Sonnet**.
+### 28 ago · T5 — Stelle nel profilo Volontario ✅ COMPLETATO (22 ago)
+- ✅ `ratingMedio` mostrato come **stelline** (`RatingBar` in modalità indicatore, `stepSize=0.5` per le
+  mezze stelle, colore `care_accent`) in **entrambi** i punti in cui appare il rating: profilo proprio del
+  volontario (`fragment_profilo_volontario.xml` + `ProfiloVolontarioViewModel`) e dialog pubblico di sola
+  lettura visto da Anziano/Familiare (`dialog_profilo_volontario.xml` + `ProfiloVolontarioDialog.kt`).
+- ✅ **Accessibilità:** le stelle **affiancano** il numero, non lo sostituiscono (regola "mai il
+  colore/forma da solo"); `contentDescription` con il valore per lo screen reader; microcopy con virgola
+  italiana ("4,5 / 5"). Caso "non ancora valutato" → **nessuna stella** (una `RatingBar` a 0 sembrerebbe
+  un voto pessimo), resta solo il testo.
+- Testato su dispositivo fisico (con e senza valutazione, in entrambe le viste).
+- ✅ **Solo stelle (22 ago):** rimossa la parte numerica ("4,5 / 5"), restano le sole stelle; senza voto
+  resta il testo "Non ancora valutato". La lettura vocale è garantita dalla `contentDescription`.
 
-### 29 ago · T6 — Vista "i miei garanti collegati" (Anziano)
-- Nel profilo Anziano, elenco dei familiari collegati al suo codice invito (oggi l'anziano non ha
-  visibilità su chi si è collegato). Piccola, tema trasparenza/accessibilità. → **Sonnet**.
+### 29 ago · T6 — Vista "i miei garanti collegati" (Anziano) ✅ COMPLETATO (22 ago)
+- ✅ Nel profilo Anziano, nuova card "I tuoi familiari collegati" (sotto il codice invito) con l'elenco
+  dei familiari collegati; con lista vuota, messaggio "Nessun familiare collegato. Condividi il codice
+  qui sopra". Sola lettura (trasparenza), caricamento una volta come il resto del profilo.
+- ✅ **Vincolo dati:** il documento `User` su Firestore non contiene l'email → si mostra il **solo nome**
+  di ogni familiare.
+- ✅ **Fix security rules (necessario):** l'`allow read` di `users` non permetteva a un anziano di leggere
+  il documento di un familiare (c'erano sé stesso, i volontari, e "familiare legge anziano", ma non il
+  verso opposto) → la lettura del nome falliva in silenzio e la lista restava vuota. Aggiunta la clausola
+  simmetrica in OR: `resource.data.get('ruolo','') == 'familiare' && resource.data.get('anzianoCollegatoId','') == request.auth.uid`.
+  Nessuna modifica al codice dell'app.
+- ✅ **File:** `ProfiloAnzianoViewModel.kt` (LiveData `garanti` + `caricaGaranti`), `ProfiloAnzianoFragment.kt`
+  (`osservaGaranti`), `fragment_profilo_anziano.xml` (card), nuovo `item_garante_collegato.xml`.
+- Testato su dispositivo fisico dopo la pubblicazione delle rules.
 
 ### 30 ago–1 set · T7 — Pagina "Servizi sanitari a domicilio" (informativa nazionale)
 Schermata **condivisa di sola informazione** (una UI riusata), che *indica canali ufficiali* e **non

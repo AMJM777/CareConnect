@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- riga di sola lettura: icona + nome di un familiare collegato all'anziano (T6) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="56dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="@dimen/spacing_small">
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_person"
+        android:contentDescription="@null"
+        app:tint="@color/care_primary" />
+
+    <TextView
+        android:id="@+id/garanteNomeText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:textSize="@dimen/text_size_body"
+        android:textColor="@color/care_on_surface"
+        tools:text="Luca Bianchi" />
+
+</LinearLayout>

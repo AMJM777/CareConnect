@@ -1,6 +1,8 @@
 # Project State — CareConnect
 
-**Ultimo aggiornamento:** 21 agosto 2026 (TESI — **T4 "Scuotimento SOS in background" completato**: nuovo `SosShakeService` (Foreground Service `specialUse`) che tiene attivo l'accelerometro anche ad app chiusa; `ShakeDetector` ora usa il sensore accelerometro **wake-up** (con fallback) → niente wake lock, funziona a schermo spento; la conferma diventa una `ConfermaSosActivity` a tutto schermo (riusa layout + countdown/TTS + `inviaSos()` di T2, **logica SOS non duplicata**); lo scuotimento apre l'overlay **direttamente** grazie al permesso **"Compari sopra le altre app"** (`SYSTEM_ALERT_WINDOW`, richiesto una volta), con la notifica full-screen come solo fallback; protezione **sempre attiva di default (opt-out)** via toggle nel Profilo, con coordinamento anti-doppia-rilevazione tra Service e Home. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
+**Ultimo aggiornamento:** 22 agosto 2026 (TESI — **T6 "Vista i miei garanti collegati (Anziano)" completato**: nuova card "I tuoi familiari collegati" nel profilo Anziano con l'elenco (sola lettura) dei familiari collegati al codice invito, o messaggio guida se vuota; `ProfiloAnzianoViewModel` espone `garanti` e ne recupera i nomi da `familiariCollegatiIds` (solo nome: l'email non è su Firestore); UI con container `LinearLayout` + `item_garante_collegato.xml`. **Bug security rules risolto:** l'`allow read` di `users` non permetteva all'anziano di leggere il documento di un familiare → aggiunta clausola simmetrica `ruolo=='familiare' && anzianoCollegatoId==request.auth.uid` (solo rules, nessuna modifica app). Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
+> **Precedente:** 22 agosto 2026 (TESI — **T5 "Stelle nel profilo Volontario" completato**: il `ratingMedio` (già calcolato in Fase 9) è ora mostrato come **stelline** (`RatingBar` in modalità indicatore, `stepSize=0.5`, colore `care_accent`) al posto del placeholder testuale, in **entrambi** i punti in cui appare il rating — profilo proprio del volontario (data binding: nuovi LiveData `ratingStelle`/`haValutazione`) e dialog pubblico di sola lettura (popolato a mano). Su decisione dell'utente la parte numerica è stata **rimossa**: restano le **sole stelle** (con `contentDescription` che conserva il valore per lo screen reader); caso "non ancora valutato" → nessuna stella, solo testo. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
+> **Precedente:** 21 agosto 2026 (TESI — **T4 "Scuotimento SOS in background" completato**: nuovo `SosShakeService` (Foreground Service `specialUse`) che tiene attivo l'accelerometro anche ad app chiusa; `ShakeDetector` ora usa il sensore accelerometro **wake-up** (con fallback) → niente wake lock, funziona a schermo spento; la conferma diventa una `ConfermaSosActivity` a tutto schermo (riusa layout + countdown/TTS + `inviaSos()` di T2, **logica SOS non duplicata**); lo scuotimento apre l'overlay **direttamente** grazie al permesso **"Compari sopra le altre app"** (`SYSTEM_ALERT_WINDOW`, richiesto una volta), con la notifica full-screen come solo fallback; protezione **sempre attiva di default (opt-out)** via toggle nel Profilo, con coordinamento anti-doppia-rilevazione tra Service e Home. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
 > **Precedente:** 17 agosto 2026 (TESI — **T2 "SOS ripensato" completato**: doppio trigger (bottone rosso + scuotimento accelerometro) sullo stesso percorso; overlay di conferma translucido con countdown 5→0, voce TTS "Sto per chiamare aiuto" + conteggio, e ANNULLA grande; a fine countdown `inviaSos()` (→ push FCM esistente) + `ACTION_DIAL` 112; scuotimento solo ad app aperta. Nuovi `TtsHelper`, `ShakeDetector`, `ConfermaSosDialogFragment`. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
 > **Precedente:** 16 agosto 2026 (TESI — **T1 "Home Anziano" completato**: Home ridisegnata come form "Nuova richiesta" diretto + banner "richiesta in corso" realtime + SOS ricollocato; split creazione/modifica; nuovi `NuovaRichiestaHomeFragment`/`NuovaRichiestaHomeViewModel`; rimossi `DashboardAnziano*`. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
 > **Precedente:** 12 luglio 2026 (sessione "Rifinitura Layout + DataBinding dichiarativo": **Fase 13 completata**. Consolidate le due voci di punteggio a rischio — Layout (3/3) e DataBinding+ViewModel (3/3). Verificate nel codice tutte e 9 le voci della griglia d'esame. Chiusi tutti i bug §10 ancora aperti (barra corta Home, A3 tastiera, A4 bottom bar, freccia Accedi, tema chiaro). Segnate come completate anche Fase 11 (Background Task) e Fase 12 (FCM), verificate nel codice. Vedi `HANDOFF_4_Fase13_Rifinitura_Completata.md`. §2/§4/§9/§10 aggiornati)
@@ -170,6 +172,53 @@
 - Testato su dispositivo fisico: scuotimento ad app aperta, sulla home del telefono (sbloccato) e a
   schermo bloccato → overlay diretto; ANNULLA non invia; fine countdown → familiari avvisati + 112;
   nessuna doppia conferma; toggle nel Profilo accende/spegne la notifica permanente.
+
+### T5 — Stelle nel profilo Volontario (22 agosto 2026) ✅
+- **Obiettivo:** mostrare il `ratingMedio` (già calcolato in Fase 9) come **stelline** al posto del
+  vecchio placeholder testuale. Feature piccola: nessuna modifica al dato o al calcolo, solo presentazione.
+- **Soluzione:** `RatingBar` in **modalità indicatore** (`android:isIndicator="true"`, sola lettura),
+  `numStars=5`, `stepSize=0.5` per le mezze stelle; stelle piene in `care_accent` (riuso palette, nessun
+  colore nuovo), vuote in `care_outline`. Stessa classe già usata per l'input di `dialog_conferma_valutazione`.
+- **Due punti aggiornati (coerenza):** (1) profilo proprio del volontario — `fragment_profilo_volontario.xml`
+  (RatingBar legata via **data binding** a `viewModel.ratingStelle` + visibilità su `viewModel.haValutazione`)
+  e `ProfiloVolontarioViewModel` (nuovi LiveData `ratingStelle: Float` e `haValutazione: Boolean`);
+  (2) dialog pubblico di sola lettura — `dialog_profilo_volontario.xml` (nuova RatingBar `profiloRatingBar`)
+  popolata a mano in `ui/common/ProfiloVolontarioDialog.kt` (niente data binding lì, il layout è gonfiato a mano).
+- **Accessibilità / difendibilità:** le stelle **affiancano** il numero, non lo sostituiscono (regola di
+  progetto "mai il colore/forma da solo"); `contentDescription` con il valore per lo screen reader.
+  Caso **"non ancora valutato"** (`ratingMedio == null`): la RatingBar è **nascosta** (una barra a 0 stelle
+  sembrerebbe un voto pessimo), resta il solo testo. Microcopy con **virgola italiana** ("4,5 / 5").
+- **Solo stelle (aggiornamento 22 ago):** rimossa la parte numerica; restano le sole stelle e, in assenza
+  di voto, il solo testo "Non ancora valutato". La `contentDescription` conserva il valore per lo screen
+  reader; `_valutazione` nel ViewModel ora serve **solo** da descrizione vocale.
+- **File modificati:** `viewmodel/volontario/ProfiloVolontarioViewModel.kt`,
+  `res/layout/fragment_profilo_volontario.xml`, `res/layout/dialog_profilo_volontario.xml`,
+  `ui/common/ProfiloVolontarioDialog.kt`. Testato su dispositivo fisico (con e senza valutazione, in entrambe le viste).
+
+### T6 — Vista "i miei garanti collegati" (Anziano) (22 agosto 2026) ✅
+- **Obiettivo:** dare all'anziano visibilità su chi si è collegato al suo codice invito (prima assente).
+  Tema trasparenza/accessibilità. Sola lettura (nessuno "scollega": eventuale sviluppo futuro).
+- **UI:** nuova card "I tuoi familiari collegati" nel profilo Anziano, sotto la card del codice invito.
+  Scelta implementativa: **container `LinearLayout` popolato via codice** (nuovo `item_garante_collegato.xml`
+  per riga) invece di un RecyclerView — lista piccola e statica dentro un `NestedScrollView`, così si evita
+  il gotcha del RecyclerView annidato; scelta difendibile all'orale. Con lista vuota, messaggio guida che
+  rimanda al codice invito.
+- **Dati:** `ProfiloAnzianoViewModel` espone `garanti: LiveData<List<String>>`; `caricaGaranti()` legge
+  `familiariCollegatiIds` (già sul documento anziano) e recupera il nome di ciascuno con `getUtente()`.
+  **Vincolo:** il documento `User` non contiene l'email (sta solo in Firebase Auth, per l'utente corrente)
+  → si mostra il **solo nome**. Caricamento una volta sola, coerente col resto del profilo (non realtime).
+- **Bug trovato e risolto — security rules (importante per l'orale):** il collegamento è un `WriteBatch`
+  atomico → se il familiare risulta collegato, l'array sull'anziano **è** popolato; il problema era che
+  l'`allow read` di `users` non consentiva a un anziano di leggere il documento di un *familiare*
+  (esistevano: sé stesso, i volontari, e "familiare→anziano", ma non il verso opposto). La lettura del nome
+  falliva con `PERMISSION_DENIED`, scartata da `getOrNull()`, e la lista restava vuota. **Fix (solo rules,
+  nessuna modifica app):** aggiunta in OR la clausola simmetrica
+  `resource.data.get('ruolo','') == 'familiare' && resource.data.get('anzianoCollegatoId','') == request.auth.uid`
+  — un anziano legge un familiare solo se quel familiare è collegato proprio a lui. Niente `get()` cross-document
+  (efficiente, passa anche nel Playground).
+- **File:** `viewmodel/anziano/ProfiloAnzianoViewModel.kt`, `ui/anziano/ProfiloAnzianoFragment.kt`,
+  `res/layout/fragment_profilo_anziano.xml`, nuovo `res/layout/item_garante_collegato.xml`; + rules `users`
+  aggiornate in console. Testato su dispositivo fisico dopo la pubblicazione delle rules.
 
 ---
 
@@ -400,7 +449,7 @@ messaggi/{messaggioId}                # T3 — chat anziano ↔ volontario, lega
 - `RichiesteDisponibiliAdapter.kt` + `item_richiesta_disponibile.xml` — singola azione "Prendi in carico"
 - `RichiestePreseInCaricoFragment.kt` + `fragment_richieste_prese_in_carico.xml` — lista realtime richieste attive del volontario
 - `RichiestePreseInCaricoAdapter.kt` + `item_richiesta_incarico.xml` — azioni "Segna come completata" / "Rilascia" (con conferma), visibili solo se `PRESA_IN_CARICO`; **esteso in Fase 7**: mostra nome/indirizzo dell'anziano (SOLO qui, non in `RichiesteDisponibiliAdapter` — privacy, vedi §2)
-- `ProfiloVolontarioFragment.kt` + `fragment_profilo_volontario.xml` — nome/email/ruolo/valutazione (placeholder)/bio modificabile/logout. **Bug corretto in Fase 7**: il logout ora usa `AuthViewModel` condiviso, non più un `logout()` locale — **verrà esteso in futuro** (non pianificato nel dettaglio) con immagine profilo, vedi §9
+- `ProfiloVolontarioFragment.kt` + `fragment_profilo_volontario.xml` — nome/email/ruolo/valutazione (**stelle + numero, T5**)/bio modificabile/logout. **Bug corretto in Fase 7**: il logout ora usa `AuthViewModel` condiviso, non più un `logout()` locale — **verrà esteso in futuro** (non pianificato nel dettaglio) con immagine profilo, vedi §9
 
 **`ui/familiare/`** *(contenuto reale da Fase 6, non più placeholder)*
 - `HomeFamiliareFragment.kt` + `fragment_home_familiare.xml` — doppio stato: form collegamento (codice invito) se `NonCollegato`, altrimenti BottomNav + NavHost annidato agganciato a runtime (vedi §2)
@@ -466,13 +515,13 @@ messaggi/{messaggioId}                # T3 — chat anziano ↔ volontario, lega
 > Nota: il testo d'esame di questa sezione (bug dispositivo, Fasi 9–12) è **superato** — quei blocchi
 > sono conclusi. Lo storico resta in §10 e in `docs/archivio/`.
 
-**Contesto tesi:** T1, T2, T3 e **T4** completati (vedi §0bis). Il prossimo blocco pianificato in
-`Roadmap_Tesi.md` è **T5 — Stelle nel profilo Volontario**: mostrare il `ratingMedio` (già calcolato)
-come **stelline** al posto del placeholder. Feature piccola, dati già disponibili → **Sonnet, medio**.
+**Contesto tesi:** T1, T2, T3, **T4**, **T5** e **T6** completati (vedi §0bis). Il prossimo blocco pianificato
+in `Roadmap_Tesi.md` è **T7 — Pagina "Servizi sanitari a domicilio"** (informativa nazionale): schermata
+condivisa di sola informazione (schede con TTS lato Anziano) su 112/118, 116117 e ADI. Contenuto statico,
+nessun dato personale → **Sonnet, medio**.
 
-A seguire: **T6** (vista "i miei garanti collegati" nel profilo Anziano) e **T7** (pagina informativa
-"Servizi sanitari a domicilio"), poi la **fase grafica finale** separata. Aprire T5 preferibilmente in
-una **nuova chat** (questa ha accumulato il contesto di T4).
+A seguire la **fase grafica finale** separata. Aprire T7 preferibilmente in una **nuova chat** (questa ha
+accumulato il contesto di T5–T6).
 
 ## 9. Backlog — idee rimandate (non fanno parte del piano d'esame attuale)
 

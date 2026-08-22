@@ -26,9 +26,17 @@ class ProfiloVolontarioViewModel(
     private val _nome = MutableLiveData("")
     val nome: LiveData<String> = _nome
 
-    // testo già formattato: "valutazione: 4.5 / 5" oppure "valutazione: non ancora valutato"
+    // descrizione vocale delle stelle per lo screen reader (es. "Valutazione 4,5 su 5")
     private val _valutazione = MutableLiveData("")
     val valutazione: LiveData<String> = _valutazione
+
+    // valore numerico per la RatingBar (0 se non ancora valutato)
+    private val _ratingStelle = MutableLiveData(0f)
+    val ratingStelle: LiveData<Float> = _ratingStelle
+
+    // true solo se il volontario ha già ricevuto almeno una valutazione
+    private val _haValutazione = MutableLiveData(false)
+    val haValutazione: LiveData<Boolean> = _haValutazione
 
     private val _bioIniziale = MutableLiveData<String>()
     val bioIniziale: LiveData<String> = _bioIniziale
@@ -59,12 +67,17 @@ class ProfiloVolontarioViewModel(
         }
     }
 
-    private fun mostraUtente(utente: User) {
+        private fun mostraUtente(utente: User) {
         utenteCaricato = utente
         _nome.value = utente.nome
-        _valutazione.value = utente.ratingMedio
-            ?.let { media -> "Valutazione: %.1f / 5".format(media) }
-            ?: "Valutazione: non ancora valutato"
+
+        val media = utente.ratingMedio
+        _haValutazione.value = media != null
+        _ratingStelle.value = media?.toFloat() ?: 0f
+        _valutazione.value = media
+            ?.let { "Valutazione %.1f su 5".format(it).replace('.', ',') }
+            ?: ""
+
         _bioIniziale.value = utente.bio ?: ""
     }
 

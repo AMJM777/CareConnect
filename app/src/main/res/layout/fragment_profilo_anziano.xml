@@ -119,6 +119,48 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- scheda di sola lettura per mostrare i familiari collegati al codice invito-->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/CareConnect.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="I tuoi familiari collegati"
+                        android:textSize="@dimen/text_size_body"
+                        android:textStyle="bold"
+                        android:textColor="@color/care_on_surface" />
+
+                    <!-- contenitore riempito dal Fragment con una riga per familiare -->
+                    <LinearLayout
+                        android:id="@+id/garantiContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:orientation="vertical" />
+
+                    <!-- messaggio quando nessun familiare si è ancora collegato -->
+                    <TextView
+                        android:id="@+id/garantiVuotoText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:text="Nessun familiare collegato. Condividi il codice qui sopra."
+                        android:textSize="@dimen/text_size_body"
+                        android:textColor="@color/care_on_surface_variant" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- scheda per visualizzare e modificare l'indirizzo di residenza -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/CareConnect.Card"

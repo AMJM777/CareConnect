@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
@@ -90,7 +91,24 @@ class ProfiloAnzianoFragment : Fragment() {
         preRiempiIndirizzo()
         osservaErrori()
         osservaIndirizzoSalvato()
+        osservaGaranti()
         configuraProtezioneSwitch()
+    }
+
+    // mostra i familiari collegati: una riga per nome, o un messaggio se la lista è vuota
+    private fun osservaGaranti() {
+        viewModel.garanti.observe(viewLifecycleOwner) { nomi ->
+            val container = binding.garantiContainer
+            container.removeAllViews()
+            binding.garantiVuotoText.visibility = if (nomi.isEmpty()) View.VISIBLE else View.GONE
+
+            val inflater = LayoutInflater.from(requireContext())
+            nomi.forEach { nome ->
+                val riga = inflater.inflate(R.layout.item_garante_collegato, container, false)
+                riga.findViewById<TextView>(R.id.garanteNomeText).text = nome
+                container.addView(riga)
+            }
+        }
     }
 
     // interruttore della protezione SOS in background (T4): stato iniziale dalla
