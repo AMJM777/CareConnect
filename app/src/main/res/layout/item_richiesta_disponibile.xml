@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- contenitore radice obbligatorio per abilitare il data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- card della singola richiesta disponibile per il volontario con margini di distanziamento -->
@@ -46,14 +47,18 @@
                 tools:text="04/07/2026 10:15" />
 
             <!-- bottone per accettare e prendere in carico la richiesta -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/prendiInCaricoButton"
-                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
+                android:minHeight="@dimen/touch_target_min"
                 android:text="Prendi in carico"
-                android:textColor="@color/black" />
+                android:backgroundTint="@color/care_primary"
+                android:textColor="@color/care_on_primary"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="14dp" />
 
         </LinearLayout>
 

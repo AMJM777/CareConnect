@@ -7,17 +7,18 @@
         <item name="android:color">#33FFFFFF</item>
     </style>
 
-    <!-- stile base per le card con angoli arrotondati, ombra leggera e bordi tenui -->
+    <!-- card con angoli arrotondati, profondità leggera e bordo tenue -->
     <style name="CareConnect.Card" parent="Widget.Material3.CardView.Elevated">
-        <item name="cardCornerRadius">16dp</item>
-        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">14dp</item>
+        <item name="cardElevation">1dp</item>
         <item name="cardBackgroundColor">@color/care_surface</item>
         <item name="strokeColor">@color/care_outline</item>
         <item name="strokeWidth">1dp</item>
         <item name="contentPadding">@dimen/spacing_medium</item>
     </style>
 
-    <!-- stile per l'etichetta di stato a forma di pillola, i colori cambieranno dinamicamente -->
+    <!-- etichetta di stato a pillola: i colori vengono impostati dinamicamente
+         da StatoRichiestaColori (sfondo + testo per ogni stato) -->
     <style name="CareConnect.StatusChip" parent="">
         <item name="android:background">@drawable/bg_status_chip</item>
         <item name="android:backgroundTint">@color/care_primary_container</item>
@@ -30,11 +31,52 @@
         <item name="android:paddingBottom">4dp</item>
     </style>
 
-    <!-- bottone per azioni secondarie con tinte di accento arancioni -->
-    <style name="CareConnect.Button.Accent" parent="Widget.Material3.Button.TonalButton">
-        <item name="backgroundTint">@color/care_accent_container</item>
-        <item name="android:textColor">@color/care_accent</item>
-        <item name="iconTint">@color/care_accent</item>
+    <!-- bottone per azioni secondarie: oro pieno con testo scuro (leggibile),
+         angoli 14dp e altezza da target anziano (56dp) -->
+    <style name="CareConnect.Button.Accent" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/care_accent</item>
+        <item name="android:textColor">@color/care_on_accent</item>
+        <item name="iconTint">@color/care_on_accent</item>
+        <item name="cornerRadius">14dp</item>
+        <item name="android:minHeight">@dimen/touch_target_min</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <!-- campo di testo con etichetta flottante e angoli coerenti -->
+    <style name="CareConnect.TextField" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">14dp</item>
+        <item name="boxCornerRadiusTopEnd">14dp</item>
+        <item name="boxCornerRadiusBottomStart">14dp</item>
+        <item name="boxCornerRadiusBottomEnd">14dp</item>
+    </style>
+
+    <!-- pulsante chat: interno arancione tenue con icona e testo scuro -->
+    <style name="CareConnect.Button.Chat" parent="Widget.Material3.Button.TonalButton">
+        <item name="backgroundTint">@color/care_chat</item>
+        <item name="android:textColor">@color/care_on_chat</item>
+        <item name="iconTint">@color/care_on_chat</item>
+        <item name="icon">@drawable/ic_chat</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8dp</item>
+        <item name="cornerRadius">14dp</item>
+        <item name="android:minHeight">@dimen/touch_target_min</item>
+    </style>
+
+    <!-- tessera di scelta del tipo di aiuto: piena se selezionata, con bordo se no -->
+    <style name="CareConnect.OptionToggle" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="backgroundTint">@color/option_toggle_bg</item>
+        <item name="android:textColor">@color/option_toggle_fg</item>
+        <item name="iconTint">@color/option_toggle_fg</item>
+        <item name="strokeColor">@color/care_primary</item>
+        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="android:minHeight">@dimen/touch_target_min</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">12dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">14dp</item>
     </style>
 
     <!-- tema per l'overlay SOS-->
@@ -45,6 +87,9 @@
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:fontFamily">@font/lexend</item>
+        <item name="fontFamily">@font/lexend</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.CareConnect.LabelLarge</item>
     </style>
 
     <!-- tema per ConfermaSosActivity-->
@@ -53,6 +98,9 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:fontFamily">@font/lexend</item>
+        <item name="fontFamily">@font/lexend</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.CareConnect.LabelLarge</item>
     </style>
 
 </resources>

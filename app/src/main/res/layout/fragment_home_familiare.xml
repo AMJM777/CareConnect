@@ -43,7 +43,8 @@
             android:layout_marginEnd="@dimen/screen_padding"
             android:text="Collegati al tuo assistito"
             android:textSize="@dimen/text_size_title"
-            android:textColor="@color/care_on_surface"
+            android:textStyle="bold"
+            android:textColor="@color/care_primary"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/collegaSubtitleText"
@@ -62,26 +63,36 @@
             android:textSize="@dimen/text_size_body"
             android:textColor="@color/care_on_surface"
             app:layout_constraintTop_toBottomOf="@id/collegaTitleText"
-            app:layout_constraintBottom_toTopOf="@id/codiceInvitoEditText"
+            app:layout_constraintBottom_toTopOf="@id/codiceInvitoLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- campo di testo dove il familiare digita il codice invito -->
-        <EditText
-            android:id="@+id/codiceInvitoEditText"
+        <!-- campo dove il familiare digita il codice invito -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/codiceInvitoLayout"
+            style="@style/CareConnect.TextField"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_large"
             android:layout_marginStart="@dimen/screen_padding"
             android:layout_marginEnd="@dimen/screen_padding"
             android:hint="Codice invito"
-            android:inputType="textCapCharacters"
-            android:imeOptions="actionDone"
-            android:maxLines="1"
             app:layout_constraintTop_toBottomOf="@id/collegaSubtitleText"
             app:layout_constraintBottom_toTopOf="@id/erroreCollegamentoText"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/codiceInvitoEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/touch_target_min"
+                android:inputType="textCapCharacters"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:textColor="@color/care_on_surface" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- messaggio di errore in caso di codice non valido -->
         <TextView
@@ -94,13 +105,13 @@
             android:textColor="@color/care_error"
             android:visibility="gone"
             tools:text="Codice non valido"
-            app:layout_constraintTop_toBottomOf="@id/codiceInvitoEditText"
+            app:layout_constraintTop_toBottomOf="@id/codiceInvitoLayout"
             app:layout_constraintBottom_toTopOf="@id/collegatiButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- bottone per confermare il codice e avviare il collegamento -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/collegatiButton"
             android:layout_width="0dp"
             android:layout_height="@dimen/button_height"
@@ -108,6 +119,11 @@
             android:layout_marginStart="@dimen/screen_padding"
             android:layout_marginEnd="@dimen/screen_padding"
             android:text="Collegati"
+            android:backgroundTint="@color/care_primary"
+            android:textColor="@color/care_on_primary"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="14dp"
             app:layout_constraintTop_toBottomOf="@id/erroreCollegamentoText"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -129,7 +145,7 @@
             android:id="@+id/collegaGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="collegaTitleText,collegaSubtitleText,codiceInvitoEditText,collegatiButton" />
+            app:constraint_referenced_ids="collegaTitleText,collegaSubtitleText,codiceInvitoLayout,collegatiButton" />
 
         <!-- contenitore dinamico per le schermate interne come attività e profilo -->
         <androidx.fragment.app.FragmentContainerView

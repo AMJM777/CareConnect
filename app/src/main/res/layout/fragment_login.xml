@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- modulo con campi email, password, bottone di accesso standard e bottone per Google -->
+<!-- modulo con campi email, password, bottone di accesso e bottone per Google -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -15,8 +15,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/screen_padding">
 
-            <!-- Guideline al 10% dell'altezza: da qui parte il titolo, così il
-                 blocco scende un po' in modo proporzionale (adattivo) -->
+            <!-- guideline al 10% dell'altezza: da qui parte il titolo -->
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/topGuideline"
                 android:layout_width="wrap_content"
@@ -24,49 +23,68 @@
                 android:orientation="horizontal"
                 app:layout_constraintGuide_percent="0.10" />
 
-            <!-- Titolo in pagina (unico titolo: la barra blu del login è vuota) -->
+            <!-- titolo in pagina -->
             <TextView
                 android:id="@+id/titleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/login_title"
                 android:textSize="@dimen/text_size_title"
-                android:textColor="@color/care_on_surface"
+                android:textColor="@color/care_primary"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="@id/topGuideline"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Campo email -->
-            <EditText
-                android:id="@+id/emailInput"
+            <!-- campo email -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emailLayout"
+                style="@style/CareConnect.TextField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/touch_target_min"
                 android:hint="@string/login_email_hint"
-                android:inputType="textEmailAddress"
-                android:textSize="@dimen/text_size_body"
-                android:autofillHints="emailAddress"
+                android:layout_marginTop="@dimen/spacing_large"
                 app:layout_constraintTop_toBottomOf="@id/titleText"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="@dimen/spacing_large" />
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Campo password -->
-            <EditText
-                android:id="@+id/passwordInput"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/emailInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:inputType="textEmailAddress"
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    android:autofillHints="emailAddress" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- campo password con mostra/nascondi -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordLayout"
+                style="@style/CareConnect.TextField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/touch_target_min"
                 android:hint="@string/login_password_hint"
-                android:inputType="textPassword"
-                android:textSize="@dimen/text_size_body"
-                android:autofillHints="password"
-                app:layout_constraintTop_toBottomOf="@id/emailInput"
+                android:layout_marginTop="@dimen/spacing_medium"
+                app:endIconMode="password_toggle"
+                app:layout_constraintTop_toBottomOf="@id/emailLayout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="@dimen/spacing_medium" />
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Messaggio di errore, nascosto di default: visibilità gestita dal Fragment -->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/passwordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:inputType="textPassword"
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    android:autofillHints="password" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- errore, visibilità gestita dal fragment -->
             <TextView
                 android:id="@+id/errorText"
                 android:layout_width="0dp"
@@ -74,47 +92,54 @@
                 android:textColor="@color/care_error"
                 android:textSize="@dimen/text_size_body"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/passwordInput"
+                app:layout_constraintTop_toBottomOf="@id/passwordLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="@dimen/spacing_small"
                 tools:text="Credenziali non valide"
                 tools:visibility="visible" />
 
-            <!-- Bottone login email/password -->
-            <Button
+            <!-- accesso email/password: azione primaria in indaco -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/loginButton"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/button_height"
                 android:text="@string/login_button"
                 android:textSize="@dimen/text_size_button"
-                android:backgroundTint="@color/care_accent"
+                android:backgroundTint="@color/care_primary"
                 android:textColor="@color/care_on_primary"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="14dp"
                 app:layout_constraintTop_toBottomOf="@id/errorText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="@dimen/spacing_medium" />
 
-            <!-- Bottone Google Sign-In -->
-            <Button
+            <!-- accesso con Google: azione secondaria col contorno -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/googleSignInButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/button_height"
                 android:text="@string/login_google_button"
                 android:textSize="@dimen/text_size_button"
+                android:textColor="@color/care_primary"
+                app:strokeColor="@color/care_primary"
+                app:cornerRadius="14dp"
                 app:layout_constraintTop_toBottomOf="@id/loginButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="@dimen/spacing_medium" />
 
-            <!-- Link verso la registrazione -->
+            <!-- link verso la registrazione -->
             <TextView
                 android:id="@+id/goToRegisterText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/login_go_to_register"
                 android:textSize="@dimen/text_size_body"
-                android:textColor="@color/care_primary_dark"
+                android:textColor="@color/care_primary"
                 android:padding="@dimen/spacing_small"
                 app:layout_constraintTop_toBottomOf="@id/googleSignInButton"
                 app:layout_constraintStart_toStartOf="parent"
@@ -122,7 +147,7 @@
                 android:layout_marginTop="@dimen/spacing_medium"
                 android:layout_marginBottom="@dimen/spacing_large" />
 
-            <!-- Indicatore di caricamento, centrato sullo schermo -->
+            <!-- caricamento centrato -->
             <ProgressBar
                 android:id="@+id/loadingIndicator"
                 android:layout_width="wrap_content"

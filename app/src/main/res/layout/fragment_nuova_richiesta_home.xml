@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Home dell'Anziano: banner "richiesta in corso" + form nuova richiesta + SOS. -->
+<!-- home dell'anziano: banner richieste in corso, form nuova richiesta, sos -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -16,9 +16,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/screen_padding">
 
-            <!-- BANNER "richiesta in corso": nascosto di default (visibility gone)
-                 Il Fragment lo mostra se ci sono richieste attive.
-                 Tap -> tab "Le mie richieste". -->
+            <!-- banner richieste in corso: nascosto finché il fragment non ne trova -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/bannerInCorso"
                 android:layout_width="match_parent"
@@ -28,7 +26,7 @@
                 android:focusable="true"
                 android:visibility="gone"
                 app:cardBackgroundColor="@color/care_primary_container"
-                app:cardCornerRadius="16dp"
+                app:cardCornerRadius="14dp"
                 app:cardElevation="0dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -56,136 +54,152 @@
                         android:layout_marginStart="@dimen/spacing_medium"
                         android:text="Hai richieste in corso"
                         android:textSize="@dimen/text_size_body"
-                        android:textColor="@color/care_on_surface" />
+                        android:textColor="@color/care_primary_dark" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- titolo del form -->
-            <TextView
-                android:id="@+id/titoloText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_large"
-                android:text="Di cosa hai bisogno?"
-                android:textSize="@dimen/text_size_title"
-                android:textStyle="bold"
-                android:textColor="@color/care_on_surface"
-                app:layout_constraintTop_toBottomOf="@id/bannerInCorso"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <!-- gruppo di opzioni predefinite per il tipo di aiuto -->
-            <RadioGroup
-                android:id="@+id/tipoRadioGroup"
+            <!-- card che raccoglie il form di creazione -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/formCard"
+                style="@style/CareConnect.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_medium"
-                app:layout_constraintTop_toBottomOf="@id/titoloText"
+                android:layout_marginTop="@dimen/spacing_large"
+                app:layout_constraintTop_toBottomOf="@id/bannerInCorso"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <RadioButton
-                    android:id="@+id/tipoSpesaRadio"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="@dimen/touch_target_min"
-                    android:text="Spesa"
-                    android:textSize="@dimen/text_size_body" />
+                    android:orientation="vertical">
 
-                <RadioButton
-                    android:id="@+id/tipoBollettaRadio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="@dimen/touch_target_min"
-                    android:text="Bolletta"
-                    android:textSize="@dimen/text_size_body" />
+                    <!-- titolo del form -->
+                    <TextView
+                        android:id="@+id/titoloText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Di cosa hai bisogno?"
+                        android:textSize="@dimen/text_size_title"
+                        android:textStyle="bold"
+                        android:textColor="@color/care_primary" />
 
-                <RadioButton
-                    android:id="@+id/tipoAssistenzaDigitaleRadio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="@dimen/touch_target_min"
-                    android:text="Assistenza digitale"
-                    android:textSize="@dimen/text_size_body" />
+                    <!-- scelta singola del tipo di aiuto -->
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/tipoToggleGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_medium"
+                        android:orientation="vertical"
+                        app:singleSelection="true"
+                        app:selectionRequired="true">
 
-                <RadioButton
-                    android:id="@+id/tipoAltroRadio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="@dimen/touch_target_min"
-                    android:text="Altro"
-                    android:textSize="@dimen/text_size_body" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/tipoSpesa"
+                            style="@style/CareConnect.OptionToggle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Spesa"
+                            app:icon="@drawable/ic_spesa" />
 
-            </RadioGroup>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/tipoBolletta"
+                            style="@style/CareConnect.OptionToggle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Bolletta"
+                            app:icon="@drawable/ic_bolletta" />
 
-            <!-- campo aggiuntivo, visibile solo se si seleziona "Altro" -->
-            <EditText
-                android:id="@+id/altroInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_small"
-                android:minHeight="@dimen/touch_target_min"
-                android:hint="Specifica (facoltativo)"
-                android:textSize="@dimen/text_size_body"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/tipoRadioGroup"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/tipoAssistenzaDigitale"
+                            style="@style/CareConnect.OptionToggle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Assistenza digitale"
+                            app:icon="@drawable/ic_assistenza_digitale" />
 
-            <!-- descrizione dei dettagli della richiesta -->
-            <EditText
-                android:id="@+id/descrizioneInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_large"
-                android:hint="Descrivi di cosa hai bisogno"
-                android:textSize="@dimen/text_size_body"
-                android:minLines="3"
-                android:gravity="top|start"
-                app:layout_constraintTop_toBottomOf="@id/altroInput"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/tipoAltro"
+                            style="@style/CareConnect.OptionToggle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Altro"
+                            app:icon="@drawable/ic_altro" />
 
-            <!-- messaggio di errore in caso di validazione fallita -->
-            <TextView
-                android:id="@+id/errorText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_small"
-                android:textColor="@color/care_error"
-                android:textSize="@dimen/text_size_body"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/descrizioneInput"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
 
-            <!-- bottone per inviare la richiesta -->
-            <Button
-                android:id="@+id/inviaButton"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/button_height"
-                android:layout_marginTop="@dimen/spacing_large"
-                android:text="Invia richiesta"
-                android:textSize="@dimen/text_size_button"
-                android:backgroundTint="@color/care_primary"
-                android:textColor="@color/care_on_primary"
-                app:layout_constraintTop_toBottomOf="@id/errorText"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                    <!-- campo libero, visibile solo con la scelta "altro" -->
+                    <EditText
+                        android:id="@+id/altroInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:background="@drawable/bg_input_outline"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp"
+                        android:hint="Specifica (facoltativo)"
+                        android:textSize="@dimen/text_size_body"
+                        android:textColor="@color/care_on_surface"
+                        android:textColorHint="@color/care_on_surface_variant"
+                        android:visibility="gone" />
 
-            <!-- rotella mostrata durante l'invio -->
-            <ProgressBar
-                android:id="@+id/loadingIndicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_medium"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/inviaButton"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                    <!-- dettagli della richiesta -->
+                    <EditText
+                        android:id="@+id/descrizioneInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:background="@drawable/bg_input_outline"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp"
+                        android:hint="Descrivi di cosa hai bisogno"
+                        android:textSize="@dimen/text_size_body"
+                        android:textColor="@color/care_on_surface"
+                        android:textColorHint="@color/care_on_surface_variant"
+                        android:minLines="3"
+                        android:gravity="top|start" />
 
-            <!-- ZONA EMERGENZA -->
+                    <!-- messaggio di errore di validazione -->
+                    <TextView
+                        android:id="@+id/errorText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:textColor="@color/care_error"
+                        android:textSize="@dimen/text_size_body"
+                        android:visibility="gone" />
+
+                    <!-- invio della richiesta -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/inviaButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:text="Invia richiesta"
+                        android:textSize="@dimen/text_size_button"
+                        android:backgroundTint="@color/care_primary"
+                        android:textColor="@color/care_on_primary"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        app:cornerRadius="14dp" />
+
+                    <!-- rotella durante l'invio -->
+                    <ProgressBar
+                        android:id="@+id/loadingIndicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/spacing_medium"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- etichetta della zona emergenza -->
             <TextView
                 android:id="@+id/emergenzaLabel"
                 android:layout_width="wrap_content"
@@ -194,10 +208,10 @@
                 android:text="In caso di emergenza"
                 android:textSize="@dimen/text_size_body"
                 android:textColor="@color/care_on_surface_variant"
-                app:layout_constraintTop_toBottomOf="@id/loadingIndicator"
+                app:layout_constraintTop_toBottomOf="@id/formCard"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- SOS: care_sos riservato ESCLUSIVAMENTE a questo. -->
+            <!-- sos: care_sos riservato solo a questo -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/sosButton"
                 android:layout_width="match_parent"
@@ -206,23 +220,46 @@
                 android:clickable="true"
                 android:focusable="true"
                 app:cardBackgroundColor="@color/care_sos"
-                app:cardCornerRadius="16dp"
+                app:cardCornerRadius="14dp"
                 app:cardElevation="2dp"
                 app:layout_constraintTop_toBottomOf="@id/emergenzaLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="@dimen/touch_target_min"
+                    android:orientation="vertical"
+                    android:gravity="center"
                     android:paddingTop="@dimen/spacing_medium"
-                    android:paddingBottom="@dimen/spacing_medium"
-                    android:text="SOS"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/care_on_sos"
-                    android:gravity="center" />
+                    android:paddingBottom="@dimen/spacing_medium">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/ic_emergenza"
+                        android:contentDescription="@null"
+                        app:tint="@color/care_on_sos" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:text="SOS"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/care_on_sos"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chiedi aiuto ora"
+                        android:textSize="@dimen/text_size_body"
+                        android:textColor="@color/care_on_sos"
+                        android:gravity="center" />
+
+                </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 

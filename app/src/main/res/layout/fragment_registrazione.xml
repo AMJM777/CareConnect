@@ -14,80 +14,117 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/screen_padding">
 
-            <!-- Titolo schermata -->
+            <!-- titolo schermata -->
             <TextView
                 android:id="@+id/titleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/register_title"
                 android:textSize="@dimen/text_size_title"
-                android:textColor="@color/care_on_surface"
+                android:textColor="@color/care_primary"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="@dimen/spacing_large" />
 
-            <!-- Campo nome -->
-            <EditText
-                android:id="@+id/nomeInput"
+            <!-- campo nome -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/nomeLayout"
+                style="@style/CareConnect.TextField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/touch_target_min"
                 android:hint="@string/register_nome_hint"
-                android:inputType="textPersonName"
-                android:textSize="@dimen/text_size_body"
-                android:autofillHints="name"
+                android:layout_marginTop="@dimen/spacing_large"
                 app:layout_constraintTop_toBottomOf="@id/titleText"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="@dimen/spacing_large" />
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Campo email -->
-            <EditText
-                android:id="@+id/emailInput"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nomeInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:inputType="textPersonName"
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    android:autofillHints="name" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- campo email -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emailLayout"
+                style="@style/CareConnect.TextField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/touch_target_min"
                 android:hint="@string/login_email_hint"
-                android:inputType="textEmailAddress"
-                android:textSize="@dimen/text_size_body"
-                android:autofillHints="emailAddress"
-                app:layout_constraintTop_toBottomOf="@id/nomeInput"
+                android:layout_marginTop="@dimen/spacing_medium"
+                app:layout_constraintTop_toBottomOf="@id/nomeLayout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="@dimen/spacing_medium" />
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Campo password -->
-            <EditText
-                android:id="@+id/passwordInput"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/emailInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:inputType="textEmailAddress"
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    android:autofillHints="emailAddress" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- campo password con mostra/nascondi -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordLayout"
+                style="@style/CareConnect.TextField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/touch_target_min"
                 android:hint="@string/login_password_hint"
-                android:inputType="textPassword"
-                android:textSize="@dimen/text_size_body"
-                android:autofillHints="newPassword"
-                app:layout_constraintTop_toBottomOf="@id/emailInput"
+                android:layout_marginTop="@dimen/spacing_medium"
+                app:endIconMode="password_toggle"
+                app:layout_constraintTop_toBottomOf="@id/emailLayout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="@dimen/spacing_medium" />
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Conferma password: previene errori di battitura in fase di registrazione -->
-            <EditText
-                android:id="@+id/confermaPasswordInput"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/passwordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:inputType="textPassword"
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    android:autofillHints="newPassword" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- conferma password con mostra/nascondi -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/confermaPasswordLayout"
+                style="@style/CareConnect.TextField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/touch_target_min"
                 android:hint="@string/register_conferma_password_hint"
-                android:inputType="textPassword"
-                android:textSize="@dimen/text_size_body"
-                app:layout_constraintTop_toBottomOf="@id/passwordInput"
+                android:layout_marginTop="@dimen/spacing_medium"
+                app:endIconMode="password_toggle"
+                app:layout_constraintTop_toBottomOf="@id/passwordLayout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="@dimen/spacing_medium" />
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Scelta ruolo: RadioGroup con opzioni grandi, coerente con
-                 le scelte di accessibilità già fatte per il resto della UI -->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/confermaPasswordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:inputType="textPassword"
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- scelta ruolo -->
             <TextView
                 android:id="@+id/ruoloLabel"
                 android:layout_width="wrap_content"
@@ -95,7 +132,7 @@
                 android:text="@string/register_ruolo_label"
                 android:textSize="@dimen/text_size_body"
                 android:textColor="@color/care_on_surface"
-                app:layout_constraintTop_toBottomOf="@id/confermaPasswordInput"
+                app:layout_constraintTop_toBottomOf="@id/confermaPasswordLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="@dimen/spacing_large" />
 
@@ -114,7 +151,9 @@
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/touch_target_min"
                     android:text="@string/register_ruolo_anziano"
-                    android:textSize="@dimen/text_size_body" />
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    android:buttonTint="@color/care_primary" />
 
                 <RadioButton
                     android:id="@+id/ruoloVolontarioRadio"
@@ -122,7 +161,9 @@
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/touch_target_min"
                     android:text="@string/register_ruolo_volontario"
-                    android:textSize="@dimen/text_size_body" />
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    android:buttonTint="@color/care_primary" />
 
                 <RadioButton
                     android:id="@+id/ruoloFamiliareRadio"
@@ -130,12 +171,13 @@
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/touch_target_min"
                     android:text="@string/register_ruolo_familiare"
-                    android:textSize="@dimen/text_size_body" />
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    android:buttonTint="@color/care_primary" />
 
             </RadioGroup>
 
-            <!-- Messaggio di errore: usato sia per errori di validazione locale
-                 (es. password diverse) sia per errori Firebase (via AuthUiState) -->
+            <!-- errore locale (password diverse) o firebase -->
             <TextView
                 android:id="@+id/errorText"
                 android:layout_width="0dp"
@@ -150,7 +192,7 @@
                 tools:text="Le password non coincidono"
                 tools:visibility="visible" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/registratiButton"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/button_height"
@@ -158,6 +200,9 @@
                 android:textSize="@dimen/text_size_button"
                 android:backgroundTint="@color/care_primary"
                 android:textColor="@color/care_on_primary"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="14dp"
                 app:layout_constraintTop_toBottomOf="@id/errorText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -169,7 +214,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/register_go_to_login"
                 android:textSize="@dimen/text_size_body"
-                android:textColor="@color/care_primary_dark"
+                android:textColor="@color/care_primary"
                 android:padding="@dimen/spacing_small"
                 app:layout_constraintTop_toBottomOf="@id/registratiButton"
                 app:layout_constraintStart_toStartOf="parent"

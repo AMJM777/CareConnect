@@ -3,49 +3,60 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- colori primari del brand, dominano la barra superiore e le sezioni principali -->
-    <color name="care_primary">#3A3585</color>
-    <color name="care_primary_variant">#FF3340B5</color>
-    <color name="care_primary_container">#FFE4E7FB</color>
+    <!-- Indaco istituzionale: barra superiore, azioni primarie, sezioni principali -->
+    <color name="care_primary">#FF322E6E</color>
+    <color name="care_primary_variant">#FF262254</color>
+    <color name="care_primary_container">#FFE7E4F7</color>
     <color name="care_on_primary">#FFFFFFFF</color>
 
-    <!-- colori di accento per i bottoni e gli elementi interattivi di spicco -->
-    <color name="care_accent">#FFF26522</color>
-    <color name="care_accent_variant">#FFC2410C</color>
-    <color name="care_accent_container">#FFFCE3D4</color>
-    <color name="care_on_accent">#FFFFFFFF</color>
+    <!-- Ambra dorata: accento caldo per gli elementi interattivi di spicco.
+         NB: essendo un tono chiaro, il testo/icona SOPRA l'accento e' scuro
+         (care_on_accent), non bianco -->
+    <color name="care_accent">#FFD98A0A</color>
+    <color name="care_accent_variant">#FF8A5A00</color>
+    <color name="care_accent_container">#FFFBE7C6</color>
+    <color name="care_on_accent">#FF241F3B</color>
 
-    <!-- rosso acceso riservato esclusivamente al banner e al bottone di emergenza -->
+    <!-- Rosso acceso riservato ESCLUSIVAMENTE all'emergenza (banner e bottone SOS) -->
+    <!-- pulsante chat: interno arancione tenue con testo arancione scuro -->
+    <color name="care_chat">#FFFCE4CE</color>
+    <color name="care_on_chat">#FF9A4400</color>
+
     <color name="care_sos">#FFD32F2F</color>
     <color name="care_on_sos">#FFFFFFFF</color>
 
-    <!-- colori per gli sfondi dell'app, le card e le varie gerarchie di testo -->
-    <color name="care_background">#FFECEEF7</color>
+    <!-- Sfondi caldi (carta), card e gerarchie di testo -->
+    <color name="care_background">#FFFAF6F0</color>
     <color name="care_surface">#FFFFFFFF</color>
-    <color name="care_on_surface">#FF2D3436</color>
-    <color name="care_on_surface_variant">#FF6B7280</color>
-    <color name="care_outline">#FFE5E7EB</color>
+    <color name="care_on_surface">#FF241F3B</color>
+    <color name="care_on_surface_variant">#FF5B5570</color>
+    <color name="care_outline">#FFEBE6DD</color>
 
-    <!-- colore scuro specifico per i testi principali, da non confondere con le varianti del brand -->
-    <color name="care_primary_dark">#FF111820</color>
+    <!-- Near-black caldo per i testi principali (login, messaggi, dialog) -->
+    <color name="care_primary_dark">#FF17132B</color>
 
-    <!-- rosso scuro per i messaggi di errore nei form, distinto dal rosso emergenza -->
+    <!-- Rosso scuro per gli errori dei form, distinto dal rosso emergenza -->
     <color name="care_error">#FFB00020</color>
     <color name="care_on_error">#FFFFFFFF</color>
 
-    <!-- combinazioni di sfondo e testo per evidenziare lo stato delle richieste -->
-    <color name="stato_aperta_bg">#FFE4E7FB</color>
-    <color name="stato_aperta_fg">#FF3340B5</color>
+    <!-- Stati richiesta: 5 tinte distinte, ognuna sempre con pallino + testo -->
+    <!-- Aperta = indaco -->
+    <color name="stato_aperta_bg">#FFE7E4F7</color>
+    <color name="stato_aperta_fg">#FF322E6E</color>
 
-    <color name="stato_incarico_bg">#FFFCE3D4</color>
-    <color name="stato_incarico_fg">#FFC2410C</color>
+    <!-- Presa in carico = oro (in linea con l'accento) -->
+    <color name="stato_incarico_bg">#FFFBE7C6</color>
+    <color name="stato_incarico_fg">#FF8A5A00</color>
 
-    <color name="stato_attesa_bg">#FFFCEFC7</color>
-    <color name="stato_attesa_fg">#FF8A6A00</color>
+    <!-- Completata dal volontario (in attesa di conferma) = teal, distinto dall'oro -->
+    <color name="stato_attesa_bg">#FFD6EAF3</color>
+    <color name="stato_attesa_fg">#FF17607F</color>
 
+    <!-- Confermata = verde -->
     <color name="stato_confermata_bg">#FFD7EFDA</color>
-    <color name="stato_confermata_fg">#FF1E7A34</color>
+    <color name="stato_confermata_fg">#FF14652A</color>
 
-    <color name="stato_annullata_bg">#FFEBEDF0</color>
-    <color name="stato_annullata_fg">#FF6B7280</color>
+    <!-- Annullata = grigio caldo -->
+    <color name="stato_annullata_bg">#FFEDEAE3</color>
+    <color name="stato_annullata_fg">#FF5F5B54</color>
 </resources>

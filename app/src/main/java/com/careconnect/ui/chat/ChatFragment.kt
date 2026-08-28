@@ -117,6 +117,9 @@ class ChatFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.messaggi.collect { lista ->
                     adapter.aggiornaLista(lista)
+                    // in sola lettura non ha senso invitare a scrivere
+                    binding.emptyStateText.text =
+                        if (soloLettura) "Nessun messaggio" else "Nessun messaggio. Scrivi per iniziare."
                     binding.emptyStateText.visibility =
                         if (lista.isEmpty()) View.VISIBLE else View.GONE
                     // porta in vista l'ultimo messaggio quando ne arriva uno nuovo

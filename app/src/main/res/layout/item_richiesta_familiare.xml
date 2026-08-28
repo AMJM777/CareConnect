@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_body"
                 android:textStyle="bold"
-                android:textColor="@color/care_primary_dark"
+                android:textColor="@color/care_primary"
                 tools:text="Spesa" />
 
             <TextView
@@ -70,12 +70,11 @@
             <!-- apre in sola lettura la chat tra l'anziano e il volontario (safeguarding) -->
             <Button
                 android:id="@+id/chatButton"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/CareConnect.Button.Chat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
-                android:text="Vedi chat"
-                android:textColor="@color/care_primary_dark" />
+                android:text="Vedi chat" />
 
             <!-- bottone per confermare la chiusura dell'attività e lasciare un feedback al volontario -->
             <Button
@@ -83,6 +82,7 @@
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="@dimen/touch_target_min"
                 android:layout_marginTop="@dimen/spacing_small"
                 android:text="Conferma e valuta"
                 android:textColor="@color/care_primary_dark" />

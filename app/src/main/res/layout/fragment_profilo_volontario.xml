@@ -182,7 +182,10 @@
                 android:layout_marginBottom="@dimen/spacing_medium"
                 android:text="Esci"
                 android:backgroundTint="@color/care_error"
-                android:textColor="@color/care_on_error" />
+                android:textColor="@color/care_on_error"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="14dp" />
 
         </LinearLayout>
 

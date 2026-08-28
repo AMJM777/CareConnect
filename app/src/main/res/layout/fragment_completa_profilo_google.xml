@@ -15,14 +15,14 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/screen_padding">
 
-            <!-- Titolo -->
+            <!-- titolo -->
             <TextView
                 android:id="@+id/titleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/completa_profilo_title"
                 android:textSize="@dimen/text_size_title"
-                android:textColor="@color/care_on_surface"
+                android:textColor="@color/care_primary"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -40,19 +40,28 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="@dimen/spacing_small" />
 
-            <!-- Nome: pre-compilato con il nome fornito da Google quando disponibile -->
-            <EditText
-                android:id="@+id/nomeInput"
+            <!-- nome, pre-compilato con quello di Google quando disponibile -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/nomeLayout"
+                style="@style/CareConnect.TextField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/touch_target_min"
                 android:hint="@string/register_nome_hint"
-                android:inputType="textPersonName"
-                android:textSize="@dimen/text_size_body"
+                android:layout_marginTop="@dimen/spacing_large"
                 app:layout_constraintTop_toBottomOf="@id/subtitleText"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="@dimen/spacing_large" />
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nomeInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:inputType="textPersonName"
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/ruoloLabel"
@@ -61,7 +70,7 @@
                 android:text="@string/register_ruolo_label"
                 android:textSize="@dimen/text_size_body"
                 android:textColor="@color/care_on_surface"
-                app:layout_constraintTop_toBottomOf="@id/nomeInput"
+                app:layout_constraintTop_toBottomOf="@id/nomeLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="@dimen/spacing_large" />
 
@@ -81,7 +90,9 @@
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/touch_target_min"
                     android:text="@string/register_ruolo_anziano"
-                    android:textSize="@dimen/text_size_body" />
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    android:buttonTint="@color/care_primary" />
 
                 <RadioButton
                     android:id="@+id/ruoloVolontarioRadio"
@@ -89,7 +100,9 @@
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/touch_target_min"
                     android:text="@string/register_ruolo_volontario"
-                    android:textSize="@dimen/text_size_body" />
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    android:buttonTint="@color/care_primary" />
 
                 <RadioButton
                     android:id="@+id/ruoloFamiliareRadio"
@@ -97,7 +110,9 @@
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/touch_target_min"
                     android:text="@string/register_ruolo_familiare"
-                    android:textSize="@dimen/text_size_body" />
+                    android:textSize="@dimen/text_size_body"
+                    android:textColor="@color/care_on_surface"
+                    android:buttonTint="@color/care_primary" />
 
             </RadioGroup>
 
@@ -114,8 +129,9 @@
                 android:layout_marginTop="@dimen/spacing_medium"
                 tools:text="Seleziona un ruolo"
                 tools:visibility="visible" />
-            <!-- bottone completa la registrazione-->
-            <Button
+
+            <!-- completa la registrazione -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/completaButton"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/button_height"
@@ -123,6 +139,9 @@
                 android:textSize="@dimen/text_size_button"
                 android:backgroundTint="@color/care_primary"
                 android:textColor="@color/care_on_primary"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="14dp"
                 app:layout_constraintTop_toBottomOf="@id/errorText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -16,8 +16,11 @@
             android:id="@+id/bollaCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="300dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="0dp">
+            app:cardElevation="0dp"
+            app:strokeColor="@color/care_outline"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -71,7 +74,11 @@
                         android:layout_marginStart="@dimen/spacing_small"
                         android:minHeight="@dimen/touch_target_min"
                         android:text="Ascolta"
-                        android:textColor="@color/care_primary_dark"
+                        android:textColor="@color/care_primary"
+                        app:icon="@drawable/ic_ascolta"
+                        app:iconTint="@color/care_primary"
+                        app:iconGravity="textStart"
+                        app:iconPadding="4dp"
                         android:visibility="gone" />
 
                 </LinearLayout>

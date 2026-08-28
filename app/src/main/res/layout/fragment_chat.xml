@@ -16,23 +16,30 @@
             android:padding="@dimen/spacing_medium"
             android:textSize="@dimen/text_size_body"
             android:textStyle="bold"
-            android:textColor="@color/care_on_surface"
+            android:textColor="@color/care_primary"
             android:background="@color/care_surface"
+            android:drawableStart="@drawable/ic_chat"
+            android:drawableTint="@color/care_primary"
+            android:drawablePadding="@dimen/spacing_small"
+            android:gravity="center_vertical"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="Conversazione con Maria Rossi" />
 
-        <!-- avviso di trasparenza: mostrato ai partecipanti (anziano/volontario),
-             nascosto al garante. Reso visibile nel Fragment. -->
+        <!-- avviso di trasparenza: mostrato ai partecipanti, nascosto al garante -->
         <TextView
             android:id="@+id/avvisoTrasparenza"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="@dimen/spacing_small"
-            android:textSize="14sp"
-            android:textColor="@color/care_on_surface_variant"
+            android:padding="@dimen/spacing_medium"
+            android:textSize="16sp"
+            android:textColor="@color/care_on_surface"
             android:background="@color/care_primary_container"
+            android:drawableStart="@drawable/ic_info"
+            android:drawableTint="@color/care_primary"
+            android:drawablePadding="@dimen/spacing_small"
+            android:gravity="center_vertical"
             android:text="Se un familiare di riferimento è collegato all'anziano, può leggere questa conversazione."
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/intestazioneChat"
@@ -66,7 +73,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- barra di invio: campo testo + bottone Invia -->
+        <!-- barra di invio: campo testo + bottone invia -->
         <LinearLayout
             android:id="@+id/barraInvio"
             android:layout_width="match_parent"
@@ -74,7 +81,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:padding="@dimen/spacing_small"
-            android:background="@color/care_surface"
+            android:background="@drawable/bg_barra_invio"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -85,20 +92,33 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:minHeight="@dimen/touch_target_min"
+                android:background="@drawable/bg_input_outline"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp"
                 android:hint="Scrivi un messaggio"
                 android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_on_surface"
+                android:textColorHint="@color/care_on_surface_variant"
                 android:inputType="textMultiLine|textCapSentences"
                 android:maxLines="4"
                 android:importantForAutofill="no"
                 tools:ignore="Autofill,LabelFor" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/inviaButton"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginStart="@dimen/spacing_small"
                 android:text="Invia"
-                android:textSize="@dimen/text_size_button" />
+                android:textSize="@dimen/text_size_button"
+                android:backgroundTint="@color/care_primary"
+                android:textColor="@color/care_on_primary"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/ic_invia"
+                app:iconTint="@color/care_on_primary"
+                app:iconGravity="textStart"
+                app:cornerRadius="14dp" />
 
         </LinearLayout>
 

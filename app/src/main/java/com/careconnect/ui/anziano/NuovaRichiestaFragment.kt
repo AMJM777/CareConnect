@@ -59,9 +59,10 @@ class NuovaRichiestaFragment : Fragment() {
             insets
         }
 
-        binding.tipoRadioGroup.setOnCheckedChangeListener { _, checkedId ->
+        binding.tipoToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
             binding.altroInput.visibility =
-                if (checkedId == R.id.tipoAltroRadio) View.VISIBLE else View.GONE
+                if (checkedId == R.id.tipoAltro) View.VISIBLE else View.GONE
             aggiornaHintDescrizione(checkedId)
         }
 
@@ -75,11 +76,11 @@ class NuovaRichiestaFragment : Fragment() {
     // hint diverso per tipo, con un esempio concreto di cosa scrivere
     private fun aggiornaHintDescrizione(checkedId: Int) {
         binding.descrizioneInput.hint = when (checkedId) {
-            R.id.tipoSpesaRadio ->
+            R.id.tipoSpesa ->
                 "Es: 2kg di pasta, latte, pane. Lascia la spesa in cucina, busso al citofono."
-            R.id.tipoBollettaRadio ->
+            R.id.tipoBolletta ->
                 "Es: bolletta luce Enel, scadenza 15/07, importo 45€. Da pagare in posta."
-            R.id.tipoAssistenzaDigitaleRadio ->
+            R.id.tipoAssistenzaDigitale ->
                 "Es: aiutami a fare una videochiamata su WhatsApp, ho il telefono nuovo."
             else ->
                 "Descrivi cosa ti serve con più dettagli possibili: aiuta il volontario a organizzarsi."
@@ -98,11 +99,11 @@ class NuovaRichiestaFragment : Fragment() {
         binding.inviaButton.text = "Salva modifiche"
 
         when (tipoEsistente) {
-            "spesa" -> binding.tipoSpesaRadio.isChecked = true
-            "bolletta" -> binding.tipoBollettaRadio.isChecked = true
-            "assistenza_digitale" -> binding.tipoAssistenzaDigitaleRadio.isChecked = true
+            "spesa" -> binding.tipoToggleGroup.check(R.id.tipoSpesa)
+            "bolletta" -> binding.tipoToggleGroup.check(R.id.tipoBolletta)
+            "assistenza_digitale" -> binding.tipoToggleGroup.check(R.id.tipoAssistenzaDigitale)
             else -> {
-                binding.tipoAltroRadio.isChecked = true
+                binding.tipoToggleGroup.check(R.id.tipoAltro)
                 if (tipoEsistente != "altro") {
                     binding.altroInput.setText(tipoEsistente)
                 }
@@ -138,12 +139,12 @@ class NuovaRichiestaFragment : Fragment() {
         viewModel.modificaRichiesta(idInModifica, tipo!!, descrizione)
     }
 
-    // funzione per leggere quale RadioButton del tipo è selezionato (con testo libero per "Altro")
-    private fun tipoSelezionato(): String? = when (binding.tipoRadioGroup.checkedRadioButtonId) {
-        R.id.tipoSpesaRadio -> "spesa"
-        R.id.tipoBollettaRadio -> "bolletta"
-        R.id.tipoAssistenzaDigitaleRadio -> "assistenza_digitale"
-        R.id.tipoAltroRadio -> {
+    // tipo scelto, con testo libero per "altro"
+    private fun tipoSelezionato(): String? = when (binding.tipoToggleGroup.checkedButtonId) {
+        R.id.tipoSpesa -> "spesa"
+        R.id.tipoBolletta -> "bolletta"
+        R.id.tipoAssistenzaDigitale -> "assistenza_digitale"
+        R.id.tipoAltro -> {
             val testoLibero = binding.altroInput.text.toString().trim()
             if (testoLibero.isNotEmpty()) testoLibero else "altro"
         }
