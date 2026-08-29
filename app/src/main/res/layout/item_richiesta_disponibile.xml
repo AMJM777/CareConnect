@@ -54,8 +54,8 @@
                 android:layout_marginTop="@dimen/spacing_small"
                 android:minHeight="@dimen/touch_target_min"
                 android:text="Prendi in carico"
-                android:backgroundTint="@color/care_primary"
-                android:textColor="@color/care_on_primary"
+                android:backgroundTint="@color/care_primary_container"
+                android:textColor="@color/care_primary"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:cornerRadius="14dp" />

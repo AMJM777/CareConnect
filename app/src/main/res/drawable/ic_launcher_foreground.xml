@@ -7,17 +7,21 @@
       android:scaleY="0.85"
       android:translateX="8.1"
       android:translateY="8.1">
+    <!-- meta sinistra del cuore -->
     <path
         android:pathData="M54,46.02C54,39.94 49.44,36.9 43.36,36.9C32.72,36.9 27.4,49.06 33.48,60.46C38.04,68.82 45.64,76.42 54,84.02Z"
         android:fillColor="#FFFFFF"/>
+    <!-- meta destra del cuore -->
     <path
         android:pathData="M54,46.02C54,39.94 58.56,36.9 64.64,36.9C75.28,36.9 80.6,49.06 74.52,60.46C69.96,68.82 62.36,76.42 54,84.02Z"
-        android:fillColor="#F26522"/>
+        android:fillColor="#E39B7B"/>
+    <!-- testa sinistra -->
     <path
         android:pathData="M49.14,30.44m-6.46,0a6.46,6.46 0,1 1,12.92 0a6.46,6.46 0,1 1,-12.92 0"
         android:fillColor="#FFFFFF"/>
+    <!-- testa destra -->
     <path
         android:pathData="M71.94,30.44m-6.46,0a6.46,6.46 0,1 1,12.92 0a6.46,6.46 0,1 1,-12.92 0"
-        android:fillColor="#F26522"/>
+        android:fillColor="#E39B7B"/>
   </group>
 </vector>
