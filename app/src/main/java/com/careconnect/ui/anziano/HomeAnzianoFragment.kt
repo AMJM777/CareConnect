@@ -14,6 +14,7 @@ import com.careconnect.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.careconnect.ui.common.nascondiBottomNavQuandoTastieraAperta
 
 // contenitore della sezione Anziano: Toolbar del ruolo + NavHost annidato
@@ -35,15 +36,22 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
             view.findViewById(R.id.anzianoBottomNav),
             viewLifecycleOwner
         )
-        // stessa cosa applicata direttamente alla bottom nav: usa isVisible(ime())
-        // e non l'altezza, perché con la finestra ridimensionata l'altezza
-        // risulterebbe 0 pur essendo la tastiera aperta
+        // bottom nav: nascosta con la tastiera aperta (isVisible(ime()), non l'altezza,
+        // che con la finestra ridimensionata risulterebbe 0) + inset basso della barra di sistema
         val bottomNav = view.findViewById<View>(R.id.anzianoBottomNav)
         ViewCompat.setOnApplyWindowInsetsListener(bottomNav) { v, insets ->
-            val tastieraAperta = insets.isVisible(WindowInsetsCompat.Type.ime())
-            v.visibility = if (tastieraAperta) View.GONE else View.VISIBLE
+            v.visibility = if (insets.isVisible(WindowInsetsCompat.Type.ime())) View.GONE else View.VISIBLE
+            v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
             insets
         }
+        // inset alto applicato alla RADICE (prugna), non alla toolbar: la radice non è
+        // gestita da NavigationUI, quindi la barra resta alta uguale su ogni schermata
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            v.updatePadding(top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top)
+            insets
+        }
+        view.post { ViewCompat.requestApplyInsets(view) }
+
         collegaToolbar(view, navController)
         collegaBottomNav(view, navController)
         gestisciTastoIndietro(navController)
@@ -80,6 +88,7 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
         // tiene evidenziato il tab giusto anche quando la navigazione avviene per altre vie
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomNav.menu.findItem(destination.id)?.isChecked = true
+            ViewCompat.requestApplyInsets(view)
         }
     }
 

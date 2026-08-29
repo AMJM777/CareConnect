@@ -1,6 +1,6 @@
 # Roadmap Tesi — CareConnect
 
-**Finestra di lavoro: 16 agosto → 2 settembre 2026.**
+**Finestra di lavoro: 16 agosto → 12 settembre 2026.** (CONSEGNA DEFINITIVA: **12 settembre 2026**)
 
 > Documento operativo **attivo** per la tesi. Riparte da zero: le fasi d'esame (0–14) sono concluse
 > e restano solo come *baseline* (app funzionante consegnata).
@@ -167,7 +167,13 @@ Il resto → in secondo piano, sotto **Backlog**, con ordine deciso da me.
   (`osservaGaranti`), `fragment_profilo_anziano.xml` (card), nuovo `item_garante_collegato.xml`.
 - Testato su dispositivo fisico dopo la pubblicazione delle rules.
 
-### 30 ago–1 set · T7 — Pagina "Servizi sanitari a domicilio" (informativa nazionale)
+### 30 ago–1 set · T7 — Pagina "Servizi sanitari a domicilio" (informativa nazionale) — ⏸️ ACCANTONATO (29 ago)
+> **Accantonato (deciso con l'utente):** è l'unico blocco "informativo di servizio pubblico" in un'app
+> che per il resto fa una cosa coerente (contatto anziano↔volontario↔familiare) → eterogeneo e difficile
+> da difendere all'orale come funzione. **Da presentare come capitolo "sviluppi futuri / fattibilità
+> normativa" della tesi, non da implementare ora**; eventuale ripresa tardiva a basso costo (statico).
+> Dettaglio e motivo anche in `Project_State` §9. Descrizione originale del blocco qui sotto.
+
 Schermata **condivisa di sola informazione** (una UI riusata), che *indica canali ufficiali* e **non
 eroga prestazioni**. Contenuto in schede (con **lettura vocale TTS** lato Anziano):
 - **Emergenze:** 112 (NUE) / 118 — coerente con l'SOS già esistente.
@@ -186,16 +192,57 @@ eroga prestazioni**. Contenuto in schede (con **lettura vocale TTS** lato Anzian
   statiche (eventuale piccola collezione Firestore se un domani si vorranno aggiornare da remoto).
   → **Sonnet**. Fonti: ADI (LeggiOggi, Medicasa), 116117 (ASL Roma 1, Wikipedia) — vedi `Project_State`.
 
-### 2–3 set · Rifinitura tecnica + documento + test finali (chiusura tecnica entro il 3 set)
-- Test su dispositivo fisico, fix, verifica lifecycle/rotazione dei blocchi T4–T7.
-- **Test negativi delle rules di T3** (ex "buffer post-T3", spostato qui, tra gli ultimi): volontario
-  non assegnato, accessi negati — da fare quando ci saranno più profili di prova.
-- Screenshot **prima/dopo** delle schermate toccate.
-- Aggiornare `Project_State.md` e questa roadmap.
+## Chiusura verso la consegna — 🎯 CONSEGNA DEFINITIVA **12 settembre 2026**
 
-### Fase GRAFICA — separata (~4–8 set, 4–5 giorni indicativi)
-Ultima fase, **a sé**, dopo l'installazione di una skill grafica dedicata; slide escluse (le gestisce
-l'utente in parallelo). Punti raccolti fin qui (da ampliare mano a mano):
+Ordine e stime (target, con margine). Le date sono indicative, il vincolo fermo è il **12 set**.
+
+### 1 · Grafica residua (30 ago – 1 set)
+- **Confermare il colore definitivo** sulle bozze e applicarlo (solo token in `colors.xml`; guida in
+  `Design_Reference_CareConnect.md`).
+- Ricolorare l'**icona launcher** (oggi ancora arancione `#F26522`).
+- **Cambio logo** dell'app: nuovo marchio coerente con la palette scelta (icona adattiva
+  `ic_launcher` + eventuale logo mostrato in-app / splash).
+
+### 2 · Rifinitura tecnica + test finali (2 – 4 set)
+- Test su dispositivo fisico: lifecycle/rotazione, edge-to-edge/inset sui 3 ruoli, flussi SOS e chat.
+- **Test negativi delle rules di T3** (volontario non assegnato, accessi negati) — quando ci saranno
+  più profili di prova.
+- Screenshot per la tesi; aggiornare `Project_State.md` e questa roadmap.
+
+### 3 · Pulizia codice + rimozione tracce di tooling (5 – 9 set, ~3–4 gg)
+- **Rimuovere `.claude/` e le skill** dal progetto; rimuovere i file **`CLAUDE.md`** (radice e `app/`).
+- Rimuovere **riferimenti a Claude / AI / strumenti** in commenti, nomi e documenti interni non
+  pertinenti al progetto Android da consegnare. Valutare quali file `docs/` tenere: alcuni servono alla
+  tesi (fonti, design reference), altri sono note di lavoro da togliere dall'archivio di consegna.
+- **Pulizia generale del codice:** codice morto, TODO/commenti di servizio, import e log di debug
+  inutilizzati, e le **scorciatoie "solo demo"** (es. il long-press sulla Toolbar che lancia subito il
+  Worker, `eseguiOraPerDemo`). Verificare **build pulita** e che l'app compili/funzioni dopo le rimozioni
+  (`.claude/skills`, `CLAUDE.md` e `docs/` non sono compilati né finiscono nell'APK → rimozione sicura).
+- Preparare l'**archivio di consegna** (progetto pulito, eventuale README di consegna).
+
+### 4 · Slide di presentazione (9 – 11 set, 3 gg)
+- Costruire le slide (gestite dall'utente). Materiale utile già pronto: `README_HCI_Colori_Anziani.md`
+  (fonti percezione colore anziani) e `Design_Reference_CareConnect.md` (scelte di design difendibili).
+
+### 5 · 🎯 CONSEGNA DEFINITIVA — 12 settembre 2026
+- Upload del progetto pulito + slide. (Ricordare: iscrizione appello + eventuale mail al docente, vedi
+  regole di consegna in `Visione_e_Requisiti.md` §4.)
+
+> Nota: l'esame dichiara "uso responsabile dell'AI (non vietato, non abusabile)"; la rimozione delle
+> tracce di tooling è una scelta di consegna dell'utente ed è sicura per il build (quei file non sono
+> compilati). Attenzione solo a non rimuovere per errore risorse effettivamente usate dall'app.
+
+### Fase GRAFICA — ✅ COMPLETATA (29 ago) — colore definitivo da confermare
+> **Fatto:** restyle completo dell'app. Palette ricolorata su **Prugna** (`#5A2A4D` + pesca), font
+> **Lexend** ovunque, componenti e schermate allineati (Home Anziano, liste, Profilo, Chat, Auth con
+> etichette flottanti), bottom nav bianca, inset edge-to-edge rivisti. Tutti i punti sotto sono stati
+> affrontati. **Riferimento/direttiva:** `Design_Reference_CareConnect.md`; fonti HCI:
+> `README_HCI_Colori_Anziani.md`; bozze visive: `CareConnect_Palette_Simulazioni.html` e
+> `CareConnect_Anteprima_NavyCaldo.html`. Dettaglio in `Project_State` §0bis.
+> **Aperto:** scelta **colore definitiva** da confermare sulle bozze (Prugna vs Navy/Ottanio/…) e
+> **icona launcher** da ricolorare. Meglio chiudere in una nuova chat (cambio colore = solo token).
+>
+> Punti storici della fase (tutti coperti):
 - **Chat in tutte le viste** (anziano, volontario, garante): bolle, colori/contrasto, distinzione
   mittenti, intestazione, avviso di trasparenza, barra di invio, accessibilità testo grande.
 - **Pulsante Chat più riconoscibile** (lato volontario e anziano).

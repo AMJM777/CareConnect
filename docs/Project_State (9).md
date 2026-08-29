@@ -1,6 +1,7 @@
 # Project State — CareConnect
 
-**Ultimo aggiornamento:** 22 agosto 2026 (TESI — **T6 "Vista i miei garanti collegati (Anziano)" completato**: nuova card "I tuoi familiari collegati" nel profilo Anziano con l'elenco (sola lettura) dei familiari collegati al codice invito, o messaggio guida se vuota; `ProfiloAnzianoViewModel` espone `garanti` e ne recupera i nomi da `familiariCollegatiIds` (solo nome: l'email non è su Firestore); UI con container `LinearLayout` + `item_garante_collegato.xml`. **Bug security rules risolto:** l'`allow read` di `users` non permetteva all'anziano di leggere il documento di un familiare → aggiunta clausola simmetrica `ruolo=='familiare' && anzianoCollegatoId==request.auth.uid` (solo rules, nessuna modifica app). Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
+**Ultimo aggiornamento:** 29 agosto 2026 (TESI — **Fase grafica completata (restyle "Prugna")**: palette ricolorata su Prugna (`#5A2A4D` + pesca `#E39B7B`), font **Lexend** su tutta l'app, componenti (card/tessere/chip/campi/pulsante Chat) e schermate (Home Anziano, liste, Profilo, Chat, Auth con **etichette flottanti**) allineati; **bottom nav bianca** con indicatore attivo pesca; gestione inset edge-to-edge rivista (inset alto sulla **radice**, non sulla toolbar). **Colore definitivo da confermare** — bozze e direttiva operativa in `Design_Reference_CareConnect.md`. T7 accantonato (vedi §8/§9). Dettaglio in §0bis.)
+> **Precedente:** 22 agosto 2026 (TESI — **T6 "Vista i miei garanti collegati (Anziano)" completato**: nuova card "I tuoi familiari collegati" nel profilo Anziano con l'elenco (sola lettura) dei familiari collegati al codice invito, o messaggio guida se vuota; `ProfiloAnzianoViewModel` espone `garanti` e ne recupera i nomi da `familiariCollegatiIds` (solo nome: l'email non è su Firestore); UI con container `LinearLayout` + `item_garante_collegato.xml`. **Bug security rules risolto:** l'`allow read` di `users` non permetteva all'anziano di leggere il documento di un familiare → aggiunta clausola simmetrica `ruolo=='familiare' && anzianoCollegatoId==request.auth.uid` (solo rules, nessuna modifica app). Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
 > **Precedente:** 22 agosto 2026 (TESI — **T5 "Stelle nel profilo Volontario" completato**: il `ratingMedio` (già calcolato in Fase 9) è ora mostrato come **stelline** (`RatingBar` in modalità indicatore, `stepSize=0.5`, colore `care_accent`) al posto del placeholder testuale, in **entrambi** i punti in cui appare il rating — profilo proprio del volontario (data binding: nuovi LiveData `ratingStelle`/`haValutazione`) e dialog pubblico di sola lettura (popolato a mano). Su decisione dell'utente la parte numerica è stata **rimossa**: restano le **sole stelle** (con `contentDescription` che conserva il valore per lo screen reader); caso "non ancora valutato" → nessuna stella, solo testo. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
 > **Precedente:** 21 agosto 2026 (TESI — **T4 "Scuotimento SOS in background" completato**: nuovo `SosShakeService` (Foreground Service `specialUse`) che tiene attivo l'accelerometro anche ad app chiusa; `ShakeDetector` ora usa il sensore accelerometro **wake-up** (con fallback) → niente wake lock, funziona a schermo spento; la conferma diventa una `ConfermaSosActivity` a tutto schermo (riusa layout + countdown/TTS + `inviaSos()` di T2, **logica SOS non duplicata**); lo scuotimento apre l'overlay **direttamente** grazie al permesso **"Compari sopra le altre app"** (`SYSTEM_ALERT_WINDOW`, richiesto una volta), con la notifica full-screen come solo fallback; protezione **sempre attiva di default (opt-out)** via toggle nel Profilo, con coordinamento anti-doppia-rilevazione tra Service e Home. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
 > **Precedente:** 17 agosto 2026 (TESI — **T2 "SOS ripensato" completato**: doppio trigger (bottone rosso + scuotimento accelerometro) sullo stesso percorso; overlay di conferma translucido con countdown 5→0, voce TTS "Sto per chiamare aiuto" + conteggio, e ANNULLA grande; a fine countdown `inviaSos()` (→ push FCM esistente) + `ACTION_DIAL` 112; scuotimento solo ad app aperta. Nuovi `TtsHelper`, `ShakeDetector`, `ConfermaSosDialogFragment`. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
@@ -219,6 +220,42 @@
 - **File:** `viewmodel/anziano/ProfiloAnzianoViewModel.kt`, `ui/anziano/ProfiloAnzianoFragment.kt`,
   `res/layout/fragment_profilo_anziano.xml`, nuovo `res/layout/item_garante_collegato.xml`; + rules `users`
   aggiornate in console. Testato su dispositivo fisico dopo la pubblicazione delle rules.
+
+### Fase Grafica — restyle completo (29 agosto 2026) ✅ (colore definitivo da confermare)
+- **Riferimento operativo:** `Design_Reference_CareConnect.md` (direttiva riusabile: stile, pattern
+  schermate, palette candidate, come applicare un colore cambiando solo i token). Fonti HCI citabili
+  in `README_HCI_Colori_Anziani.md`. Bozze visive: `CareConnect_Palette_Simulazioni.html`,
+  `CareConnect_Anteprima_NavyCaldo.html`, `CareConnect_Restyle_Proposta.html` (tutte in `docs/`).
+- **Metodo:** consultate le skill di design in `.claude/skills/` (`ui-ux-pro-max`, `design-system`)
+  per ancorare palette/tipografia/contrasto a dati, non all'intuito. Ogni scelta cromatica ha i
+  **contrasti verificati** a mano (script) prima dell'applicazione.
+- **Tipografia:** introdotto **Lexend** (font incluso, non scaricabile a runtime — scelta motivata
+  per la demo offline) su tutta l'app via `themes.xml` (fontFamily + text appearance Material). Legato
+  alla leggibilità/HCI. Applicato anche agli overlay SOS (solo tema, logica intatta).
+- **Palette:** ricolorata su **Prugna** (`care_primary #5A2A4D`, accento pesca `#E39B7B`, carta
+  `#F7F1F3`, ink `#2A1E28`). Solo valori in `colors.xml`, **nomi token invariati** → ridipinge tutta
+  l'app senza toccare i layout. `care_sos`/`care_error` invariati (rossi riservati).
+- **Componenti:** `CareConnect.Card` (14dp), `CareConnect.OptionToggle` (tessere tipo-richiesta con
+  icona), `CareConnect.Button.Chat` (tonale, con icona — reso riconoscibile), `CareConnect.Button.Accent`
+  (corretto un bug di contrasto 2,29:1), `bg_input_outline` con **focus primario**, `CareConnect.TextField`
+  (etichette flottanti). Nuove icone vettoriali (spesa/bolletta/assistenza/altro/chat/info/invia/ascolta/
+  emergenza/empty).
+- **Schermate allineate:** Home Anziano (form in card + tessere + SOS esplicito), "Modifica richiesta",
+  righe richiesta dei 3 ruoli (Chat riconoscibile, tipo in primario), Chat (intestazione, avviso
+  trasparenza con icona, bolle, barra invio, empty-state neutro in sola lettura), Auth
+  (login/registrazione/completa profilo con **TextInputLayout** + mostra/nascondi password, Google
+  outlined), form "Collegati", dialog valutazione, profili, empty-state liste con icona.
+- **Bottom nav bianca:** i 3 contenitori di ruolo hanno la nav su sfondo bianco con voce attiva
+  primaria e **indicatore attivo pesca**; `bottom_nav_item_tint` e `CareConnect.BottomNav.ActiveIndicator`
+  aggiornati.
+- **Inset edge-to-edge rivisti (importante):** la vecchia soluzione `fitsSystemWindows` sulla radice
+  colorava *entrambe* le barre di sistema con un colore solo → con la nav bianca lasciava una striscia
+  prugna in basso. Nuova soluzione nei 3 contenitori: **inset alto → radice** (status bar prugna),
+  **inset basso → bottom nav** (bianca), via `OnApplyWindowInsetsListener`. Il padding alto va sulla
+  **radice, NON sulla toolbar** (gestita da `NavigationUI`, dava altezze incoerenti tra schermate —
+  bug "barra corta della Home" diagnosticato misurando i fotogrammi: 245px vs 324px). Aggiorna §10.
+- **Accantonati / da fare** (vedi §8/§9): scelta **colore definitiva** da confermare; **icona launcher**
+  ancora arancione (`#F26522`) da ricolorare; **T7** (servizi sanitari) accantonato.
 
 ---
 
@@ -515,18 +552,39 @@ messaggi/{messaggioId}                # T3 — chat anziano ↔ volontario, lega
 > Nota: il testo d'esame di questa sezione (bug dispositivo, Fasi 9–12) è **superato** — quei blocchi
 > sono conclusi. Lo storico resta in §10 e in `docs/archivio/`.
 
-**Contesto tesi:** T1, T2, T3, **T4**, **T5** e **T6** completati (vedi §0bis). Il prossimo blocco pianificato
-in `Roadmap_Tesi.md` è **T7 — Pagina "Servizi sanitari a domicilio"** (informativa nazionale): schermata
-condivisa di sola informazione (schede con TTS lato Anziano) su 112/118, 116117 e ADI. Contenuto statico,
-nessun dato personale → **Sonnet, medio**.
+**Contesto tesi:** T1–T6 completati e **fase grafica completata** (restyle Prugna, vedi §0bis). Aperti:
 
-A seguire la **fase grafica finale** separata. Aprire T7 preferibilmente in una **nuova chat** (questa ha
-accumulato il contesto di T5–T6).
+1. **Colore definitivo da confermare** — la palette **Prugna** è applicata, ma la scelta cromatica
+   finale è ancora da decidere sulle bozze. Direttiva e **mappa dei token** in
+   `Design_Reference_CareConnect.md`; fonti HCI in `README_HCI_Colori_Anziani.md`. Consigliato farlo
+   in una **nuova chat** (questa ha molto contesto): cambiare colore = cambiare **solo i valori** in
+   `colors.xml`, lo stile e i layout restano.
+2. **Icona launcher / logo** ancora arancione (`#F26522`) → **cambio logo** dell'app + ricolorazione
+   sulla palette scelta.
+3. **T7 "Servizi sanitari a domicilio": ACCANTONATO** (vedi §9) — non coerente col cuore del prodotto
+   in questa fase; meglio come **capitolo "sviluppi futuri/fattibilità" della tesi** o da riprendere
+   più avanti (statico, poco costoso).
+4. **Chiusura tecnica → 12 set:** test finali su device (+ **test negativi rules T3**), **pulizia
+   codice e rimozione tracce di tooling** (skill/`.claude`/`CLAUDE.md`, ~3–4 gg), **slide** (3 gg).
+   Calendario dettagliato in `Roadmap_Tesi.md` ("Chiusura verso la consegna"). **Consegna: 12 set 2026.**
 
 ## 9. Backlog — idee rimandate (non fanno parte del piano d'esame attuale)
 
 Raccolte qui perché emerse durante lo sviluppo ma esplicitamente rimandate. Vedere anche `Visione_e_Requisiti.md` §6 per le idee di estensione tesi già tracciate in precedenza (canale servizi sanitari, interfaccia HCI con il prof. Camurri, ecc.) — le voci sotto sono nuove, emerse dopo la Fase 5, e **non sono ancora presenti in quel file**: se si vuole un'unica fonte per il backlog tesi, andrebbero eventualmente copiate anche lì.
 
+- **T7 — "Servizi sanitari a domicilio" (informativa nazionale): ACCANTONATO (29 agosto 2026).** Era
+  pianificato (schede 112/118, 116117, ADI, con TTS lato anziano, schermata condivisa nei 3 ruoli).
+  **Motivo (deciso con l'utente):** è l'unico blocco "informativo di servizio pubblico" in un'app che
+  per il resto fa una cosa coerente (contatto anziano↔volontario↔familiare); risulta eterogeneo e
+  difficile da difendere all'orale come funzione dell'app. **Classificazione:** meglio come **capitolo
+  "sviluppi futuri / fattibilità normativa" della tesi** (da *presentare*, non da implementare ora),
+  oppure ripresa tardiva a basso costo (contenuto statico). Piano già ragionato: ingresso da Profilo o
+  4ª voce in bottom nav, schermata condivisa, schede statiche in XML/strings.
+- **Scelta colore definitiva (da confermare)** — palette Prugna applicata come scelta operativa; le
+  alternative (Navy, Ottanio, Verde bosco, Terracotta) sono valutate con bozze e ragionamento HCI. Vedi
+  `Design_Reference_CareConnect.md` (direttiva + mappa token) e `README_HCI_Colori_Anziani.md` (fonti).
+- **Icona launcher** — `ic_launcher_foreground.xml` usa ancora l'arancione storico `#F26522`; ricolorare
+  sulla palette definitiva.
 - **Immagine profilo (Volontario, ed eventualmente altri ruoli)**: valutate 3 opzioni in Fase 5 (foto vera con Firebase Storage / avatar semplice predefinito / rimandare). Scelta: rimandare, possibile estensione per la tesi. Se ripresa in futuro, ricordare che comporta una nuova dipendenza (Firebase Storage), permessi Android per galleria/fotocamera, e security rules dedicate allo Storage (non solo a Firestore).
 - **Geolocalizzazione (Extra, 1pt)** — **RITIRATA dal piano d'esame il 5 luglio**, per fare spazio alla Fase 8 senza sforare la scadenza del 17 luglio (vedi Roadmap, nota di aggiornamento e Fase 12). Era: permessi posizione, associazione posizione a richiesta, filtro/ordinamento per vicinanza nella vista Volontario. `Request.posizione: GeoPoint?` esiste già nel modello (Fase 1, mai popolato) — se ripresa per la tesi, il campo dati è già pronto, manca solo la UI/permessi.
 - **Vista "chi sono i miei garanti/familiari collegati" per l'Anziano**: l'anziano vedrebbe l'elenco dei familiari che hanno accesso alle sue attività (oggi l'Anziano non ha visibilità su chi si è collegato con il suo codice invito). Non pianificata in una fase specifica, valutabile come piccola aggiunta al nuovo Profilo Anziano (Fase 8) o come estensione successiva.

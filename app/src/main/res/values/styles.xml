@@ -4,7 +4,7 @@
     <!-- sfondo a pillola per la voce attiva nella barra di navigazione inferiore -->
     <style name="CareConnect.BottomNav.ActiveIndicator"
         parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">#33FFFFFF</item>
+        <item name="android:color">@color/care_accent_container</item>
     </style>
 
     <!-- card con angoli arrotondati, profondità leggera e bordo tenue -->

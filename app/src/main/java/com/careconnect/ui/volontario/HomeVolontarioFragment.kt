@@ -14,6 +14,9 @@ import com.careconnect.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.careconnect.work.WorkScheduler
 import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.careconnect.ui.common.nascondiBottomNavQuandoTastieraAperta
 
 // contenitore della sezione Volontario: Toolbar del ruolo + NavHost annidato
@@ -34,6 +37,20 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
             view.findViewById(R.id.volontarioBottomNav),
             viewLifecycleOwner
         )
+
+        // bottom nav: inset basso della barra di sistema
+        val bottomNav = view.findViewById<View>(R.id.volontarioBottomNav)
+        ViewCompat.setOnApplyWindowInsetsListener(bottomNav) { v, insets ->
+            v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
+            insets
+        }
+        // inset alto applicato alla RADICE (prugna), non alla toolbar: la radice non è
+        // gestita da NavigationUI, quindi la barra resta alta uguale su ogni schermata
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            v.updatePadding(top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top)
+            insets
+        }
+        view.post { ViewCompat.requestApplyInsets(view) }
 
         collegaToolbar(view, navController)
         collegaBottomNav(view, navController)
@@ -77,6 +94,7 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomNav.menu.findItem(destination.id)?.isChecked = true
+            ViewCompat.requestApplyInsets(view)
         }
     }
 

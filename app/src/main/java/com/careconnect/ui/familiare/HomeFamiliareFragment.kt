@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -64,6 +67,16 @@ class HomeFamiliareFragment : Fragment() {
             homeViewModel.collegati(binding.codiceInvitoEditText.text.toString())
         }
 
+        // inset alto sulla RADICE (non sulla toolbar), inset basso sulla bottom nav.
+        // la radice non è gestita da NavigationUI → barra alta uguale su ogni schermata
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val barre = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(top = barre.top)
+            binding.familiareBottomNav.updatePadding(bottom = barre.bottom)
+            insets
+        }
+        binding.root.post { ViewCompat.requestApplyInsets(binding.root) }
+
         osservaStato()
         osservaErroreCollegamento()
         osservaCollegamentoInCorso()
@@ -80,6 +93,8 @@ class HomeFamiliareFragment : Fragment() {
                         if (stato is StatoHomeFamiliare.NonCollegato) View.VISIBLE else View.GONE
                     binding.collegatoGroup.visibility =
                         if (stato is StatoHomeFamiliare.Collegato) View.VISIBLE else View.GONE
+                    // lo stato decide chi riceve l'inset alto (toolbar o radice)
+                    ViewCompat.requestApplyInsets(binding.root)
 
                     if (stato is StatoHomeFamiliare.Collegato) {
                         agganciaNavGraphAnnidato()

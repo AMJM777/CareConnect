@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- adatta il layout alle barre di sistema per mantenere proporzioni corrette in base allo stato -->
+    <!-- gli inset delle barre di sistema sono distribuiti nel fragment in base
+         allo stato: alto alla toolbar (o alla radice per il form), basso alla bottom nav -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/care_background"
-        android:fitsSystemWindows="true">
+        android:background="@color/care_background">
 
         <!-- barra superiore visibile solo quando il familiare è già collegato all'assistito -->
         <androidx.appcompat.widget.Toolbar
@@ -162,7 +162,7 @@
             android:id="@+id/familiareBottomNav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/care_primary"
+            android:background="@color/care_surface"
             app:elevation="8dp"
             app:labelVisibilityMode="labeled"
             app:itemIconTint="@color/bottom_nav_item_tint"

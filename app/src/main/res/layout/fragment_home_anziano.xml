@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- layout principale verticale che si adatta alle barre di sistema per mantenere le proporzioni senza listener a runtime -->
+<!-- layout verticale: toolbar in alto, contenuto, bottom nav in basso.
+     gli inset delle barre di sistema sono distribuiti nel fragment
+     (alto alla toolbar, basso alla bottom nav) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/care_primary"
-    android:fitsSystemWindows="true">
+    android:background="@color/care_primary">
 
     <!-- barra superiore colorata per mostrare il titolo della schermata corrente -->
     <androidx.appcompat.widget.Toolbar
@@ -32,7 +33,7 @@
         android:id="@+id/anzianoBottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/care_primary"
+        android:background="@color/care_surface"
         app:elevation="8dp"
         app:labelVisibilityMode="labeled"
         app:itemIconTint="@color/bottom_nav_item_tint"
