@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 sealed class StatoHomeFamiliare {
     object Caricamento : StatoHomeFamiliare()
     object NonCollegato : StatoHomeFamiliare()
-    data class Collegato(val nomeAnziano: String) : StatoHomeFamiliare()
+    object Collegato : StatoHomeFamiliare()
 }
 
 // capisce se l'utente è già collegato a un anziano e gestisce il collegamento tramite codice invito
@@ -47,15 +47,11 @@ class HomeFamiliareViewModel(
         viewModelScope.launch {
             userRepository.getUtente(uid).fold(
                 onSuccess = { familiare ->
-                    val anzianoId = familiare.anzianoCollegatoId
-                    if (anzianoId == null) {
-                        _stato.value = StatoHomeFamiliare.NonCollegato
+                    // collegato se segue almeno un anziano (lista molti-a-molti)
+                    _stato.value = if (familiare.anzianiCollegatiIds.isEmpty()) {
+                        StatoHomeFamiliare.NonCollegato
                     } else {
-                        // servono anche i dati dell'anziano per mostrarne il nome
-                        userRepository.getUtente(anzianoId).fold(
-                            onSuccess = { anziano -> _stato.value = StatoHomeFamiliare.Collegato(anziano.nome) },
-                            onFailure = { _stato.value = StatoHomeFamiliare.NonCollegato }
-                        )
+                        StatoHomeFamiliare.Collegato
                     }
                 },
                 onFailure = { _stato.value = StatoHomeFamiliare.NonCollegato }
@@ -82,7 +78,7 @@ class HomeFamiliareViewModel(
                 onSuccess = { anziano ->
                     userRepository.collegaFamiliareAdAnziano(anziano.uid, uid).fold(
                         onSuccess = {
-                            _stato.value = StatoHomeFamiliare.Collegato(anziano.nome)
+                            _stato.value = StatoHomeFamiliare.Collegato
                         },
                         onFailure = { errore ->
                             _erroreCollegamento.value = errore.message ?: "Impossibile completare il collegamento"

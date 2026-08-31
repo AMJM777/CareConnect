@@ -47,6 +47,28 @@
 
         </LinearLayout>
 
+        <!-- selettore degli anziani seguiti: visibile solo con più di un anziano -->
+        <HorizontalScrollView
+            android:id="@+id/selettoreAnziani"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:scrollbars="none"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/sosBanner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/anzianiChipGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true"
+                app:singleSelection="true"
+                app:selectionRequired="true" />
+
+        </HorizontalScrollView>
+
         <!-- messaggio centrale mostrato solo quando la lista delle attività è vuota -->
         <TextView
             android:id="@+id/emptyStateText"
@@ -60,7 +82,7 @@
             android:textSize="@dimen/text_size_body"
             android:textColor="@color/care_on_surface"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/sosBanner"
+            app:layout_constraintTop_toBottomOf="@id/selettoreAnziani"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -73,7 +95,7 @@
             android:paddingTop="@dimen/screen_padding"
             android:paddingBottom="@dimen/screen_padding"
             android:clipToPadding="false"
-            app:layout_constraintTop_toBottomOf="@id/sosBanner"
+            app:layout_constraintTop_toBottomOf="@id/selettoreAnziani"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

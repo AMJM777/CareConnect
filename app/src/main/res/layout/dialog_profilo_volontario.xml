@@ -1,50 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- finestra modale per mostrare la foto, la bio utente e le recensioni del volontario -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- finestra modale di sola lettura: nome, valutazione, bio e recensioni del volontario -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="@dimen/spacing_medium">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/profiloNomeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_size_title"
-        android:textStyle="bold"
-        android:textColor="@color/care_on_surface"
-        tools:text="Mario Rossi" />
-
-    <TextView
-        android:id="@+id/profiloRatingText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_small"
-        android:textSize="@dimen/text_size_body"
-        android:textColor="@color/care_primary_dark"
-        tools:text="Non ancora valutato" />
-
-    <RatingBar
-        android:id="@+id/profiloRatingBar"
-        style="?android:attr/ratingBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_small"
-        android:isIndicator="true"
-        android:numStars="5"
-        android:stepSize="0.5"
-        android:progressTint="@color/care_accent"
-        android:secondaryProgressTint="@color/care_accent"
-        android:progressBackgroundTint="@color/care_outline" />
-
-    <TextView
-        android:id="@+id/profiloBioText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_medium"
-        android:textSize="@dimen/text_size_body"
-        android:textColor="@color/care_on_surface"
-        tools:text="Volontario disponibile nei weekend, amo aiutare gli anziani del quartiere." />
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_medium">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/profiloNomeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_title"
+            android:textStyle="bold"
+            android:textColor="@color/care_on_surface"
+            tools:text="Mario Rossi" />
+
+        <TextView
+            android:id="@+id/profiloRatingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_primary_dark"
+            tools:text="Non ancora valutato" />
+
+        <RatingBar
+            android:id="@+id/profiloRatingBar"
+            style="?android:attr/ratingBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize="0.5"
+            android:progressTint="@color/care_accent"
+            android:secondaryProgressTint="@color/care_accent"
+            android:progressBackgroundTint="@color/care_outline" />
+
+        <TextView
+            android:id="@+id/profiloBioText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            tools:text="Volontario disponibile nei weekend, amo aiutare gli anziani del quartiere." />
+
+        <!-- titolo delle recensioni: visibile solo se ce n'è almeno una -->
+        <TextView
+            android:id="@+id/recensioniTitolo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:text="Recensioni"
+            android:textSize="@dimen/text_size_body"
+            android:textStyle="bold"
+            android:textColor="@color/care_on_surface"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!-- contenitore riempito a runtime con una riga per recensione -->
+        <LinearLayout
+            android:id="@+id/recensioniContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/spacing_small" />
+
+    </LinearLayout>
+
+</ScrollView>

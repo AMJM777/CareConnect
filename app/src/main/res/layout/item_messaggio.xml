@@ -16,7 +16,6 @@
             android:id="@+id/bollaCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="300dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/care_outline"
@@ -46,6 +45,7 @@
                     android:id="@+id/testoMessaggio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:maxWidth="280dp"
                     android:textSize="@dimen/text_size_body"
                     android:textColor="@color/care_on_surface"
                     tools:text="Sono sotto casa, arrivo tra cinque minuti" />

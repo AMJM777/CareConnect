@@ -34,15 +34,19 @@ class ControlloConfermeFamiliareWorker(
         val familiare = userRepository.getUtente(utente.uid).getOrElse {
             return Result.retry()
         }
-        val anzianoId = familiare.anzianoCollegatoId ?: return Result.success()
+        val anzianiIds = familiare.anzianiCollegatiIds
+        if (anzianiIds.isEmpty()) return Result.success()
 
-        val richieste = requestRepository.getRichiestePerAnziano(anzianoId).getOrElse {
-            return Result.retry()
+        // raccoglie le richieste da confermare di tutti gli anziani seguiti
+        val daConfermare = mutableSetOf<String>()
+        for (anzianoId in anzianiIds) {
+            val richieste = requestRepository.getRichiestePerAnziano(anzianoId).getOrElse {
+                return Result.retry()
+            }
+            richieste
+                .filter { it.stato == RequestStatus.COMPLETATA_DAL_VOLONTARIO }
+                .forEach { daConfermare.add(it.id) }
         }
-        val daConfermare = richieste
-            .filter { it.stato == RequestStatus.COMPLETATA_DAL_VOLONTARIO }
-            .map { it.id }
-            .toSet()
 
         val giaNotificate = leggiIdNotificati()
         val nuove = daConfermare - giaNotificate

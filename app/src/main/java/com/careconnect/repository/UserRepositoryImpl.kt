@@ -95,8 +95,7 @@ class UserRepositoryImpl(
         val anzianoDocRef = collection.document(anzianoId)
         val familiareDocRef = collection.document(familiareId)
 
-        // Controllo che i ruoli siano giusti e che il familiare non sia già
-        // collegato altrove
+        // Controllo che i ruoli siano giusti e che non sia già collegato a questo anziano
         val anziano = anzianoDocRef.get().await().toUser()
             ?: throw NoSuchElementException("Anziano non trovato: $anzianoId")
         val familiare = familiareDocRef.get().await().toUser()
@@ -108,16 +107,19 @@ class UserRepositoryImpl(
         if (familiare.ruolo != UserRole.FAMILIARE) {
             throw IllegalStateException("Solo un account Familiare può collegarsi con un codice invito")
         }
-        if (familiare.anzianoCollegatoId != null) {
-            throw IllegalStateException("Sei già collegato a un altro anziano")
+        if (anzianoId in familiare.anzianiCollegatiIds) {
+            throw IllegalStateException("Segui già questa persona")
         }
 
+        // includo anche gli anziani già seguiti (il mapper li migra dal vecchio
+        // campo singolo): così il primo collegamento non fa perdere lo storico
+        val anzianiDaScrivere: List<Any> = (familiare.anzianiCollegatiIds + anzianoId).distinct()
+
         // WriteBatch: le due scritture vanno a buon fine insieme o falliscono
-        // insieme: se due familiari si collegano nello stesso
-        // istante, nessuno dei due sovrascrive l'aggiunta dell'altro
+        // insieme; arrayUnion evita che collegamenti in parallelo si sovrascrivano
         firestore.batch()
             .update(anzianoDocRef, "familiariCollegatiIds", FieldValue.arrayUnion(familiareId))
-            .update(familiareDocRef, "anzianoCollegatoId", anzianoId)
+            .update(familiareDocRef, "anzianiCollegatiIds", FieldValue.arrayUnion(*anzianiDaScrivere.toTypedArray()))
             .commit()
             .await()
     }
@@ -164,6 +166,11 @@ class UserRepositoryImpl(
             codiceInvito = getString("codiceInvito"),
             indirizzo = getString("indirizzo"),
             anzianoCollegatoId = getString("anzianoCollegatoId"),
+            anzianiCollegatiIds = run {
+                val lista = (get("anzianiCollegatiIds") as? List<*>)?.filterIsInstance<String>()
+                // migrazione: se manca la lista uso il vecchio campo singolo, se presente
+                lista ?: getString("anzianoCollegatoId")?.let { listOf(it) } ?: emptyList()
+            },
             ratingMedio = getDouble("ratingMedio"),
             bio = getString("bio")
         )
@@ -176,6 +183,7 @@ class UserRepositoryImpl(
         "codiceInvito" to codiceInvito,
         "indirizzo" to indirizzo,
         "anzianoCollegatoId" to anzianoCollegatoId,
+        "anzianiCollegatiIds" to anzianiCollegatiIds,
         "ratingMedio" to ratingMedio,
         "bio" to bio
     )

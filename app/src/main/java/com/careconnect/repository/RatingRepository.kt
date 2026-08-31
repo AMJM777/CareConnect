@@ -12,4 +12,10 @@ interface RatingRepository {
      * (transizione non valida)
      */
     suspend fun creaRatingEConfermaRichiesta(rating: Rating): Result<String>
+
+    /**
+     * legge tutte le valutazioni ricevute da un volontario,
+     * per mostrarle nel suo profilo (proprio e pubblico)
+     */
+    suspend fun getRatingsPerVolontario(volontarioId: String): Result<List<Rating>>
 }

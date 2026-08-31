@@ -120,6 +120,27 @@
                         android:contentDescription="@{viewModel.valutazione}"
                         android:visibility="@{viewModel.haValutazione ? View.VISIBLE : View.GONE}" />
 
+                    <!-- titolo dei commenti: visibile solo se ce n'è almeno uno -->
+                    <TextView
+                        android:id="@+id/recensioniTitolo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_medium"
+                        android:text="Commenti ricevuti"
+                        android:textSize="@dimen/text_size_body"
+                        android:textStyle="bold"
+                        android:textColor="@color/care_on_surface"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <!-- contenitore riempito a runtime con una riga per commento -->
+                    <LinearLayout
+                        android:id="@+id/recensioniContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="@dimen/spacing_small" />
+
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>

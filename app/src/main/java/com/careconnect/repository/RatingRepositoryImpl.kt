@@ -4,6 +4,7 @@ import com.careconnect.model.Rating
 import com.careconnect.model.RequestStatus
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import com.google.firebase.firestore.DocumentSnapshot
 
 // implementazione di RatingRepository
 class RatingRepositoryImpl(
@@ -46,4 +47,26 @@ class RatingRepositoryImpl(
         "commento" to commento,
         "valutatoreId" to valutatoreId
     )
+
+    override suspend fun getRatingsPerVolontario(volontarioId: String): Result<List<Rating>> = runCatching {
+        ratingsCollection
+            .whereEqualTo("volontarioId", volontarioId)
+            .get()
+            .await()
+            .documents
+            .mapNotNull { it.toRating() }
+    }
+
+    // funzione di mapping da Firestore a Rating
+    private fun DocumentSnapshot.toRating(): Rating? {
+        if (!exists()) return null
+        return Rating(
+            id = id,
+            requestId = getString("requestId") ?: "",
+            volontarioId = getString("volontarioId") ?: "",
+            stelle = (getLong("stelle") ?: 0L).toInt(),
+            commento = getString("commento"),
+            valutatoreId = getString("valutatoreId") ?: ""
+        )
+    }
 }

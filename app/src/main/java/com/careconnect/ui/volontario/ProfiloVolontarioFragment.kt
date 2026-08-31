@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RatingBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
@@ -18,6 +20,7 @@ import androidx.navigation.navOptions
 import com.careconnect.R
 import com.careconnect.databinding.FragmentProfiloVolontarioBinding
 import com.careconnect.repository.AuthRepositoryImpl
+import com.careconnect.repository.RatingRepositoryImpl
 import com.careconnect.repository.UserRepositoryImpl
 import com.careconnect.util.SessionCache
 import com.careconnect.viewmodel.auth.AuthViewModel
@@ -37,7 +40,7 @@ class ProfiloVolontarioFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ProfiloVolontarioViewModel by viewModels {
-        ProfiloVolontarioViewModelFactory(UserRepositoryImpl(), AuthRepositoryImpl())
+        ProfiloVolontarioViewModelFactory(UserRepositoryImpl(), AuthRepositoryImpl(), RatingRepositoryImpl())
     }
 
     // stesso AuthViewModel condiviso di login/registrazione: garantisce che
@@ -80,6 +83,24 @@ class ProfiloVolontarioFragment : Fragment() {
         preRiempiBio()
         osservaErrori()
         osservaBioSalvata()
+        osservaRecensioni()
+    }
+
+    // mostra i commenti ricevuti (solo le valutazioni con testo) sotto le stelle
+    private fun osservaRecensioni() {
+        viewModel.recensioni.observe(viewLifecycleOwner) { recensioni ->
+            val container = binding.recensioniContainer
+            container.removeAllViews()
+            binding.recensioniTitolo.visibility =
+                if (recensioni.isEmpty()) View.GONE else View.VISIBLE
+            val inflater = LayoutInflater.from(requireContext())
+            recensioni.forEach { recensione ->
+                val riga = inflater.inflate(R.layout.item_recensione, container, false)
+                riga.findViewById<RatingBar>(R.id.recensioneRatingBar).rating = recensione.stelle.toFloat()
+                riga.findViewById<TextView>(R.id.recensioneCommentoText).text = recensione.commento
+                container.addView(riga)
+            }
+        }
     }
 
     // la bio è un campo editabile: viene scritta nell'EditText una sola volta, al caricamento.

@@ -7,11 +7,13 @@ import com.careconnect.model.Rating
 import com.careconnect.model.Request
 import com.careconnect.model.SosAlert
 import com.careconnect.model.SosStatus
+import com.careconnect.model.User
 import com.careconnect.repository.AuthRepository
 import com.careconnect.repository.RatingRepository
 import com.careconnect.repository.RequestRepository
 import com.careconnect.repository.SosRepository
 import com.careconnect.repository.UserRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,15 +39,22 @@ class AttivitaFamiliareViewModel(
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
+    // anziani seguiti dal familiare, per il selettore in cima all'Attività
+    private val _anzianiSeguiti = MutableStateFlow<List<User>>(emptyList())
+    val anzianiSeguiti: StateFlow<List<User>> = _anzianiSeguiti.asStateFlow()
+
     private val familiareId: String? = authRepository.utenteCorrente()?.uid
 
+    // ascolto delle richieste dell'anziano selezionato: si riavvia a ogni cambio
+    private var jobRichieste: Job? = null
+
     init {
-        osservaRichiesteAnziano()
+        caricaAnziani()
         osservaSos()
     }
 
-    // funzione per osservare in tempo reale le richieste dell'anziano collegato a questo familiare
-    private fun osservaRichiesteAnziano() {
+    // carica gli anziani seguiti e seleziona il primo per default
+    private fun caricaAnziani() {
         val uid = familiareId
         if (uid == null) {
             _errore.value = "Sessione non valida"
@@ -53,14 +62,20 @@ class AttivitaFamiliareViewModel(
         }
         viewModelScope.launch {
             val familiare = userRepository.getUtente(uid).getOrNull()
-            val anzianoId = familiare?.anzianoCollegatoId
-            if (anzianoId == null) {
-                _errore.value = "Nessun anziano collegato"
-                return@launch
-            }
+            val anziani = familiare?.anzianiCollegatiIds?.mapNotNull { id ->
+                userRepository.getUtente(id).getOrNull()
+            } ?: emptyList()
+            _anzianiSeguiti.value = anziani
+            anziani.firstOrNull()?.let { selezionaAnziano(it.uid) }
+        }
+    }
+
+    // osserva in tempo reale le richieste dell'anziano scelto nel selettore
+    fun selezionaAnziano(anzianoId: String) {
+        jobRichieste?.cancel()
+        jobRichieste = viewModelScope.launch {
             requestRepository.osservaRichiestePerAnziano(anzianoId).collect { lista ->
-                // ordinate per data di creazione decrescente: vedi commento in
-                // RichiesteDisponibiliViewModel, stesso motivo (query senza orderBy).
+                // ordinate per data di creazione decrescente (query senza orderBy)
                 _richieste.value = lista.sortedByDescending { it.timestampCreazione.seconds }
             }
         }

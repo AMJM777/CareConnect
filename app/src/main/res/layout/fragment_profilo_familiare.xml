@@ -47,7 +47,7 @@
                 android:textSize="@dimen/text_size_title"
                 android:textStyle="bold"
                 android:textColor="@color/care_on_surface"
-                tools:text="Sei collegato/a come: Marco" />
+                tools:text="Marco" />
 
             <!-- etichetta visiva che identifica chiaramente il ruolo dell'utente -->
             <TextView
@@ -58,7 +58,19 @@
                 android:layout_marginTop="@dimen/spacing_small"
                 android:text="Familiare" />
 
-            <!-- scheda riepilogativa del collegamento con l'assistito -->
+            <!-- email del familiare, collegata ai dati del profilo -->
+            <TextView
+                android:id="@+id/emailText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:gravity="center"
+                android:text="@{viewModel.email}"
+                android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_on_surface_variant"
+                tools:text="marco.rossi@email.com" />
+
+            <!-- scheda delle persone seguite + collegamento di un nuovo anziano -->
             <com.google.android.material.card.MaterialCardView
                 style="@style/CareConnect.Card"
                 android:layout_width="match_parent"
@@ -73,22 +85,93 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Il tuo collegamento"
+                        android:text="Le persone che segui"
                         android:textSize="@dimen/text_size_body"
                         android:textStyle="bold"
                         android:textColor="@color/care_on_surface" />
 
-                    <!-- nome dell'anziano seguito gestito in tempo reale dal viewmodel -->
+                    <!-- mostrato solo se non segui ancora nessuno -->
                     <TextView
-                        android:id="@+id/nomeAnzianoText"
+                        android:id="@+id/nessunAnzianoText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_small"
-                        android:text="@{viewModel.nomeAnzianoTesto}"
+                        android:text="Non segui ancora nessuno. Collega un anziano qui sotto."
+                        android:textSize="@dimen/text_size_body"
+                        android:textColor="@color/care_on_surface_variant"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <!-- riempito a runtime con una riga per anziano seguito -->
+                    <LinearLayout
+                        android:id="@+id/anzianiContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="@dimen/spacing_small" />
+
+                    <!-- collegamento di un nuovo anziano tramite codice invito -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_medium"
+                        android:text="Collega un altro anziano"
                         android:textSize="@dimen/text_size_body"
                         android:textStyle="bold"
-                        android:textColor="@color/care_primary"
-                        tools:text="Stai seguendo: Maria" />
+                        android:textColor="@color/care_on_surface" />
+
+                    <EditText
+                        android:id="@+id/codiceInvitoEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:hint="Inserisci il codice invito"
+                        android:inputType="textCapCharacters"
+                        android:textSize="@dimen/text_size_body"
+                        android:textColor="@color/care_on_surface"
+                        android:background="@drawable/bg_input_outline"
+                        android:padding="@dimen/spacing_medium" />
+
+                    <Button
+                        android:id="@+id/collegaButton"
+                        style="@style/CareConnect.Button.Accent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:text="Collega" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- scheda informativa sul ruolo del familiare -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/CareConnect.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Il tuo ruolo"
+                        android:textSize="@dimen/text_size_body"
+                        android:textStyle="bold"
+                        android:textColor="@color/care_on_surface" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        android:text="Segui l'attività della persona che assisti e ricevi i suoi allarmi SOS. Puoi confermare e recensire le richieste completate dai volontari."
+                        android:textSize="@dimen/text_size_body"
+                        android:textColor="@color/care_on_surface" />
 
                 </LinearLayout>
 

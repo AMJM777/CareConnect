@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
@@ -58,8 +59,48 @@ class ProfiloFamiliareFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.logoutButton.setOnClickListener { mostraConfermaLogout() }
+        binding.collegaButton.setOnClickListener {
+            profiloViewModel.collegati(binding.codiceInvitoEditText.text.toString())
+        }
 
         osservaErrori()
+        osservaAnziani()
+        osservaCollegamento()
+    }
+
+    // mostra la lista degli anziani seguiti; se vuota, l'invito a collegarne uno
+    private fun osservaAnziani() {
+        profiloViewModel.anzianiSeguiti.observe(viewLifecycleOwner) { anziani ->
+            val container = binding.anzianiContainer
+            container.removeAllViews()
+            binding.nessunAnzianoText.visibility =
+                if (anziani.isEmpty()) View.VISIBLE else View.GONE
+            val inflater = LayoutInflater.from(requireContext())
+            anziani.forEach { anziano ->
+                val riga = inflater.inflate(R.layout.item_anziano_seguito, container, false)
+                riga.findViewById<TextView>(R.id.anzianoNomeText).text = anziano.nome
+                riga.findViewById<TextView>(R.id.anzianoIndirizzoText).text =
+                    anziano.indirizzo?.takeIf { it.isNotBlank() }
+                        ?.let { "Indirizzo: $it" }
+                        ?: "Indirizzo non ancora indicato"
+                container.addView(riga)
+            }
+        }
+    }
+
+    // conferma di collegamento riuscito: pulisco il campo e avviso
+    private fun osservaCollegamento() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                profiloViewModel.collegamentoRiuscito.collect { ok ->
+                    if (ok) {
+                        Toast.makeText(requireContext(), "Anziano collegato", Toast.LENGTH_SHORT).show()
+                        binding.codiceInvitoEditText.text?.clear()
+                        profiloViewModel.collegamentoRiuscitoMostrato()
+                    }
+                }
+            }
+        }
     }
 
     // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un Toast

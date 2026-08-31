@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.careconnect.R
 import com.careconnect.databinding.FragmentAttivitaFamiliareBinding
 import com.careconnect.model.Request
+import com.careconnect.model.User
+import com.google.android.material.chip.Chip
 import com.careconnect.repository.AuthRepositoryImpl
 import com.careconnect.repository.RatingRepositoryImpl
 import com.careconnect.repository.RequestRepositoryImpl
@@ -88,9 +90,43 @@ class AttivitaFamiliareFragment : Fragment() {
         // durante il riordino tra uno snapshot e l'altro.
         binding.richiesteRecyclerView.itemAnimator = null
 
+        osservaAnziani()
         osservaRichieste()
         osservaErrori()
         osservaSos()
+    }
+
+    // costruisce il selettore degli anziani seguiti (visibile solo con più di uno)
+    private fun osservaAnziani() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.anzianiSeguiti.collect { anziani ->
+                    popolaSelettore(anziani)
+                }
+            }
+        }
+    }
+
+    private fun popolaSelettore(anziani: List<User>) {
+        val gruppo = binding.anzianiChipGroup
+        binding.selettoreAnziani.visibility = if (anziani.size > 1) View.VISIBLE else View.GONE
+        // evito di ricostruire (e resettare la scelta) se è già popolato
+        if (gruppo.childCount == anziani.size) return
+        gruppo.removeAllViews()
+        val inflater = LayoutInflater.from(requireContext())
+        anziani.forEachIndexed { index, anziano ->
+            val chip = inflater.inflate(R.layout.item_chip_anziano, gruppo, false) as Chip
+            chip.text = anziano.nome
+            chip.id = View.generateViewId()
+            chip.tag = anziano.uid
+            if (index == 0) chip.isChecked = true
+            gruppo.addView(chip)
+        }
+        gruppo.setOnCheckedStateChangeListener { group, checkedIds ->
+            val id = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
+            val anzianoId = group.findViewById<Chip>(id)?.tag as? String ?: return@setOnCheckedStateChangeListener
+            viewModel.selezionaAnziano(anzianoId)
+        }
     }
 
     // funzione per osservare eventuali alert SOS attivi e mostrare/nascondere il banner
@@ -99,6 +135,16 @@ class AttivitaFamiliareFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.sosAttivo.collect { alert ->
                     binding.sosBanner.visibility = if (alert != null) View.VISIBLE else View.GONE
+                    if (alert != null) {
+                        // nome dell'anziano che ha lanciato l'allarme, se è tra quelli seguiti
+                        val nome = viewModel.anzianiSeguiti.value
+                            .firstOrNull { it.uid == alert.anzianoId }?.nome
+                        binding.sosText.text = if (nome != null) {
+                            "$nome ha lanciato un allarme SOS"
+                        } else {
+                            "Il tuo assistito ha lanciato un allarme SOS"
+                        }
+                    }
                     binding.chiudiSosButton.setOnClickListener {
                         alert?.let { viewModel.chiudiSos(it.id) }
                     }
