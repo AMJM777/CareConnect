@@ -221,7 +221,7 @@
   `res/layout/fragment_profilo_anziano.xml`, nuovo `res/layout/item_garante_collegato.xml`; + rules `users`
   aggiornate in console. Testato su dispositivo fisico dopo la pubblicazione delle rules.
 
-### Fase Grafica — restyle completo (29 agosto 2026) ✅ (colore definitivo da confermare)
+### Fase Grafica — restyle completo (29 agosto 2026) ✅ CHIUSA (31 agosto 2026: colore definitivo confermato + icona launcher ricolorata)
 - **Riferimento operativo:** `Design_Reference_CareConnect.md` (direttiva riusabile: stile, pattern
   schermate, palette candidate, come applicare un colore cambiando solo i token). Fonti HCI citabili
   in `README_HCI_Colori_Anziani.md`. Bozze visive: `CareConnect_Palette_Simulazioni.html`,
@@ -232,9 +232,11 @@
 - **Tipografia:** introdotto **Lexend** (font incluso, non scaricabile a runtime — scelta motivata
   per la demo offline) su tutta l'app via `themes.xml` (fontFamily + text appearance Material). Legato
   alla leggibilità/HCI. Applicato anche agli overlay SOS (solo tema, logica intatta).
-- **Palette:** ricolorata su **Prugna** (`care_primary #5A2A4D`, accento pesca `#E39B7B`, carta
-  `#F7F1F3`, ink `#2A1E28`). Solo valori in `colors.xml`, **nomi token invariati** → ridipinge tutta
-  l'app senza toccare i layout. `care_sos`/`care_error` invariati (rossi riservati).
+- **Palette:** ricolorata su **Prugna**, colore definitivo **confermato il 31 ago** su una **prugna
+  più scura** (`care_primary #4A2140`, variant `#3A1A33`, `stato_aperta_fg #4A2140`; accento pesca
+  `#E39B7B`, carta `#F7F1F3`, ink `#2A1E28`). Contrasti verificati (bianco su primario ~13:1). Solo
+  valori in `colors.xml`, **nomi token invariati** → ridipinge tutta l'app senza toccare i layout.
+  `care_sos`/`care_error` invariati (rossi riservati).
 - **Componenti:** `CareConnect.Card` (14dp), `CareConnect.OptionToggle` (tessere tipo-richiesta con
   icona), `CareConnect.Button.Chat` (tonale, con icona — reso riconoscibile), `CareConnect.Button.Accent`
   (corretto un bug di contrasto 2,29:1), `bg_input_outline` con **focus primario**, `CareConnect.TextField`
@@ -254,8 +256,11 @@
   **inset basso → bottom nav** (bianca), via `OnApplyWindowInsetsListener`. Il padding alto va sulla
   **radice, NON sulla toolbar** (gestita da `NavigationUI`, dava altezze incoerenti tra schermate —
   bug "barra corta della Home" diagnosticato misurando i fotogrammi: 245px vs 324px). Aggiorna §10.
-- **Accantonati / da fare** (vedi §8/§9): scelta **colore definitiva** da confermare; **icona launcher**
-  ancora arancione (`#F26522`) da ricolorare; **T7** (servizi sanitari) accantonato.
+- **Chiusi il 31 ago:** colore definitivo **confermato** (prugna scura `#4A2140`); **icona launcher**
+  ricolorata (sfondo prugna `#4A2140`, cuore bianco + pesca `#E39B7B`, arancione `#F26522` rimosso ovunque);
+  bibliografia del **font Lexend** aggiunta in `Grafica_Design_e_Skill.md`; bottone "Prendi in carico"
+  del volontario ammorbidito a **tonale**. Splash brandizzato **scartato** (resta sobrio). Fase grafica **chiusa**.
+- **Accantonato** (vedi §9): **T7** (servizi sanitari) rimandato.
 
 ---
 
@@ -552,15 +557,15 @@ messaggi/{messaggioId}                # T3 — chat anziano ↔ volontario, lega
 > Nota: il testo d'esame di questa sezione (bug dispositivo, Fasi 9–12) è **superato** — quei blocchi
 > sono conclusi. Lo storico resta in §10 e in `docs/archivio/`.
 
-**Contesto tesi:** T1–T6 completati e **fase grafica completata** (restyle Prugna, vedi §0bis). Aperti:
+**Contesto tesi:** T1–T6 completati e **fase grafica CHIUSA** (restyle Prugna, colore definitivo e
+icona launcher fatti — vedi §0bis). Aperti:
 
-1. **Colore definitivo da confermare** — la palette **Prugna** è applicata, ma la scelta cromatica
-   finale è ancora da decidere sulle bozze. Direttiva e **mappa dei token** in
-   `Design_Reference_CareConnect.md`; fonti HCI in `README_HCI_Colori_Anziani.md`. Consigliato farlo
-   in una **nuova chat** (questa ha molto contesto): cambiare colore = cambiare **solo i valori** in
-   `colors.xml`, lo stile e i layout restano.
-2. **Icona launcher / logo** ancora arancione (`#F26522`) → **cambio logo** dell'app + ricolorazione
-   sulla palette scelta.
+1. **Colore definitivo** — ✅ **CHIUSO il 31 ago:** confermata una **prugna più scura**
+   (`care_primary #4A2140`, variant `#3A1A33`), applicata cambiando solo i valori in `colors.xml`.
+   Direttiva e mappa token in `Design_Reference_CareConnect.md`; fonti HCI in `README_HCI_Colori_Anziani.md`.
+2. **Icona launcher / logo** — ✅ **CHIUSO il 31 ago:** ricolorata su prugna `#4A2140` (cuore bianco +
+   pesca `#E39B7B`); arancione `#F26522` rimosso dal progetto. Nessun logo in-app/splash separato: lo
+   splash resta sobrio (scelta confermata).
 3. **T7 "Servizi sanitari a domicilio": ACCANTONATO** (vedi §9) — non coerente col cuore del prodotto
    in questa fase; meglio come **capitolo "sviluppi futuri/fattibilità" della tesi** o da riprendere
    più avanti (statico, poco costoso).
@@ -580,11 +585,11 @@ Raccolte qui perché emerse durante lo sviluppo ma esplicitamente rimandate. Ved
   "sviluppi futuri / fattibilità normativa" della tesi** (da *presentare*, non da implementare ora),
   oppure ripresa tardiva a basso costo (contenuto statico). Piano già ragionato: ingresso da Profilo o
   4ª voce in bottom nav, schermata condivisa, schede statiche in XML/strings.
-- **Scelta colore definitiva (da confermare)** — palette Prugna applicata come scelta operativa; le
-  alternative (Navy, Ottanio, Verde bosco, Terracotta) sono valutate con bozze e ragionamento HCI. Vedi
-  `Design_Reference_CareConnect.md` (direttiva + mappa token) e `README_HCI_Colori_Anziani.md` (fonti).
-- **Icona launcher** — `ic_launcher_foreground.xml` usa ancora l'arancione storico `#F26522`; ricolorare
-  sulla palette definitiva.
+- **Scelta colore definitiva** — ✅ **CHIUSA il 31 ago:** confermata la **prugna più scura** `#4A2140`
+  (le alternative Navy/Ottanio/Verde bosco/Terracotta restano documentate come ragionamento HCI in
+  `README_HCI_Colori_Anziani.md`, utile alle slide).
+- **Icona launcher** — ✅ **CHIUSA il 31 ago:** ricolorata su prugna `#4A2140` (cuore bianco + pesca
+  `#E39B7B`); arancione `#F26522` rimosso dal progetto.
 - **Immagine profilo (Volontario, ed eventualmente altri ruoli)**: valutate 3 opzioni in Fase 5 (foto vera con Firebase Storage / avatar semplice predefinito / rimandare). Scelta: rimandare, possibile estensione per la tesi. Se ripresa in futuro, ricordare che comporta una nuova dipendenza (Firebase Storage), permessi Android per galleria/fotocamera, e security rules dedicate allo Storage (non solo a Firestore).
 - **Geolocalizzazione (Extra, 1pt)** — **RITIRATA dal piano d'esame il 5 luglio**, per fare spazio alla Fase 8 senza sforare la scadenza del 17 luglio (vedi Roadmap, nota di aggiornamento e Fase 12). Era: permessi posizione, associazione posizione a richiesta, filtro/ordinamento per vicinanza nella vista Volontario. `Request.posizione: GeoPoint?` esiste già nel modello (Fase 1, mai popolato) — se ripresa per la tesi, il campo dati è già pronto, manca solo la UI/permessi.
 - **Vista "chi sono i miei garanti/familiari collegati" per l'Anziano**: l'anziano vedrebbe l'elenco dei familiari che hanno accesso alle sue attività (oggi l'Anziano non ha visibilità su chi si è collegato con il suo codice invito). Non pianificata in una fase specifica, valutabile come piccola aggiunta al nuovo Profilo Anziano (Fase 8) o come estensione successiva.

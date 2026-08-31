@@ -25,39 +25,55 @@ class UserRepositoryImpl(
             ?: throw NoSuchElementException("Utente non trovato: $uid")
     }
 
+    // segnala che un candidato è già in uso, così il ciclo riprova con un altro
+    private class CodiceOccupatoException : Exception()
+
     override suspend fun ottieniOCreaCodiceInvito(anzianoId: String): Result<String> = runCatching {
-        val anziano = collection.document(anzianoId).get().await().toUser()
+        val anzianoRef = collection.document(anzianoId)
+        val anziano = anzianoRef.get().await().toUser()
             ?: throw NoSuchElementException("Utente non trovato: $anzianoId")
 
         if (anziano.ruolo != UserRole.ANZIANO) {
             throw IllegalStateException("Solo un anziano può avere un codice invito")
         }
 
-        // Se esiste già, lo riusa
+        // se esiste già, lo riusa
         anziano.codiceInvito?.let { return@runCatching it }
 
-        // egnera un candidato e verifica che nessun altro lo stia già usando.
-        // 6 caratteri da un alfabeto di 32 simboli (~1 miliardo di combinaazioni)
-        var codiceTrovato: String? = null
+        val codiciCollection = firestore.collection("codiciInvito")
+
+        // prova qualche candidato: l'unicità è garantita dall'id del documento
         var tentativi = 0
-        while (codiceTrovato == null && tentativi < 5) {
+        while (tentativi < 5) {
             val candidato = generaCodiceCasuale()
-            val giaUsato = collection
-                .whereEqualTo("codiceInvito", candidato)
-                .limit(1)
-                .get()
-                .await()
-            if (giaUsato.isEmpty) {
-                codiceTrovato = candidato
+            val candidatoRef = codiciCollection.document(candidato)
+
+            val esito = runCatching {
+                firestore.runTransaction { txn ->
+                    // la lettura va fatta prima di ogni scrittura nella transazione
+                    if (txn.get(candidatoRef).exists()) {
+                        throw CodiceOccupatoException()
+                    }
+                    // registra la mappa codice -> anziano e salva il codice sull'utente
+                    txn.set(candidatoRef, mapOf("anzianoId" to anzianoId))
+                    txn.update(anzianoRef, "codiceInvito", candidato)
+                    null
+                }.await()
+            }
+
+            if (esito.isSuccess) {
+                return@runCatching candidato
+            }
+
+            // se è fallita perché il codice era occupato riprova, altrimenti propaga l'errore
+            val causa = esito.exceptionOrNull()
+            val occupato = causa is CodiceOccupatoException || causa?.cause is CodiceOccupatoException
+            if (!occupato) {
+                throw causa ?: IllegalStateException("Errore durante la generazione del codice")
             }
             tentativi++
         }
-        val codiceFinale = codiceTrovato
-            ?: throw IllegalStateException("Impossibile generare un codice invito univoco, riprova")
-
-        // fa l'update solo di "codiceInvito"
-        collection.document(anzianoId).update("codiceInvito", codiceFinale).await()
-        codiceFinale
+        throw IllegalStateException("Impossibile generare un codice invito univoco, riprova")
     }
 
     override suspend fun trovaAnzianoPerCodiceInvito(codice: String): Result<User> = runCatching {

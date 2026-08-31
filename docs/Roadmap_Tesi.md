@@ -196,12 +196,14 @@ eroga prestazioni**. Contenuto in schede (con **lettura vocale TTS** lato Anzian
 
 Ordine e stime (target, con margine). Le date sono indicative, il vincolo fermo è il **12 set**.
 
-### 1 · Grafica residua (30 ago – 1 set)
-- **Confermare il colore definitivo** sulle bozze e applicarlo (solo token in `colors.xml`; guida in
-  `Design_Reference_CareConnect.md`).
-- Ricolorare l'**icona launcher** (oggi ancora arancione `#F26522`).
-- **Cambio logo** dell'app: nuovo marchio coerente con la palette scelta (icona adattiva
-  `ic_launcher` + eventuale logo mostrato in-app / splash).
+### 1 · Grafica residua — ✅ CHIUSA (31 ago)
+- ✅ **Colore definitivo confermato:** prugna più scura `#4A2140` (variant `#3A1A33`), applicata solo
+  cambiando i valori dei token in `colors.xml`. Contrasti verificati.
+- ✅ **Icona launcher ricolorata:** sfondo prugna `#4A2140`, cuore bianco + pesca `#E39B7B`; arancione
+  `#F26522` rimosso da tutto il progetto.
+- ✅ **Logo:** il cuore ricolorato è il marchio definitivo. Nessun logo in-app/splash separato — lo
+  splash resta sobrio (scelta confermata, brandizzazione scartata).
+- ✅ **Bibliografia font (Lexend)** aggiunta in `Grafica_Design_e_Skill.md` §2.
 
 ### 2 · Rifinitura tecnica + test finali (2 – 4 set)
 - Test su dispositivo fisico: lifecycle/rotazione, edge-to-edge/inset sui 3 ruoli, flussi SOS e chat.
@@ -232,15 +234,14 @@ Ordine e stime (target, con margine). Le date sono indicative, il vincolo fermo 
 > tracce di tooling è una scelta di consegna dell'utente ed è sicura per il build (quei file non sono
 > compilati). Attenzione solo a non rimuovere per errore risorse effettivamente usate dall'app.
 
-### Fase GRAFICA — ✅ COMPLETATA (29 ago) — colore definitivo da confermare
-> **Fatto:** restyle completo dell'app. Palette ricolorata su **Prugna** (`#5A2A4D` + pesca), font
-> **Lexend** ovunque, componenti e schermate allineati (Home Anziano, liste, Profilo, Chat, Auth con
-> etichette flottanti), bottom nav bianca, inset edge-to-edge rivisti. Tutti i punti sotto sono stati
-> affrontati. **Riferimento/direttiva:** `Design_Reference_CareConnect.md`; fonti HCI:
-> `README_HCI_Colori_Anziani.md`; bozze visive: `CareConnect_Palette_Simulazioni.html` e
-> `CareConnect_Anteprima_NavyCaldo.html`. Dettaglio in `Project_State` §0bis.
-> **Aperto:** scelta **colore definitiva** da confermare sulle bozze (Prugna vs Navy/Ottanio/…) e
-> **icona launcher** da ricolorare. Meglio chiudere in una nuova chat (cambio colore = solo token).
+### Fase GRAFICA — ✅ CHIUSA (31 ago)
+> **Fatto:** restyle completo dell'app. Palette ricolorata su **Prugna**, colore definitivo confermato
+> su una **prugna più scura** (`#4A2140` + pesca), font **Lexend** ovunque, componenti e schermate
+> allineati (Home Anziano, liste, Profilo, Chat, Auth con etichette flottanti), bottom nav bianca,
+> inset edge-to-edge rivisti, **icona launcher ricolorata**. **Riferimento/direttiva:**
+> `Design_Reference_CareConnect.md`; fonti HCI: `README_HCI_Colori_Anziani.md`; bibliografia font in
+> `Grafica_Design_e_Skill.md` §2. Dettaglio in `Project_State` §0bis.
+> **Nessun punto aperto:** colore e icona chiusi il 31 ago; splash lasciato sobrio (brandizzazione scartata).
 >
 > Punti storici della fase (tutti coperti):
 - **Chat in tutte le viste** (anziano, volontario, garante): bolle, colori/contrasto, distinzione
