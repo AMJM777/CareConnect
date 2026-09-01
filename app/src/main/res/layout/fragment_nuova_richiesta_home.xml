@@ -263,6 +263,20 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- suggerimento: lo scuotimento e' il secondo modo per lanciare l'sos -->
+            <TextView
+                android:id="@+id/scuotiHintText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:gravity="center"
+                android:text="Oppure scuoti il telefono per chiedere aiuto"
+                android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_on_surface_variant"
+                app:layout_constraintTop_toBottomOf="@id/sosButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
