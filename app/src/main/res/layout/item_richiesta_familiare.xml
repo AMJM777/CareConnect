@@ -74,18 +74,18 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/chatButton"
                 style="@style/CareConnect.Button.Tonal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_small"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginTop="@dimen/spacing_medium"
                 android:text="Vedi chat"
                 app:icon="@drawable/ic_chat" />
 
-            <!-- confermare la chiusura e valutare: azione secondaria pesca -->
+            <!-- confermare la chiusura e valutare: azione primaria prugna (tema coerente) -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/confermaButton"
-                style="@style/CareConnect.Button.Accent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/CareConnect.Button.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
                 android:layout_marginTop="@dimen/spacing_small"
                 android:text="Conferma e valuta"
                 app:icon="@drawable/ic_spunta" />

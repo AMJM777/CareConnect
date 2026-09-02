@@ -12,7 +12,8 @@
     <!-- pesca: accento caldo per i bottoni secondari.
          NB: tono chiaro -> il testo SOPRA la pesca e' PRUGNA (care_on_accent).
          Schiarita a #EBB093 per un contrasto piu' comodo: prugna su pesca = 5,96:1 (AA). -->
-    <color name="care_accent">#FFEBB093</color>
+    <color name="care_accent">#EBB093</color>
+    <color name="care_accent_soft">#FFF5D9C6</color>    <!-- pesca tenue: pulsanti secondari nei profili -->
     <color name="care_accent_variant">#FF9A4A2E</color>
     <color name="care_accent_container">#FFF4E2D6</color>   <!-- pesca tenue: solo sfondo avatar -->
     <color name="care_on_accent">#FF5A2A4D</color>

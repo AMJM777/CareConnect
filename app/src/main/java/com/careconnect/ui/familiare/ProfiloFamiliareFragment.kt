@@ -81,7 +81,6 @@ class ProfiloFamiliareFragment : Fragment() {
                 riga.findViewById<TextView>(R.id.anzianoNomeText).text = anziano.nome
                 riga.findViewById<TextView>(R.id.anzianoIndirizzoText).text =
                     anziano.indirizzo?.takeIf { it.isNotBlank() }
-                        ?.let { "Indirizzo: $it" }
                         ?: "Indirizzo non ancora indicato"
                 container.addView(riga)
             }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- riga di un anziano seguito: nome + indirizzo -->
+<!-- riga di un anziano seguito: avatar + nome + indirizzo -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,28 +9,53 @@
     android:paddingTop="@dimen/spacing_small"
     android:paddingBottom="@dimen/spacing_small">
 
-    <TextView
-        android:id="@+id/anzianoNomeText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/text_size_body"
-        android:textStyle="bold"
-        android:textColor="@color/care_primary"
-        tools:text="Maria" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/anzianoIndirizzoText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_small"
-        android:textSize="@dimen/text_size_body"
-        android:textColor="@color/care_on_surface_variant"
-        tools:text="Indirizzo: Via Roma 12, Milano" />
+        <ImageView
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_avatar_circle"
+            android:src="@drawable/ic_person"
+            android:padding="9dp"
+            app:tint="@color/care_primary"
+            android:contentDescription="@null" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/spacing_medium"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/anzianoNomeText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_card_title"
+                android:textStyle="bold"
+                android:textColor="@color/care_primary"
+                tools:text="Milena Mitte" />
+
+            <TextView
+                android:id="@+id/anzianoIndirizzoText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_body"
+                android:textColor="@color/care_on_surface_variant"
+                tools:text="Via Roma 12, Genova" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="@dimen/spacing_small"
+        android:layout_marginTop="@dimen/spacing_medium"
         android:background="@color/care_outline" />
 
 </LinearLayout>

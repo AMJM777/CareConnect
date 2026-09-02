@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RatingBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
@@ -160,26 +161,25 @@ class AttivitaFamiliareFragment : Fragment() {
         val ratingBar = vistaDialog.findViewById<RatingBar>(R.id.ratingBar)
         val commentoEditText = vistaDialog.findViewById<EditText>(R.id.commentoEditText)
 
-        val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Conferma completamento")
-            .setView(vistaDialog)
-            .setPositiveButton("Conferma", null)
-            .setNegativeButton("Annulla", null)
-            .create()
+        vistaDialog.findViewById<TextView>(R.id.valutaSottotitolo).text =
+            "Valuta l'aiuto di ${richiesta.volontarioNome ?: "questo volontario"}"
 
-        // listener impostato dopo la creazione, non nel builder: così si può
-        // validare il rating senza chiudere il dialog se non è valido
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                val stelle = ratingBar.rating.toInt()
-                if (stelle == 0) {
-                    Toast.makeText(requireContext(), "Seleziona almeno una stella", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                viewModel.confermaEValuta(richiesta, stelle, commentoEditText.text.toString())
-                dialog.dismiss()
+        // dialog senza titolo/pulsanti di default: header e pulsanti sono nel layout
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(vistaDialog)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        vistaDialog.findViewById<View>(R.id.confermaButton).setOnClickListener {
+            val stelle = ratingBar.rating.toInt()
+            if (stelle == 0) {
+                Toast.makeText(requireContext(), "Seleziona almeno una stella", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+            viewModel.confermaEValuta(richiesta, stelle, commentoEditText.text.toString())
+            dialog.dismiss()
         }
+        vistaDialog.findViewById<View>(R.id.annullaButton).setOnClickListener { dialog.dismiss() }
 
         dialog.show()
     }

@@ -35,7 +35,7 @@
     <!-- AZIONE SECONDARIA: fill pesca con testo prugna (5,96:1), angoli 14dp,
          altezza da target anziano (56dp). Es: "Copia codice", "Salva indirizzo", "Invia richiesta". -->
     <style name="CareConnect.Button.Accent" parent="Widget.Material3.Button">
-        <item name="backgroundTint">@color/care_accent</item>
+        <item name="backgroundTint">@color/care_accent_soft</item>
         <item name="android:textColor">@color/care_on_accent</item>
         <item name="iconTint">@color/care_on_accent</item>
         <item name="cornerRadius">@dimen/button_corner_radius</item>

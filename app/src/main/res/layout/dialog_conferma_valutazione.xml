@@ -1,42 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- popup visivo per assegnare le stelline e cliccare il bottone di conferma feedback -->
+<!-- dialog di conferma completamento + valutazione (familiare) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/spacing_medium">
+    android:background="@drawable/bg_dialog_card"
+    android:clipToOutline="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Come valuti il servizio ricevuto?"
-        android:textSize="@dimen/text_size_body"
-        android:textColor="@color/care_on_surface" />
-
-    <RatingBar
-        android:id="@+id/ratingBar"
-        style="?android:attr/ratingBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_small"
-        android:numStars="5"
-        android:stepSize="1.0"
-        android:progressTint="@color/care_accent"
-        android:rating="0" />
-
-    <EditText
-        android:id="@+id/commentoEditText"
+    <!-- HEADER verde: esito positivo -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_medium"
-        android:background="@drawable/bg_input_outline"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="14dp"
-        android:hint="Commento (facoltativo)"
-        android:inputType="textMultiLine"
-        android:minLines="2"
-        android:gravity="top|start"
-        android:textColor="@color/care_on_surface"
-        android:textColorHint="@color/care_on_surface_variant" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/stato_confermata_bg"
+        android:padding="@dimen/spacing_medium">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_check_circle"
+            app:tint="@color/stato_confermata_fg"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_small"
+            android:text="Richiesta completata"
+            android:textSize="@dimen/text_size_title"
+            android:textStyle="bold"
+            android:textColor="@color/stato_confermata_fg" />
+
+    </LinearLayout>
+
+    <!-- CORPO -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/screen_padding">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Com'è andata?"
+            android:textSize="@dimen/text_size_title"
+            android:textStyle="bold"
+            android:textColor="@color/care_primary" />
+
+        <TextView
+            android:id="@+id/valutaSottotitolo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface_variant"
+            tools:text="Valuta l'aiuto di Mario Rossi" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            style="?android:attr/ratingBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:numStars="5"
+            android:stepSize="1"
+            android:rating="0"
+            android:progressTint="@color/care_accent"
+            android:secondaryProgressTint="@color/care_accent"
+            android:progressBackgroundTint="@color/care_outline" />
+
+        <EditText
+            android:id="@+id/commentoEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:background="@drawable/bg_input_outline"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="14dp"
+            android:hint="Scrivi un commento (facoltativo)…"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:gravity="top|start"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/care_on_surface"
+            android:textColorHint="@color/care_on_surface_variant" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/confermaButton"
+            style="@style/CareConnect.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:text="Conferma valutazione" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/annullaButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:minHeight="@dimen/touch_target_min"
+            android:text="Annulla"
+            android:textColor="@color/care_primary" />
+
+    </LinearLayout>
 
 </LinearLayout>
