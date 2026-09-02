@@ -5,22 +5,30 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.careconnect.model.Rating
 import com.careconnect.model.User
 import com.careconnect.repository.AuthRepository
 import com.careconnect.repository.RatingRepository
+import com.careconnect.repository.RequestRepository
 import com.careconnect.repository.UserRepository
+import com.careconnect.util.RecensioneFormat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+
+// modello di presentazione di un commento ricevuto: testo + etichetta "Nome R. · Tipo"
+data class RecensioneUi(
+    val commento: String,
+    val etichetta: String
+)
 
 // carica il profilo una sola volta (non realtime) e gestisce logout + modifica della bio
 // nome e valutazione sono legati dall'xml con data binding tramite i liveData sottostanti
 class ProfiloVolontarioViewModel(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
-    private val ratingRepository: RatingRepository
+    private val ratingRepository: RatingRepository,
+    private val requestRepository: RequestRepository
 ) : ViewModel() {
 
     // tenuto in memoria come sorgente per salvaBio(): salvaUtente è un .set() completo, serve l'oggetto intero
@@ -37,6 +45,14 @@ class ProfiloVolontarioViewModel(
     private val _ratingStelle = MutableLiveData(0f)
     val ratingStelle: LiveData<Float> = _ratingStelle
 
+    // media come numero grande accanto alle stelle (es. "4,9")
+    private val _ratingNumero = MutableLiveData("")
+    val ratingNumero: LiveData<String> = _ratingNumero
+
+    // conteggio delle valutazioni (es. "su 24 valutazioni")
+    private val _numeroValutazioni = MutableLiveData("")
+    val numeroValutazioni: LiveData<String> = _numeroValutazioni
+
     // true solo se il volontario ha già ricevuto almeno una valutazione
     private val _haValutazione = MutableLiveData(false)
     val haValutazione: LiveData<Boolean> = _haValutazione
@@ -44,9 +60,9 @@ class ProfiloVolontarioViewModel(
     private val _bioIniziale = MutableLiveData<String>()
     val bioIniziale: LiveData<String> = _bioIniziale
 
-    // commenti ricevuti (solo le valutazioni con testo), mostrati sotto le stelle
-    private val _recensioni = MutableLiveData<List<Rating>>(emptyList())
-    val recensioni: LiveData<List<Rating>> = _recensioni
+    // commenti ricevuti (solo le valutazioni con testo), arricchiti con nome e tipo
+    private val _recensioni = MutableLiveData<List<RecensioneUi>>(emptyList())
+    val recensioni: LiveData<List<RecensioneUi>> = _recensioni
 
     val email: String? = authRepository.utenteCorrente()?.email
 
@@ -74,13 +90,14 @@ class ProfiloVolontarioViewModel(
         }
     }
 
-        private fun mostraUtente(utente: User) {
+    private fun mostraUtente(utente: User) {
         utenteCaricato = utente
         _nome.value = utente.nome
 
         val media = utente.ratingMedio
         _haValutazione.value = media != null
         _ratingStelle.value = media?.toFloat() ?: 0f
+        _ratingNumero.value = media?.let { "%.1f".format(it).replace('.', ',') } ?: ""
         _valutazione.value = media
             ?.let { "Valutazione %.1f su 5".format(it).replace('.', ',') }
             ?: ""
@@ -90,12 +107,30 @@ class ProfiloVolontarioViewModel(
         caricaRecensioni(utente.uid)
     }
 
-    // carica i commenti ricevuti dal volontario (solo le valutazioni con testo)
+    // carica i commenti ricevuti dal volontario (solo le valutazioni con testo),
+    // arricchendoli con il nome abbreviato dell'autore e il tipo di richiesta
     private fun caricaRecensioni(volontarioId: String) {
         viewModelScope.launch {
-            _recensioni.value = ratingRepository.getRatingsPerVolontario(volontarioId).getOrNull()
-                ?.filter { !it.commento.isNullOrBlank() }
-                ?: emptyList()
+            val tutte = ratingRepository.getRatingsPerVolontario(volontarioId).getOrNull() ?: emptyList()
+            _numeroValutazioni.value = when (tutte.size) {
+                0 -> ""
+                1 -> "su 1 valutazione"
+                else -> "su ${tutte.size} valutazioni"
+            }
+
+            val conCommento = tutte.filter { !it.commento.isNullOrBlank() }
+            _recensioni.value = conCommento.map { rating ->
+                // nome e tipo dalla RICHIESTA (autoreNome è denormalizzato ed è leggibile
+                // dal volontario che l'ha servita): evita di leggere il documento utente del
+                // valutatore, che le regole non gli consentono → niente "Anonimo"
+                val richiesta = requestRepository.getRichiesta(rating.requestId).getOrNull()
+                RecensioneUi(
+                    commento = rating.commento ?: "",
+                    etichetta = RecensioneFormat.etichetta(
+                        richiesta?.autoreNome ?: "", richiesta?.tipo ?: ""
+                    )
+                )
+            }
         }
     }
 
@@ -133,12 +168,13 @@ class ProfiloVolontarioViewModel(
 class ProfiloVolontarioViewModelFactory(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
-    private val ratingRepository: RatingRepository
+    private val ratingRepository: RatingRepository,
+    private val requestRepository: RequestRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ProfiloVolontarioViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ProfiloVolontarioViewModel(userRepository, authRepository, ratingRepository) as T
+            return ProfiloVolontarioViewModel(userRepository, authRepository, ratingRepository, requestRepository) as T
         }
         throw IllegalArgumentException("ViewModel sconosciuto: ${modelClass.name}")
     }

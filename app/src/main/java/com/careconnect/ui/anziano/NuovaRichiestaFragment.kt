@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.careconnect.R
 import com.careconnect.databinding.FragmentNuovaRichiestaBinding
+import com.google.android.material.button.MaterialButton
 import com.careconnect.repository.RequestRepositoryImpl
 import com.careconnect.viewmodel.anziano.NuovaRichiestaUiState
 import com.careconnect.viewmodel.anziano.NuovaRichiestaViewModel
@@ -37,6 +38,14 @@ class NuovaRichiestaFragment : Fragment() {
     // valorizzato in modalità modifica leggendo gli argomenti di navigazipne
     private var requestIdInModifica: String? = null
 
+    // le quattro pillole del tipo di aiuto: selezione singola gestita a mano
+    private val tipoButtons by lazy {
+        listOf(
+            binding.tipoSpesa, binding.tipoBolletta,
+            binding.tipoAssistenzaDigitale, binding.tipoAltro
+        )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,11 +68,9 @@ class NuovaRichiestaFragment : Fragment() {
             insets
         }
 
-        binding.tipoToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (!isChecked) return@addOnButtonCheckedListener
-            binding.altroInput.visibility =
-                if (checkedId == R.id.tipoAltro) View.VISIBLE else View.GONE
-            aggiornaHintDescrizione(checkedId)
+        // selezione singola manuale sulle pillole separate
+        tipoButtons.forEach { pulsante ->
+            pulsante.setOnClickListener { selezionaTipo(pulsante) }
         }
 
         binding.inviaButton.setOnClickListener { onInviaClick() }
@@ -72,6 +79,14 @@ class NuovaRichiestaFragment : Fragment() {
         osservaStato()
     }
 
+
+    // accende la pillola scelta e spegne le altre, poi aggiorna il campo "altro" e l'hint
+    private fun selezionaTipo(scelto: MaterialButton) {
+        tipoButtons.forEach { it.isChecked = (it.id == scelto.id) }
+        binding.altroInput.visibility =
+            if (scelto.id == R.id.tipoAltro) View.VISIBLE else View.GONE
+        aggiornaHintDescrizione(scelto.id)
+    }
 
     // hint diverso per tipo, con un esempio concreto di cosa scrivere
     private fun aggiornaHintDescrizione(checkedId: Int) {
@@ -99,11 +114,11 @@ class NuovaRichiestaFragment : Fragment() {
         binding.inviaButton.text = "Salva modifiche"
 
         when (tipoEsistente) {
-            "spesa" -> binding.tipoToggleGroup.check(R.id.tipoSpesa)
-            "bolletta" -> binding.tipoToggleGroup.check(R.id.tipoBolletta)
-            "assistenza_digitale" -> binding.tipoToggleGroup.check(R.id.tipoAssistenzaDigitale)
+            "spesa" -> selezionaTipo(binding.tipoSpesa)
+            "bolletta" -> selezionaTipo(binding.tipoBolletta)
+            "assistenza_digitale" -> selezionaTipo(binding.tipoAssistenzaDigitale)
             else -> {
-                binding.tipoToggleGroup.check(R.id.tipoAltro)
+                selezionaTipo(binding.tipoAltro)
                 if (tipoEsistente != "altro") {
                     binding.altroInput.setText(tipoEsistente)
                 }
@@ -140,15 +155,18 @@ class NuovaRichiestaFragment : Fragment() {
     }
 
     // tipo scelto, con testo libero per "altro"
-    private fun tipoSelezionato(): String? = when (binding.tipoToggleGroup.checkedButtonId) {
-        R.id.tipoSpesa -> "spesa"
-        R.id.tipoBolletta -> "bolletta"
-        R.id.tipoAssistenzaDigitale -> "assistenza_digitale"
-        R.id.tipoAltro -> {
-            val testoLibero = binding.altroInput.text.toString().trim()
-            if (testoLibero.isNotEmpty()) testoLibero else "altro"
+    private fun tipoSelezionato(): String? {
+        val checkedId = tipoButtons.firstOrNull { it.isChecked }?.id ?: return null
+        return when (checkedId) {
+            R.id.tipoSpesa -> "spesa"
+            R.id.tipoBolletta -> "bolletta"
+            R.id.tipoAssistenzaDigitale -> "assistenza_digitale"
+            R.id.tipoAltro -> {
+                val testoLibero = binding.altroInput.text.toString().trim()
+                if (testoLibero.isNotEmpty()) testoLibero else "altro"
+            }
+            else -> null
         }
-        else -> null
     }
 
     private fun mostraErroreLocale(messaggio: String) {

@@ -19,9 +19,9 @@
         <item name="colorOnSurfaceVariant">@color/care_on_surface_variant</item>
         <item name="colorOutline">@color/care_outline</item>
 
-        <!-- FONT DELL'APP: lòexend su tutti i textview normali -->
-        <item name="android:fontFamily">@font/lexend</item>
-        <item name="fontFamily">@font/lexend</item>
+        <!-- FONT DELL'APP: Atkinson Hyperlegible su tutti i textview normali -->
+        <item name="android:fontFamily">@font/atkinson</item>
+        <item name="fontFamily">@font/atkinson</item>
 
         <!-- FONT sui componenti Material: cambia solo il font, non la dimensione -->
         <item name="textAppearanceBodyLarge">@style/TextAppearance.CareConnect.BodyLarge</item>
@@ -35,45 +35,54 @@
     <style name="Theme.CareConnect" parent="Base.Theme.CareConnect" />
 
     <!-- Text appearance CareConnect: stessa dimensione/peso del corrispettivo
-         Material3, ma con lexend. -->
+         Material3, ma con Atkinson Hyperlegible. -->
     <style name="TextAppearance.CareConnect.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
-        <item name="fontFamily">@font/lexend</item>
-        <item name="android:fontFamily">@font/lexend</item>
+        <item name="fontFamily">@font/atkinson</item>
+        <item name="android:fontFamily">@font/atkinson</item>
     </style>
     <style name="TextAppearance.CareConnect.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
-        <item name="fontFamily">@font/lexend</item>
-        <item name="android:fontFamily">@font/lexend</item>
+        <item name="fontFamily">@font/atkinson</item>
+        <item name="android:fontFamily">@font/atkinson</item>
     </style>
     <style name="TextAppearance.CareConnect.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
-        <item name="fontFamily">@font/lexend</item>
-        <item name="android:fontFamily">@font/lexend</item>
+        <item name="fontFamily">@font/atkinson</item>
+        <item name="android:fontFamily">@font/atkinson</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="TextAppearance.CareConnect.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
-        <item name="fontFamily">@font/lexend</item>
-        <item name="android:fontFamily">@font/lexend</item>
+        <item name="fontFamily">@font/atkinson</item>
+        <item name="android:fontFamily">@font/atkinson</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="TextAppearance.CareConnect.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
-        <item name="fontFamily">@font/lexend</item>
-        <item name="android:fontFamily">@font/lexend</item>
+        <item name="fontFamily">@font/atkinson</item>
+        <item name="android:fontFamily">@font/atkinson</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="TextAppearance.CareConnect.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
-        <item name="fontFamily">@font/lexend</item>
-        <item name="android:fontFamily">@font/lexend</item>
-    </style>
-
-    <!-- Titoletto di sezione dentro le card. Accento (variante scura, per
-         leggibilità)
-         Cambiando qui il colore, cambiano tutti i titoletti  -->
-    <style name="CareConnect.SectionLabel" parent="">
-        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="fontFamily">@font/atkinson</item>
+        <item name="android:fontFamily">@font/atkinson</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/care_accent_variant</item>
     </style>
 
-    <!--Bottone arancione - blu: inutilizzato -->
-    <style name="CareConnect.Button.Primary" parent="Widget.Material3.Button">
-        <item name="backgroundTint">@color/care_accent</item>
+    <!-- Titoletto di sezione dentro le card: prugna, 17sp, grassetto (spec redesign).
+         Cambiando qui, cambiano tutti i titoletti delle card. -->
+    <style name="CareConnect.SectionLabel" parent="">
+        <item name="android:textSize">@dimen/text_size_card_title</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/care_primary</item>
+    </style>
+
+    <!-- AZIONE PRIMARIA: fill prugna, testo bianco. Es: "Accedi", "Prendi in carico". -->
+    <style name="CareConnect.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/care_primary</item>
+        <item name="android:textColor">@color/care_on_primary</item>
+        <item name="iconTint">@color/care_on_primary</item>
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="android:textSize">@dimen/text_size_button</item>
+        <item name="android:minHeight">@dimen/touch_target_min</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
     </style>
 
 </resources>

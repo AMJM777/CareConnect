@@ -23,9 +23,9 @@
                 android:id="@+id/tipoText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_body"
+                android:textSize="@dimen/text_size_title"
                 android:textStyle="bold"
-                android:textColor="@color/care_on_surface"
+                android:textColor="@color/care_primary"
                 tools:text="Spesa" />
 
             <TextView
@@ -46,19 +46,15 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="04/07/2026 10:15" />
 
-            <!-- bottone per accettare e prendere in carico la richiesta -->
+            <!-- accettare e prendere in carico: azione primaria morbida (viola chiaro) -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/prendiInCaricoButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_small"
-                android:minHeight="@dimen/touch_target_min"
+                style="@style/CareConnect.Button.Tonal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginTop="@dimen/spacing_medium"
                 android:text="Prendi in carico"
-                android:backgroundTint="@color/care_primary_container"
-                android:textColor="@color/care_primary"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:cornerRadius="14dp" />
+                app:icon="@drawable/ic_spunta" />
 
         </LinearLayout>
 

@@ -24,4 +24,14 @@ object StatoRichiestaColori {
         RequestStatus.CONFERMATA -> R.color.stato_confermata_fg
         RequestStatus.ANNULLATA -> R.color.stato_annullata_fg
     }
+
+    // Colore del pallino (leggermente più acceso del testo): lo stato non è
+    // affidato al solo colore, ma il pallino aiuta il riconoscimento rapido
+    fun pallino(stato: RequestStatus): Int = when (stato) {
+        RequestStatus.APERTA -> R.color.stato_aperta_dot
+        RequestStatus.PRESA_IN_CARICO -> R.color.stato_incarico_dot
+        RequestStatus.COMPLETATA_DAL_VOLONTARIO -> R.color.stato_attesa_dot
+        RequestStatus.CONFERMATA -> R.color.stato_confermata_dot
+        RequestStatus.ANNULLATA -> R.color.stato_annullata_dot
+    }
 }

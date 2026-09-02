@@ -94,6 +94,9 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomNav.menu.findItem(destination.id)?.isChecked = true
+            // la chat ha un header proprio: nascondo la toolbar del ruolo lì
+            view.findViewById<View>(R.id.volontarioToolbar).visibility =
+                if (destination.id == R.id.chatFragment) View.GONE else View.VISIBLE
             ViewCompat.requestApplyInsets(view)
         }
     }

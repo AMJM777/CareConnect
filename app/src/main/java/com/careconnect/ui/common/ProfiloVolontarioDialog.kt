@@ -10,11 +10,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.careconnect.R
 import com.careconnect.repository.RatingRepositoryImpl
+import com.careconnect.repository.RequestRepositoryImpl
 import com.careconnect.repository.UserRepositoryImpl
+import com.careconnect.util.RecensioneFormat
 import kotlinx.coroutines.launch
 
 // funzione di estensione su Fragment: mostra un dialog di sola lettura con
-// nome, descrizione, valutazione e recensioni di un volontario.
+// header (avatar + nome), valutazione, descrizione e recensioni di un volontario.
 // condivisa tra anziano e familiare
 fun Fragment.mostraProfiloVolontario(volontarioId: String) {
     viewLifecycleOwner.lifecycleScope.launch {
@@ -23,47 +25,58 @@ fun Fragment.mostraProfiloVolontario(volontarioId: String) {
         val vistaDialog = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_profilo_volontario, null)
 
-        val media = volontario.ratingMedio
         vistaDialog.findViewById<TextView>(R.id.profiloNomeText).text = volontario.nome
+        vistaDialog.findViewById<TextView>(R.id.profiloBioText).text =
+            volontario.bio?.takeIf { it.isNotBlank() } ?: "Nessuna descrizione"
 
-        // con un voto restano solo le stelle; senza, il testo "non ancora valutato"
+        // tutte le valutazioni: servono per il conteggio e per le recensioni con testo
+        val tutte = RatingRepositoryImpl().getRatingsPerVolontario(volontarioId).getOrNull() ?: emptyList()
+
+        // valutazione: con un voto -> numero grande + stelle + conteggio; senza -> testo
+        val media = volontario.ratingMedio
         val ratingText = vistaDialog.findViewById<TextView>(R.id.profiloRatingText)
-        val ratingBar = vistaDialog.findViewById<RatingBar>(R.id.profiloRatingBar)
+        val ratingRow = vistaDialog.findViewById<View>(R.id.ratingRow)
         if (media != null) {
+            ratingRow.visibility = View.VISIBLE
+            ratingText.visibility = View.GONE
+            vistaDialog.findViewById<TextView>(R.id.profiloRatingNumero).text =
+                "%.1f".format(media).replace('.', ',')
+            val ratingBar = vistaDialog.findViewById<RatingBar>(R.id.profiloRatingBar)
             ratingBar.rating = media.toFloat()
             ratingBar.contentDescription = "Valutazione %.1f su 5".format(media).replace('.', ',')
-            ratingBar.visibility = View.VISIBLE
-            ratingText.visibility = View.GONE
+            vistaDialog.findViewById<TextView>(R.id.profiloNumeroValutazioni).text =
+                if (tutte.size == 1) "su 1 valutazione" else "su ${tutte.size} valutazioni"
         } else {
-            ratingBar.visibility = View.GONE
+            ratingRow.visibility = View.GONE
             ratingText.text = "Non ancora valutato"
             ratingText.visibility = View.VISIBLE
         }
 
-        vistaDialog.findViewById<TextView>(R.id.profiloBioText).text =
-            volontario.bio?.takeIf { it.isNotBlank() } ?: "Nessuna descrizione"
-
-        // recensioni: mostro solo quelle che hanno un commento scritto
+        // recensioni con commento, in riquadri lavanda + "Nome R. · Tipo"
         val recensioniTitolo = vistaDialog.findViewById<TextView>(R.id.recensioniTitolo)
         val recensioniContainer = vistaDialog.findViewById<LinearLayout>(R.id.recensioniContainer)
-        val recensioni = RatingRepositoryImpl().getRatingsPerVolontario(volontarioId).getOrNull()
-            ?.filter { !it.commento.isNullOrBlank() }
-            ?: emptyList()
+        val recensioni = tutte.filter { !it.commento.isNullOrBlank() }
         if (recensioni.isNotEmpty()) {
             recensioniTitolo.visibility = View.VISIBLE
             val inflater = LayoutInflater.from(requireContext())
+            val requestRepo = RequestRepositoryImpl()
             recensioni.forEach { recensione ->
                 val riga = inflater.inflate(R.layout.item_recensione, recensioniContainer, false)
-                riga.findViewById<RatingBar>(R.id.recensioneRatingBar).rating = recensione.stelle.toFloat()
-                riga.findViewById<TextView>(R.id.recensioneCommentoText).text = recensione.commento
+                riga.findViewById<TextView>(R.id.recensioneCommentoText).text = "“${recensione.commento}”"
+                val richiesta = requestRepo.getRichiesta(recensione.requestId).getOrNull()
+                riga.findViewById<TextView>(R.id.recensioneAutoreText).text =
+                    RecensioneFormat.etichetta(richiesta?.autoreNome ?: "", richiesta?.tipo ?: "")
                 recensioniContainer.addView(riga)
             }
         }
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Profilo volontario")
+        // dialog senza titolo/pulsanti di default: header e "Chiudi" sono nel layout
+        val dialog = AlertDialog.Builder(requireContext())
             .setView(vistaDialog)
-            .setPositiveButton("Chiudi", null)
-            .show()
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        vistaDialog.findViewById<View>(R.id.closeButton).setOnClickListener { dialog.dismiss() }
+        vistaDialog.findViewById<View>(R.id.chiudiButton).setOnClickListener { dialog.dismiss() }
+        dialog.show()
     }
 }

@@ -11,6 +11,7 @@ import com.careconnect.model.RequestStatus
 import java.text.SimpleDateFormat
 import java.util.Locale
 import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat
 import com.careconnect.ui.common.RichiestaDiffCallback
 import com.careconnect.ui.common.StatoRichiestaColori
 
@@ -46,6 +47,9 @@ class AttivitaFamiliareAdapter(
             ContextCompat.getColorStateList(ctxStato, StatoRichiestaColori.sfondo(richiesta.stato))
         holder.binding.statoText.setTextColor(
             ContextCompat.getColor(ctxStato, StatoRichiestaColori.testo(richiesta.stato)))
+        TextViewCompat.setCompoundDrawableTintList(
+            holder.binding.statoText,
+            ContextCompat.getColorStateList(ctxStato, StatoRichiestaColori.pallino(richiesta.stato)))
         holder.binding.dataText.text = formattaData(richiesta.timestampCreazione.toDate())
 
         val nomeVolontario = richiesta.volontarioNome

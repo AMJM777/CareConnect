@@ -8,24 +8,70 @@
         android:layout_height="match_parent"
         android:background="@color/care_background">
 
-        <!-- intestazione: con chi sto parlando -->
-        <TextView
-            android:id="@+id/intestazioneChat"
+        <!-- intestazione unica (prugna): freccia indietro + avatar + nome e ruolo -->
+        <LinearLayout
+            android:id="@+id/headerChat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="@dimen/spacing_medium"
-            android:textSize="@dimen/text_size_body"
-            android:textStyle="bold"
-            android:textColor="@color/care_primary"
-            android:background="@color/care_surface"
-            android:drawableStart="@drawable/ic_chat"
-            android:drawableTint="@color/care_primary"
-            android:drawablePadding="@dimen/spacing_small"
+            android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:background="@color/care_primary"
+            android:paddingStart="@dimen/spacing_small"
+            android:paddingEnd="@dimen/spacing_medium"
+            android:paddingTop="@dimen/spacing_small"
+            android:paddingBottom="@dimen/spacing_small"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:text="Conversazione con Maria Rossi" />
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_indietro"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/care_on_primary"
+                android:contentDescription="Indietro" />
+
+            <ImageView
+                android:id="@+id/avatarInterlocutore"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="@dimen/spacing_small"
+                android:background="@drawable/bg_avatar_circle"
+                android:src="@drawable/ic_person"
+                android:padding="9dp"
+                app:tint="@color/care_primary"
+                android:contentDescription="@null" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_medium"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/nomeInterlocutore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/care_on_primary"
+                    tools:text="Mario Rossi" />
+
+                <TextView
+                    android:id="@+id/ruoloInterlocutore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_label"
+                    android:textColor="@color/care_on_primary"
+                    android:alpha="0.85"
+                    tools:text="Volontario" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <!-- avviso di trasparenza: mostrato ai partecipanti, nascosto al garante -->
         <TextView
@@ -42,12 +88,13 @@
             android:gravity="center_vertical"
             android:text="Se un familiare di riferimento è collegato all'anziano, può leggere questa conversazione."
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/intestazioneChat"
+            app:layout_constraintTop_toBottomOf="@id/headerChat"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:visibility="visible" />
 
-        <!-- lista messaggi -->
+        <!-- lista messaggi: si ferma sopra la barra di invio o il promemoria di
+             sola lettura, quale dei due è visibile (barrier che ignora i GONE) -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/messaggiRecyclerView"
             android:layout_width="match_parent"
@@ -55,9 +102,17 @@
             android:clipToPadding="false"
             android:paddingBottom="@dimen/spacing_small"
             app:layout_constraintTop_toBottomOf="@id/avvisoTrasparenza"
-            app:layout_constraintBottom_toTopOf="@id/barraInvio"
+            app:layout_constraintBottom_toTopOf="@id/barraBottomBarrier"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barraBottomBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top"
+            app:barrierAllowsGoneWidgets="false"
+            app:constraint_referenced_ids="barraInvio,readOnlyHint" />
 
         <!-- messaggio mostrato quando non c'e' ancora nessun messaggio -->
         <TextView
@@ -121,6 +176,27 @@
                 app:cornerRadius="14dp" />
 
         </LinearLayout>
+
+        <!-- promemoria sola lettura (garante): sostituisce la barra di invio -->
+        <TextView
+            android:id="@+id/readOnlyHint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/touch_target_min"
+            android:padding="@dimen/spacing_medium"
+            android:gravity="center"
+            android:background="@color/care_primary_container"
+            android:drawableStart="@drawable/ic_lucchetto"
+            android:drawableTint="@color/care_primary"
+            android:drawablePadding="@dimen/spacing_small"
+            android:text="Non puoi scrivere in questa conversazione"
+            android:textSize="@dimen/text_size_label"
+            android:textColor="@color/care_primary"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

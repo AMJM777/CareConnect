@@ -88,6 +88,9 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
         // tiene evidenziato il tab giusto anche quando la navigazione avviene per altre vie
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomNav.menu.findItem(destination.id)?.isChecked = true
+            // la chat ha un header proprio: nascondo la toolbar del ruolo lì
+            view.findViewById<View>(R.id.anzianoToolbar).visibility =
+                if (destination.id == R.id.chatFragment) View.GONE else View.VISIBLE
             ViewCompat.requestApplyInsets(view)
         }
     }

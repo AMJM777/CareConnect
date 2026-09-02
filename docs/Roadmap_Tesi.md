@@ -205,30 +205,38 @@ Ordine e stime (target, con margine). Le date sono indicative, il vincolo fermo 
   splash resta sobrio (scelta confermata, brandizzazione scartata).
 - ✅ **Bibliografia font (Lexend)** aggiunta in `Grafica_Design_e_Skill.md` §2.
 
-### 2 · Rifinitura tecnica + test finali (2 – 4 set)
-- Test su dispositivo fisico: lifecycle/rotazione, edge-to-edge/inset sui 3 ruoli, flussi SOS e chat.
-- **Test negativi delle rules di T3** (volontario non assegnato, accessi negati) — quando ci saranno
-  più profili di prova.
-- Screenshot per la tesi; aggiornare `Project_State.md` e questa roadmap.
+### 2 · Pulizia del codice puro (2 – 4 set, 3 gg — oggi compreso) 🟡 IN CORSO
+- **Pulizia generale del codice:** codice morto, TODO/commenti di servizio, import e log di debug
+  inutilizzati, e le **scorciatoie "solo demo"** (es. il long-press sulla Toolbar che lancia subito il
+  Worker, `eseguiOraPerDemo`).
+- **Metodo (deciso con l'utente, 2 set):** revisione file per file; per le funzioni indicate dall'utente
+  Claude fornisce una **spiegazione semplice** prima di proporre qualsiasi modifica. Modalità manuale
+  (Claude propone, l'utente applica).
+- Al termine: verificare **build pulita** e che l'app compili/funzioni dopo le rimozioni.
 
-### 3 · Pulizia codice + rimozione tracce di tooling (5 – 9 set, ~3–4 gg)
+### 3 · Rimozione tracce di tooling (5 set, 1 gg)
 - **Rimuovere `.claude/` e le skill** dal progetto; rimuovere i file **`CLAUDE.md`** (radice e `app/`).
 - Rimuovere **riferimenti a Claude / AI / strumenti** in commenti, nomi e documenti interni non
   pertinenti al progetto Android da consegnare. Valutare quali file `docs/` tenere: alcuni servono alla
   tesi (fonti, design reference), altri sono note di lavoro da togliere dall'archivio di consegna.
-- **Pulizia generale del codice:** codice morto, TODO/commenti di servizio, import e log di debug
-  inutilizzati, e le **scorciatoie "solo demo"** (es. il long-press sulla Toolbar che lancia subito il
-  Worker, `eseguiOraPerDemo`). Verificare **build pulita** e che l'app compili/funzioni dopo le rimozioni
-  (`.claude/skills`, `CLAUDE.md` e `docs/` non sono compilati né finiscono nell'APK → rimozione sicura).
-- Preparare l'**archivio di consegna** (progetto pulito, eventuale README di consegna).
+- Verificare che l'app compili dopo le rimozioni (`.claude/skills`, `CLAUDE.md` e `docs/` non sono
+  compilati né finiscono nell'APK → rimozione sicura). Preparare l'**archivio di consegna**
+  (progetto pulito, eventuale README di consegna).
 
-### 4 · Slide di presentazione (9 – 11 set, 3 gg)
-- Costruire le slide (gestite dall'utente). Materiale utile già pronto: `README_HCI_Colori_Anziani.md`
+### 4 · Slide + screenshot (6 – 9 set, 4 gg)
+- Costruire le slide (gestite dall'utente) e produrre gli **screenshot per la tesi** (schermate chiave
+  dei 3 ruoli, prima/dopo grafica). Materiale utile già pronto: `README_HCI_Colori_Anziani.md`
   (fonti percezione colore anziani) e `Design_Reference_CareConnect.md` (scelte di design difendibili).
 
-### 5 · 🎯 CONSEGNA DEFINITIVA — 12 settembre 2026
+### 5 · Buffer (10 – 11 set)
+- Margine di sicurezza prima della consegna: rifiniture last-minute, imprevisti, e lo slot per i
+  **test aperti** qui sotto se non ancora incastrati.
+
+### 6 · 🎯 CONSEGNA DEFINITIVA — 12 settembre 2026
 - Upload del progetto pulito + slide. (Ricordare: iscrizione appello + eventuale mail al docente, vedi
   regole di consegna in `Visione_e_Requisiti.md` §4.)
+
+> ✅ **Rifinitura tecnica + test finali (device + test negativi rules T3): dati per conclusi** (2 set).
 
 > Nota: l'esame dichiara "uso responsabile dell'AI (non vietato, non abusabile)"; la rimozione delle
 > tracce di tooling è una scelta di consegna dell'utente ed è sicura per il build (quei file non sono

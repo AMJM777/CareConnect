@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- contenitore radice obbligatorio per abilitare il data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- card della singola richiesta per l'anziano con margini per distanziarla nella lista -->
@@ -22,7 +23,7 @@
                 android:id="@+id/tipoText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_body"
+                android:textSize="@dimen/text_size_title"
                 android:textStyle="bold"
                 android:textColor="@color/care_primary"
                 tools:text="Spesa" />
@@ -36,13 +37,14 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
 
-            <!-- indicatore a pillola per lo stato della richiesta -->
+            <!-- indicatore a pillola per lo stato: pallino (tinta da adapter) + testo -->
             <TextView
                 android:id="@+id/statoText"
                 style="@style/CareConnect.StatusChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
+                android:drawableStart="@drawable/bg_status_dot"
                 tools:text="Aperta" />
 
             <!-- nome del volontario assegnato, cliccabile per aprirne il profilo, visibile solo se accettata -->
@@ -67,43 +69,43 @@
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="03/07/2026 14:30" />
 
-            <!-- contenitore per i bottoni di modifica e annullamento disposti in orizzontale -->
+            <!-- bottoni azione sulla stessa riga (l'anziano ne mostra al massimo due insieme) -->
             <LinearLayout
                 android:id="@+id/azioniContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="@dimen/spacing_small">
+                android:layout_marginTop="@dimen/spacing_medium">
 
-                <!-- apre la chat con il volontario della richiesta -->
-                <Button
+                <!-- apre la chat con il volontario della richiesta (azione primaria) -->
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/chatButton"
                     style="@style/CareConnect.Button.Chat"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:minHeight="@dimen/touch_target_min"
+                    android:layout_marginEnd="@dimen/spacing_small"
                     android:text="Chat" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/modificaButton"
-                    style="@style/Widget.Material3.Button.TextButton"
+                    style="@style/CareConnect.Button.Outline"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:minHeight="@dimen/touch_target_min"
+                    android:layout_marginEnd="@dimen/spacing_small"
                     android:text="Modifica"
-                    android:textColor="@color/care_primary_dark" />
+                    app:icon="@drawable/ic_modifica" />
 
-                <Button
+                <!-- annullamento: outline neutro (niente rosso, riservato all'SOS) -->
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/annullaButton"
-                    style="@style/Widget.Material3.Button.TextButton"
+                    style="@style/CareConnect.Button.Outline"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:minHeight="@dimen/touch_target_min"
                     android:text="Annulla"
-                    android:textColor="@color/care_error" />
+                    app:icon="@drawable/ic_annulla" />
 
             </LinearLayout>
 

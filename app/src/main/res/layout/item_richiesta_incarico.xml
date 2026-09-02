@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- contenitore radice obbligatorio per abilitare il data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- card della richiesta presa in carico dal volontario con margini di distanziamento -->
@@ -22,7 +23,7 @@
                 android:id="@+id/tipoText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_body"
+                android:textSize="@dimen/text_size_title"
                 android:textStyle="bold"
                 android:textColor="@color/care_primary"
                 tools:text="Spesa" />
@@ -57,13 +58,14 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="Via Roma 12, Milano" />
 
-            <!-- indicatore a pillola per mostrare lo stato attuale della richiesta -->
+            <!-- indicatore a pillola: pallino (tinta da adapter) + testo -->
             <TextView
                 android:id="@+id/statoText"
                 style="@style/CareConnect.StatusChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
+                android:drawableStart="@drawable/bg_status_dot"
                 tools:text="Presa in carico" />
 
             <TextView
@@ -82,39 +84,35 @@
                 android:id="@+id/azioniContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/spacing_small">
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/spacing_medium">
 
-                <!-- apre la chat con l'anziano della richiesta -->
-                <Button
+                <!-- apre la chat con l'anziano della richiesta (azione primaria) -->
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/chatButton"
                     style="@style/CareConnect.Button.Chat"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/button_height"
                     android:text="Chat" />
 
-                <!-- bottone per segnalare di aver concluso positivamente l'attività -->
-                <Button
+                <!-- concludere positivamente l'attività: outline (coerente con la simulazione) -->
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/completaButton"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:minHeight="@dimen/touch_target_min"
+                    style="@style/CareConnect.Button.Outline"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_marginTop="@dimen/spacing_small"
                     android:text="Completa"
-                    android:textColor="@color/care_primary_dark" />
+                    app:icon="@drawable/ic_spunta" />
 
-                <!-- bottone per rinunciare all'incarico e far tornare la richiesta tra quelle disponibili -->
-                <Button
+                <!-- rinunciare all'incarico: outline neutro (niente rosso) -->
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/rilasciaButton"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:minHeight="@dimen/touch_target_min"
-                    android:text="Rilascia"
-                    android:textColor="@color/care_error" />
+                    style="@style/CareConnect.Button.Outline"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:text="Rilascia" />
 
             </LinearLayout>
 

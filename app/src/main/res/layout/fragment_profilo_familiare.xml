@@ -26,14 +26,15 @@
 
             <!-- immagine di profilo standard arrotondata per il familiare -->
             <ImageView
-                android:layout_width="88dp"
-                android:layout_height="88dp"
+                android:layout_width="104dp"
+                android:layout_height="104dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/spacing_medium"
                 android:background="@drawable/bg_avatar_circle"
                 android:src="@drawable/ic_person"
                 android:scaleType="fitCenter"
-                android:padding="22dp"
+                android:padding="24dp"
+                app:tint="@color/care_primary"
                 android:contentDescription="@null" />
 
             <!-- nome del familiare caricato dinamicamente dal viewmodel -->
@@ -86,9 +87,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Le persone che segui"
-                        android:textSize="@dimen/text_size_body"
-                        android:textStyle="bold"
-                        android:textColor="@color/care_on_surface" />
+                        style="@style/CareConnect.SectionLabel" />
 
                     <!-- mostrato solo se non segui ancora nessuno -->
                     <TextView
@@ -116,9 +115,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_medium"
                         android:text="Collega un altro anziano"
-                        android:textSize="@dimen/text_size_body"
-                        android:textStyle="bold"
-                        android:textColor="@color/care_on_surface" />
+                        style="@style/CareConnect.SectionLabel" />
 
                     <EditText
                         android:id="@+id/codiceInvitoEditText"
@@ -135,10 +132,9 @@
                     <Button
                         android:id="@+id/collegaButton"
                         style="@style/CareConnect.Button.Accent"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginTop="@dimen/spacing_small"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_marginTop="@dimen/spacing_medium"
                         android:text="Collega" />
 
                 </LinearLayout>
@@ -161,9 +157,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Il tuo ruolo"
-                        android:textSize="@dimen/text_size_body"
-                        android:textStyle="bold"
-                        android:textColor="@color/care_on_surface" />
+                        style="@style/CareConnect.SectionLabel" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -177,19 +171,16 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- bottone rosso di disconnessione dall'account -->
-            <Button
+            <!-- disconnessione: outline neutro (niente rosso, riservato all'SOS) -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/logoutButton"
+                style="@style/CareConnect.Button.Outline"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginTop="@dimen/spacing_large"
                 android:layout_marginBottom="@dimen/spacing_medium"
                 android:text="Esci"
-                android:backgroundTint="@color/care_error"
-                android:textColor="@color/care_on_error"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:cornerRadius="14dp" />
+                app:icon="@drawable/ic_esci" />
 
         </LinearLayout>
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- contenitore radice obbligatorio per abilitare il data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- card della singola richiesta vista dal familiare con margini di distanziamento -->
@@ -22,7 +23,7 @@
                 android:id="@+id/tipoText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_body"
+                android:textSize="@dimen/text_size_title"
                 android:textStyle="bold"
                 android:textColor="@color/care_primary"
                 tools:text="Spesa" />
@@ -36,13 +37,14 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
 
-            <!-- indicatore a pillola per evidenziare lo stato di avanzamento -->
+            <!-- indicatore a pillola: pallino (tinta da adapter) + testo -->
             <TextView
                 android:id="@+id/statoText"
                 style="@style/CareConnect.StatusChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
+                android:drawableStart="@drawable/bg_status_dot"
                 tools:text="Completata, in attesa di conferma" />
 
             <!-- nome del volontario, cliccabile per aprirne il profilo, visibile solo se in carico o completata -->
@@ -67,25 +69,26 @@
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="04/07/2026 10:15" />
 
-            <!-- apre in sola lettura la chat tra l'anziano e il volontario (safeguarding) -->
-            <Button
+            <!-- apre in sola lettura la chat tra l'anziano e il volontario (safeguarding):
+                 azione morbida (tonale), meno forte del pieno prugna -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/chatButton"
-                style="@style/CareConnect.Button.Chat"
+                style="@style/CareConnect.Button.Tonal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
-                android:text="Vedi chat" />
+                android:text="Vedi chat"
+                app:icon="@drawable/ic_chat" />
 
-            <!-- bottone per confermare la chiusura dell'attività e lasciare un feedback al volontario -->
-            <Button
+            <!-- confermare la chiusura e valutare: azione secondaria pesca -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/confermaButton"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/CareConnect.Button.Accent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/touch_target_min"
                 android:layout_marginTop="@dimen/spacing_small"
                 android:text="Conferma e valuta"
-                android:textColor="@color/care_primary_dark" />
+                app:icon="@drawable/ic_spunta" />
 
         </LinearLayout>
 

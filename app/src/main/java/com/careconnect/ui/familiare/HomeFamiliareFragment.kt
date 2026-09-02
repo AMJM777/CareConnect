@@ -165,6 +165,9 @@ class HomeFamiliareFragment : Fragment() {
         }
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomNav.menu.findItem(destination.id)?.isChecked = true
+            // la chat (sola lettura) ha un header proprio: nascondo la toolbar del ruolo lì
+            binding.familiareToolbar.visibility =
+                if (destination.id == R.id.chatFragment) View.GONE else View.VISIBLE
         }
     }
     // funzione che gestisce il tasto Indietro di sistema in modo esplicito

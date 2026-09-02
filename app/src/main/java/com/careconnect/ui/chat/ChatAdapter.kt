@@ -52,31 +52,36 @@ class ChatAdapter(
         holder.binding.testoMessaggio.text = messaggio.testo
         holder.binding.oraMessaggio.text = formattaOra(messaggio.timestamp.toDate())
 
-        // nome del mittente: solo nella vista osservatore (garante), per capire
-        // chi ha scritto (l'anziano o il volontario)
+        // bolla "riempita" (prugna, testo bianco): i miei messaggi; nella vista
+        // osservatore del garante, quelli dell'anziano assistito. Le altre sono
+        // bianche con testo prugna. Allineamento coerente: riempite a destra.
+        val riempita = if (mostraNomi) delAnziano else mio
+
+        // nome del mittente: solo nella vista osservatore (garante), come "Nome · ruolo"
         if (mostraNomi) {
             holder.binding.mittenteNomeText.visibility = View.VISIBLE
-            holder.binding.mittenteNomeText.text = if (delVolontario) volontarioNome else anzianoNome
+            val nome = if (delVolontario) volontarioNome else anzianoNome
+            val ruolo = if (delVolontario) "Volontario" else "Anziano"
+            holder.binding.mittenteNomeText.text = "$nome · $ruolo"
         } else {
             holder.binding.mittenteNomeText.visibility = View.GONE
         }
 
-        // allineamento della bolla (impostato in entrambi i rami per via del
-        // riciclo): se osservo, per ruolo (anziano a destra, volontario a
-        // sinistra); altrimenti i miei a destra, gli altri a sinistra
-        val allineaDestra = if (mostraNomi) delAnziano else mio
+        // allineamento (impostato in entrambi i rami per via del riciclo)
         val params = holder.binding.bollaCard.layoutParams as LinearLayout.LayoutParams
-        params.gravity = if (allineaDestra) Gravity.END else Gravity.START
+        params.gravity = if (riempita) Gravity.END else Gravity.START
         holder.binding.bollaCard.layoutParams = params
 
-        // colore: nella vista osservatore distinguo per ruolo, altrimenti
-        // i miei messaggi dagli altrui
-        val coloreSfondo = if (mostraNomi) {
-            if (delAnziano) R.color.care_primary_container else R.color.care_accent_container
-        } else {
-            if (mio) R.color.care_primary_container else R.color.care_surface
-        }
-        holder.binding.bollaCard.setCardBackgroundColor(ContextCompat.getColor(ctx, coloreSfondo))
+        // colori della bolla: riempita = prugna + testo bianco; altrimenti bianca + testo prugna
+        val bgRes = if (riempita) R.color.care_primary else R.color.care_surface
+        val txtRes = if (riempita) R.color.care_on_primary else R.color.care_primary
+        val oraRes = if (riempita) R.color.care_on_primary else R.color.care_on_surface_variant
+        val strokeRes = if (riempita) R.color.care_primary else R.color.care_outline
+        holder.binding.bollaCard.setCardBackgroundColor(ContextCompat.getColor(ctx, bgRes))
+        holder.binding.bollaCard.strokeColor = ContextCompat.getColor(ctx, strokeRes)
+        holder.binding.testoMessaggio.setTextColor(ContextCompat.getColor(ctx, txtRes))
+        holder.binding.oraMessaggio.setTextColor(ContextCompat.getColor(ctx, oraRes))
+        holder.binding.mittenteNomeText.setTextColor(ContextCompat.getColor(ctx, txtRes))
 
         // pulsante di lettura vocale: solo lato Anziano e solo sui messaggi
         // ricevuti (non ha senso farsi rileggere cio' che ho scritto io)

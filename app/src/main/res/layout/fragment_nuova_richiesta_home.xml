@@ -25,8 +25,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:visibility="gone"
-                app:cardBackgroundColor="@color/care_primary_container"
-                app:cardCornerRadius="14dp"
+                app:cardBackgroundColor="@color/care_accent_container"
+                app:cardCornerRadius="@dimen/button_corner_radius"
                 app:cardElevation="0dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -40,9 +40,9 @@
                     android:padding="@dimen/spacing_medium">
 
                     <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@android:drawable/ic_menu_recent_history"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_info"
                         android:contentDescription="@null"
                         app:tint="@color/care_primary" />
 
@@ -86,21 +86,21 @@
                         android:textStyle="bold"
                         android:textColor="@color/care_primary" />
 
-                    <!-- scelta singola del tipo di aiuto -->
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                        android:id="@+id/tipoToggleGroup"
+                    <!-- scelta del tipo di aiuto: pillole SEPARATE (non un toggle-group
+                         unito). La selezione singola è gestita nel Fragment. -->
+                    <LinearLayout
+                        android:id="@+id/tipoContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_medium"
-                        android:orientation="vertical"
-                        app:singleSelection="true"
-                        app:selectionRequired="true">
+                        android:orientation="vertical">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/tipoSpesa"
                             style="@style/CareConnect.OptionToggle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:checkable="true"
                             android:text="Spesa"
                             app:icon="@drawable/ic_spesa" />
 
@@ -109,6 +109,8 @@
                             style="@style/CareConnect.OptionToggle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_small"
+                            android:checkable="true"
                             android:text="Bolletta"
                             app:icon="@drawable/ic_bolletta" />
 
@@ -117,6 +119,8 @@
                             style="@style/CareConnect.OptionToggle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_small"
+                            android:checkable="true"
                             android:text="Assistenza digitale"
                             app:icon="@drawable/ic_assistenza_digitale" />
 
@@ -125,10 +129,12 @@
                             style="@style/CareConnect.OptionToggle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_small"
+                            android:checkable="true"
                             android:text="Altro"
                             app:icon="@drawable/ic_altro" />
 
-                    </com.google.android.material.button.MaterialButtonToggleGroup>
+                    </LinearLayout>
 
                     <!-- campo libero, visibile solo con la scelta "altro" -->
                     <EditText
@@ -172,19 +178,14 @@
                         android:textSize="@dimen/text_size_body"
                         android:visibility="gone" />
 
-                    <!-- invio della richiesta -->
+                    <!-- invio della richiesta: azione primaria prugna -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/inviaButton"
+                        style="@style/CareConnect.Button.Primary"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/button_height"
                         android:layout_marginTop="@dimen/spacing_large"
-                        android:text="Invia richiesta"
-                        android:textSize="@dimen/text_size_button"
-                        android:backgroundTint="@color/care_primary"
-                        android:textColor="@color/care_on_primary"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"
-                        app:cornerRadius="14dp" />
+                        android:text="Invia richiesta" />
 
                     <!-- rotella durante l'invio -->
                     <ProgressBar
@@ -220,7 +221,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 app:cardBackgroundColor="@color/care_sos"
-                app:cardCornerRadius="14dp"
+                app:cardCornerRadius="@dimen/button_corner_radius"
                 app:cardElevation="2dp"
                 app:layout_constraintTop_toBottomOf="@id/emergenzaLabel"
                 app:layout_constraintStart_toStartOf="parent"
@@ -229,35 +230,42 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:gravity="center"
+                    android:minHeight="64dp"
+                    android:paddingHorizontal="@dimen/spacing_large"
                     android:paddingTop="@dimen/spacing_medium"
                     android:paddingBottom="@dimen/spacing_medium">
 
                     <ImageView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:src="@drawable/ic_emergenza"
                         android:contentDescription="@null"
                         app:tint="@color/care_on_sos" />
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_small"
-                        android:text="SOS"
-                        android:textSize="28sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/care_on_sos"
-                        android:gravity="center" />
+                        android:layout_marginStart="@dimen/spacing_medium"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Chiedi aiuto ora"
-                        android:textSize="@dimen/text_size_body"
-                        android:textColor="@color/care_on_sos"
-                        android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SOS"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/care_on_sos" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Chiedi aiuto ora"
+                            android:textSize="@dimen/text_size_body"
+                            android:textColor="@color/care_on_sos" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 

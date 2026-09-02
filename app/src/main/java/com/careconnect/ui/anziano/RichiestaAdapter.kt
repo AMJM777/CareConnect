@@ -11,6 +11,7 @@ import com.careconnect.model.RequestStatus
 import java.text.SimpleDateFormat
 import java.util.Locale
 import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat
 import com.careconnect.ui.common.RichiestaDiffCallback
 import com.careconnect.ui.common.StatoRichiestaColori
 
@@ -47,6 +48,10 @@ private val onChatClick: (Request) -> Unit
             ContextCompat.getColorStateList(ctxStato, StatoRichiestaColori.sfondo(richiesta.stato))
         holder.binding.statoText.setTextColor(
             ContextCompat.getColor(ctxStato, StatoRichiestaColori.testo(richiesta.stato)))
+        // Tinta del pallino (drawableStart) in base allo stato: mai solo colore
+        TextViewCompat.setCompoundDrawableTintList(
+            holder.binding.statoText,
+            ContextCompat.getColorStateList(ctxStato, StatoRichiestaColori.pallino(richiesta.stato)))
         holder.binding.dataText.text = formattaData(richiesta.timestampCreazione.toDate())
 
         // nome del volontario, mostrato solo se presente. cliccabile: apre il profilo di sola lettura

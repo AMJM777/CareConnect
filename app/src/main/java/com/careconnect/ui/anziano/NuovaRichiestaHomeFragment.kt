@@ -21,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.careconnect.R
 import com.careconnect.databinding.FragmentNuovaRichiestaHomeBinding
+import com.google.android.material.button.MaterialButton
 import com.careconnect.repository.AuthRepositoryImpl
 import com.careconnect.repository.RequestRepositoryImpl
 import com.careconnect.repository.SosRepositoryImpl
@@ -56,6 +57,14 @@ class NuovaRichiestaHomeFragment : Fragment() {
     // preferenza opt-out della protezione SOS in background (T4)
     private val protezionePrefs by lazy { ProtezioneSosPrefs(requireContext()) }
 
+    // le quattro pillole del tipo di aiuto: selezione singola gestita a mano
+    private val tipoButtons by lazy {
+        listOf(
+            binding.tipoSpesa, binding.tipoBolletta,
+            binding.tipoAssistenzaDigitale, binding.tipoAltro
+        )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -77,12 +86,9 @@ class NuovaRichiestaHomeFragment : Fragment() {
             insets
         }
 
-        // il campo libero appare solo con la scelta "altro"
-        binding.tipoToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (!isChecked) return@addOnButtonCheckedListener
-            binding.altroInput.visibility =
-                if (checkedId == R.id.tipoAltro) View.VISIBLE else View.GONE
-            aggiornaHintDescrizione(checkedId)
+        // selezione singola manuale sulle pillole separate
+        tipoButtons.forEach { pulsante ->
+            pulsante.setOnClickListener { selezionaTipo(pulsante) }
         }
 
         binding.inviaButton.setOnClickListener { onInviaClick() }
@@ -164,6 +170,14 @@ class NuovaRichiestaHomeFragment : Fragment() {
         shakeDetector.ferma()
     }
 
+    // accende la pillola scelta e spegne le altre, poi aggiorna il campo "altro" e l'hint
+    private fun selezionaTipo(scelto: MaterialButton) {
+        tipoButtons.forEach { it.isChecked = (it.id == scelto.id) }
+        binding.altroInput.visibility =
+            if (scelto.id == R.id.tipoAltro) View.VISIBLE else View.GONE
+        aggiornaHintDescrizione(scelto.id)
+    }
+
     // hint diverso per tipo, con un esempio concreto di cosa scrivere
     private fun aggiornaHintDescrizione(checkedId: Int) {
         binding.descrizioneInput.hint = when (checkedId) {
@@ -198,15 +212,18 @@ class NuovaRichiestaHomeFragment : Fragment() {
     }
 
     // tipo scelto, con testo libero per "altro"
-    private fun tipoSelezionato(): String? = when (binding.tipoToggleGroup.checkedButtonId) {
-        R.id.tipoSpesa -> "spesa"
-        R.id.tipoBolletta -> "bolletta"
-        R.id.tipoAssistenzaDigitale -> "assistenza_digitale"
-        R.id.tipoAltro -> {
-            val testoLibero = binding.altroInput.text.toString().trim()
-            if (testoLibero.isNotEmpty()) testoLibero else "altro"
+    private fun tipoSelezionato(): String? {
+        val checkedId = tipoButtons.firstOrNull { it.isChecked }?.id ?: return null
+        return when (checkedId) {
+            R.id.tipoSpesa -> "spesa"
+            R.id.tipoBolletta -> "bolletta"
+            R.id.tipoAssistenzaDigitale -> "assistenza_digitale"
+            R.id.tipoAltro -> {
+                val testoLibero = binding.altroInput.text.toString().trim()
+                if (testoLibero.isNotEmpty()) testoLibero else "altro"
+            }
+            else -> null
         }
-        else -> null
     }
 
     private fun mostraErroreLocale(messaggio: String) {
@@ -216,7 +233,7 @@ class NuovaRichiestaHomeFragment : Fragment() {
 
     // svuota il form dopo una creazione riuscita, così è pronto per la prossima
     private fun pulisciForm() {
-        binding.tipoToggleGroup.clearChecked()
+        tipoButtons.forEach { it.isChecked = false }
         binding.altroInput.text?.clear()
         binding.altroInput.visibility = View.GONE
         binding.descrizioneInput.text?.clear()

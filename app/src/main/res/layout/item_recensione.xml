@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- riquadro di una recensione ricevuta: commento tra virgolette + "Nome R. · Tipo" -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="@dimen/spacing_small"
+    android:background="@drawable/bg_recensione"
+    android:padding="@dimen/spacing_medium">
+
+    <TextView
+        android:id="@+id/recensioneCommentoText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_body"
+        android:textColor="@color/care_on_surface"
+        tools:text="“Molto gentile e disponibile.”" />
+
+    <TextView
+        android:id="@+id/recensioneAutoreText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_small"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="@dimen/text_size_label"
+        android:textStyle="bold"
+        android:textColor="@color/care_primary"
+        tools:text="Maria R. · Spesa" />
+
+</LinearLayout>

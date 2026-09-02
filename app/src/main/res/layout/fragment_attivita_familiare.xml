@@ -35,15 +35,20 @@
                 android:textStyle="bold"
                 android:textColor="@color/care_on_primary" />
 
-            <!-- bottone testuale per confermare la presa visione e chiudere l'allarme -->
-            <Button
+            <!-- conferma presa visione: outline chiaro sul banner rosso (vero bottone) -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/chiudiSosButton"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_small"
+                android:minHeight="@dimen/touch_target_min"
                 android:text="Ho visto, chiudi"
-                android:textColor="@color/care_on_primary" />
+                android:textColor="@color/care_on_primary"
+                app:strokeColor="@color/care_on_primary"
+                app:icon="@drawable/ic_spunta"
+                app:iconTint="@color/care_on_primary"
+                app:cornerRadius="@dimen/button_corner_radius" />
 
         </LinearLayout>
 

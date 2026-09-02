@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.careconnect.R
 import com.careconnect.databinding.FragmentChatBinding
@@ -66,19 +67,27 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // intestazione: titolo personalizzato se fornito (garante), altrimenti
-        // "Conversazione con <altro>"; in sola lettura lo segnalo
-        val titoloBase = titolo ?: "Conversazione con $altroNome"
-        binding.intestazioneChat.text =
-            if (soloLettura) "$titoloBase (sola lettura)" else titoloBase
+        // intestazione: nome e ruolo dell'interlocutore (o titolo, per il garante)
+        val sonoGarante = viewModel.uidCorrente != anzianoId && viewModel.uidCorrente != volontarioId
+        if (sonoGarante) {
+            // vista garante: solo "Chat" (i nomi sono già etichettati in ogni bolla)
+            binding.avatarInterlocutore.visibility = View.GONE
+            binding.ruoloInterlocutore.visibility = View.GONE
+            binding.nomeInterlocutore.text = "Chat"
+        } else {
+            binding.avatarInterlocutore.visibility = View.VISIBLE
+            binding.ruoloInterlocutore.visibility = View.VISIBLE
+            binding.nomeInterlocutore.text = altroNome
+            binding.ruoloInterlocutore.text =
+                if (viewModel.uidCorrente == anzianoId) "Volontario" else "Anziano"
+        }
 
         // barra di invio nascosta quando la chat e' chiusa (storico) o quando
-        // chi guarda e' il garante (sola lettura)
+        // chi guarda e' il garante (sola lettura); al suo posto il promemoria
         binding.barraInvio.visibility = if (soloLettura) View.GONE else View.VISIBLE
+        binding.readOnlyHint.visibility = if (soloLettura) View.VISIBLE else View.GONE
 
-        // avviso di trasparenza: lo vedono i due partecipanti (anziano/volontario),
-        // non il garante. Chi guarda e' garante se non e' ne' anziano ne' volontario.
-        val sonoGarante = viewModel.uidCorrente != anzianoId && viewModel.uidCorrente != volontarioId
+        // avviso di trasparenza: lo vedono i due partecipanti (anziano/volontario), non il garante
         binding.avvisoTrasparenza.visibility = if (sonoGarante) View.GONE else View.VISIBLE
 
         // TTS solo lato Anziano
@@ -101,6 +110,9 @@ class ChatFragment : Fragment() {
         binding.messaggiRecyclerView.layoutManager =
             LinearLayoutManager(requireContext()).apply { stackFromEnd = true }
         binding.messaggiRecyclerView.adapter = adapter
+
+        // la chat ha un header proprio (la toolbar del ruolo è nascosta): freccia indietro
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
 
         binding.inviaButton.setOnClickListener {
             val testo = binding.messaggioInput.text.toString()

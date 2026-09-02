@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- ACCESSIBILITA ANZIANI -->
-    <!-- Testo -->
-    <dimen name="text_size_body">18sp</dimen>
-    <dimen name="text_size_title">24sp</dimen>
+    <!-- Testo (Atkinson Hyperlegible, sempre in sp, mai sotto 16sp salvo orari 14sp) -->
+    <dimen name="text_size_caption">14sp</dimen>      <!-- solo testi-meta: date, orari chat -->
+    <dimen name="text_size_label">16sp</dimen>        <!-- etichette secondarie -->
+    <dimen name="text_size_card_title">17sp</dimen>   <!-- titoletti di card in prugna -->
+    <dimen name="text_size_body">18sp</dimen>         <!-- corpo -->
+    <dimen name="text_size_title">24sp</dimen>        <!-- titoli di sezione (23-24sp) -->
+    <dimen name="text_size_headline">27sp</dimen>     <!-- header schermata -->
     <dimen name="text_size_button">18sp</dimen>
 
     <!-- Touch target: più grande del minimo Material (48dp) per ridurre errori di tocco -->
     <dimen name="touch_target_min">56dp</dimen>
     <dimen name="button_height">56dp</dimen>
+
+    <!-- Raggi coerenti su tutte le schermate -->
+    <dimen name="card_corner_radius">18dp</dimen>
+    <dimen name="button_corner_radius">14dp</dimen>
 
     <!-- Spaziature standard, riutilizzate in tutti i layout -->
     <dimen name="spacing_small">8dp</dimen>

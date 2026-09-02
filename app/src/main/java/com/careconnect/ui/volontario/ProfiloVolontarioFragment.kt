@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -21,6 +20,7 @@ import com.careconnect.R
 import com.careconnect.databinding.FragmentProfiloVolontarioBinding
 import com.careconnect.repository.AuthRepositoryImpl
 import com.careconnect.repository.RatingRepositoryImpl
+import com.careconnect.repository.RequestRepositoryImpl
 import com.careconnect.repository.UserRepositoryImpl
 import com.careconnect.util.SessionCache
 import com.careconnect.viewmodel.auth.AuthViewModel
@@ -40,7 +40,9 @@ class ProfiloVolontarioFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ProfiloVolontarioViewModel by viewModels {
-        ProfiloVolontarioViewModelFactory(UserRepositoryImpl(), AuthRepositoryImpl(), RatingRepositoryImpl())
+        ProfiloVolontarioViewModelFactory(
+            UserRepositoryImpl(), AuthRepositoryImpl(), RatingRepositoryImpl(), RequestRepositoryImpl()
+        )
     }
 
     // stesso AuthViewModel condiviso di login/registrazione: garantisce che
@@ -86,7 +88,7 @@ class ProfiloVolontarioFragment : Fragment() {
         osservaRecensioni()
     }
 
-    // mostra i commenti ricevuti (solo le valutazioni con testo) sotto le stelle
+    // mostra i commenti ricevuti (solo le valutazioni con testo) in riquadri lavanda
     private fun osservaRecensioni() {
         viewModel.recensioni.observe(viewLifecycleOwner) { recensioni ->
             val container = binding.recensioniContainer
@@ -96,8 +98,9 @@ class ProfiloVolontarioFragment : Fragment() {
             val inflater = LayoutInflater.from(requireContext())
             recensioni.forEach { recensione ->
                 val riga = inflater.inflate(R.layout.item_recensione, container, false)
-                riga.findViewById<RatingBar>(R.id.recensioneRatingBar).rating = recensione.stelle.toFloat()
-                riga.findViewById<TextView>(R.id.recensioneCommentoText).text = recensione.commento
+                riga.findViewById<TextView>(R.id.recensioneCommentoText).text =
+                    "“${recensione.commento}”"
+                riga.findViewById<TextView>(R.id.recensioneAutoreText).text = recensione.etichetta
                 container.addView(riga)
             }
         }

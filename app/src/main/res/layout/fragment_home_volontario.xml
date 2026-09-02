@@ -17,7 +17,8 @@
         android:minHeight="?attr/actionBarSize"
         android:background="@color/care_primary"
         android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
-        app:titleTextColor="@color/care_on_primary" />
+        app:titleTextColor="@color/care_on_primary"
+        app:titleTextAppearance="@style/TextAppearance.CareConnect.TitleLarge" />
 
     <!-- contenitore dinamico per le schermate interne del volontario con gestione manuale del tasto indietro -->
     <androidx.fragment.app.FragmentContainerView

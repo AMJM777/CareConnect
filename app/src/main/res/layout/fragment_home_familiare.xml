@@ -20,6 +20,7 @@
             android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
             android:visibility="gone"
             app:titleTextColor="@color/care_on_primary"
+            app:titleTextAppearance="@style/TextAppearance.CareConnect.TitleLarge"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
