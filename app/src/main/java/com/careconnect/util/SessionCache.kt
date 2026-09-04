@@ -11,19 +11,19 @@ import com.careconnect.model.UserRole
 class SessionCache(context: Context) {
 
     // applicationContext per non tenere in memoria un riferimento a
-    // un'Activity/Fragment che verrebbe distrutta prima di questa classe.
+    // un'Activity/Fragment che verrebbe distrutta prima di questa classe
     private val prefs = context.applicationContext
         .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    // funzione per salvare il ruolo dopo un login o una registrazione riusciti.
+    // funzione per salvare il ruolo dopo un login o una registrazione riuscita
     fun salvaRuolo(ruolo: UserRole) {
         prefs.edit()
             .putString(CHIAVE_RUOLO, ruolo.firestoreValue)
             .apply()
     }
 
-    // funzione per leggere il ruolo salvato. null se non c'è mai stato
-    // salvato nulla o se il valore non è più valido.
+    // funzione per leggere il ruolo salvato.
+    // null se non c'è mai stato  salvato nulla o se il valore non è più valido
     fun getRuoloSalvato(): UserRole? {
         val valoreSalvato = prefs.getString(CHIAVE_RUOLO, null) ?: return null
         return try {
@@ -33,7 +33,7 @@ class SessionCache(context: Context) {
         }
     }
 
-    // funzione per cancellare il ruolo salvato. da chiamare al logout.
+    // funzione per cancellare il ruolo salvato da chiamare al logout
     fun pulisci() {
         prefs.edit()
             .remove(CHIAVE_RUOLO)

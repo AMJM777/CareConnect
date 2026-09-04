@@ -16,8 +16,8 @@ import com.careconnect.ui.common.RichiestaDiffCallback
 import com.careconnect.ui.common.StatoRichiestaColori
 
 // adapter della RecyclerView che mostra le richieste dell'anziano, con i
-// bottoni "Modifica" e "Annulla" e il nome del volontario, se presente.
-// ListAdapter + DiffUtil (vedi RichiesteDisponibiliAdapter per il motivo).
+// bottoni "Modifica" e "Annulla" e il nome del volontario, se presente
+// ListAdapter + DiffUtil
 class RichiesteAdapter(
 private val onModificaClick: (Request) -> Unit,
 private val onAnnullaClick: (Request) -> Unit,
@@ -35,26 +35,26 @@ private val onChatClick: (Request) -> Unit
         return RichiestaViewHolder(binding)
     }
 
-    // funzione che collega i dati di una richiesta alla riga corrispondente della lista.
+    // funzione che collega i dati di una richiesta alla riga corrispondente della lista
     override fun onBindViewHolder(holder: RichiestaViewHolder, position: Int) {
         val richiesta = getItem(position)
 
         holder.binding.tipoText.text = richiesta.tipo.replaceFirstChar { it.uppercase() }
         holder.binding.descrizioneText.text = richiesta.descrizione
         holder.binding.statoText.text = etichettaStato(richiesta.stato)
-        // Colora la pillola in base allo stato (sfondo tenue + testo intenso).
+        // volora la pillola in base allo stato
         val ctxStato = holder.binding.statoText.context
         holder.binding.statoText.backgroundTintList =
             ContextCompat.getColorStateList(ctxStato, StatoRichiestaColori.sfondo(richiesta.stato))
         holder.binding.statoText.setTextColor(
             ContextCompat.getColor(ctxStato, StatoRichiestaColori.testo(richiesta.stato)))
-        // Tinta del pallino (drawableStart) in base allo stato: mai solo colore
+        // tinta del pallino in base allo stato
         TextViewCompat.setCompoundDrawableTintList(
             holder.binding.statoText,
             ContextCompat.getColorStateList(ctxStato, StatoRichiestaColori.pallino(richiesta.stato)))
         holder.binding.dataText.text = formattaData(richiesta.timestampCreazione.toDate())
 
-        // nome del volontario, mostrato solo se presente. cliccabile: apre il profilo di sola lettura
+        // nome del volontario, mostrato solo se presente, se cliccato, apre il profilo di sola lettura
         val nomeVolontario = richiesta.volontarioNome
         if (nomeVolontario != null) {
             holder.binding.volontarioNomeText.visibility = View.VISIBLE
@@ -75,7 +75,7 @@ private val onChatClick: (Request) -> Unit
 
 
         // chat col volontario: attiva mentre presa in carico (si scrive) e
-        // dopo, completata, in sola lettura (storico).
+        // dopo, completata, in sola lettura
         val mostraChat = richiesta.stato == RequestStatus.PRESA_IN_CARICO ||
                 richiesta.stato == RequestStatus.COMPLETATA_DAL_VOLONTARIO
         holder.binding.chatButton.visibility = if (mostraChat) View.VISIBLE else View.GONE

@@ -25,8 +25,7 @@ object StatoRichiestaColori {
         RequestStatus.ANNULLATA -> R.color.stato_annullata_fg
     }
 
-    // Colore del pallino (leggermente più acceso del testo): lo stato non è
-    // affidato al solo colore, ma il pallino aiuta il riconoscimento rapido
+    // Colore del pallino (leggermente più acceso del testo)
     fun pallino(stato: RequestStatus): Int = when (stato) {
         RequestStatus.APERTA -> R.color.stato_aperta_dot
         RequestStatus.PRESA_IN_CARICO -> R.color.stato_incarico_dot

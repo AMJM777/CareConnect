@@ -20,7 +20,7 @@ class ProfiloAnzianoViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    // utente caricato: serve a salvaIndirizzo() per fare .copy() (salvaUtente è un .set() completo)
+    // utente caricato: serve a salvaIndirizzo() per fare .copy()
     private var utenteCaricato: User? = null
 
     // codice invito tenuto per la copia negli appunti
@@ -77,7 +77,7 @@ class ProfiloAnzianoViewModel(
     }
 
     // recupera il nome di ogni familiare collegato a partire dalla lista di uid.
-    // il documento User su Firestore non contiene l'email, quindi si mostra il solo nome.
+    // il documento User su Firestore non contiene l'email, quindi si mostra il solo nome
     private fun caricaGaranti(ids: List<String>) {
         if (ids.isEmpty()) {
             _garanti.value = emptyList()

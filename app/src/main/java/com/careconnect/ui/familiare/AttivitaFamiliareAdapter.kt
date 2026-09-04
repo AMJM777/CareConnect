@@ -15,10 +15,8 @@ import androidx.core.widget.TextViewCompat
 import com.careconnect.ui.common.RichiestaDiffCallback
 import com.careconnect.ui.common.StatoRichiestaColori
 
-// adapter della lista "Attività" del familiare: mostra le richieste
-// dell'anziano seguito, con "Conferma" visibile solo su quelle completate
-// dal volontario e in attesa di conferma.
-// ListAdapter + DiffUtil (vedi RichiesteDisponibiliAdapter per il motivo).
+// adapter della lista "Attività" del familiare: mostra le richieste dell'anziano seguito,
+// con "Conferma" solo su quelle completate dal volontario e in attesa di conferma
 class AttivitaFamiliareAdapter(
     private val onConfermaClick: (Request) -> Unit,
     private val onVolontarioClick: (String) -> Unit,
@@ -63,7 +61,7 @@ class AttivitaFamiliareAdapter(
             holder.binding.volontarioNomeText.visibility = View.GONE
         }
 
-        // "Vedi chat" (sola lettura) c'è quando esiste una conversazione:
+        // "Vedi chat" (sola lettura) c'è solo quando esiste una conversazione, ovvero
         // dalla presa in carico in poi, anche a lavoro completato/confermato
         val esisteChat = richiesta.stato == RequestStatus.PRESA_IN_CARICO ||
             richiesta.stato == RequestStatus.COMPLETATA_DAL_VOLONTARIO ||
@@ -71,8 +69,8 @@ class AttivitaFamiliareAdapter(
         holder.binding.chatButton.visibility = if (esisteChat) View.VISIBLE else View.GONE
         holder.binding.chatButton.setOnClickListener { onChatClick(richiesta) }
 
-        // "Conferma" ha senso solo quando il volontario ha già segnato la
-        // richiesta come completata: tocca al familiare confermarla e valutare
+        // "Conferma" solo quando il volontario ha già segnato la
+        // richiesta come completata, poi tocca al familiare confermarla e valutare
         val daConfermare = richiesta.stato == RequestStatus.COMPLETATA_DAL_VOLONTARIO
         holder.binding.confermaButton.visibility = if (daConfermare) View.VISIBLE else View.GONE
         holder.binding.confermaButton.setOnClickListener { onConfermaClick(richiesta) }

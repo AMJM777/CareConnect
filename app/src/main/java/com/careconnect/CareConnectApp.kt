@@ -7,9 +7,9 @@ import androidx.appcompat.app.AppCompatDelegate
 
 // blocca l'app sul tema in chiaro: values-night è vuoto, quindi in scuro
 // la UI sarebbe illeggibile.
-// Tiene anche traccia se l'app è in primo piano: serve al SosShakeService (T4)
+// Tiene anche traccia se l'app è in primo piano: serve al SosShakeService
 // per decidere se aprire la conferma direttamente (app aperta) o via notifica
-// full-screen (app chiusa/bloccata).
+// full-screen (app chiusa/bloccata)
 class CareConnectApp : Application() {
 
     override fun onCreate() {
@@ -32,7 +32,7 @@ class CareConnectApp : Application() {
             inPrimoPiano = avviate > 0
         }
 
-        // callback non usati: richiesti dall'interfaccia
+        // callback non usati, richiesti dall'interfaccia
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
         override fun onActivityResumed(activity: Activity) {}
         override fun onActivityPaused(activity: Activity) {}

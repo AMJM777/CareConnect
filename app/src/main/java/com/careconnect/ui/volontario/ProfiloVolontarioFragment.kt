@@ -33,7 +33,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 
 // profilo del volontario: nome, email, ruolo, valutazione, descrizione
-// modificabile, logout. nome/email/valutazione sono legati dall'XML con data binding.
+// modificabile, logout. nome/email/valutazione sono legati dall'XML con data binding
 class ProfiloVolontarioFragment : Fragment() {
 
     private var _binding: FragmentProfiloVolontarioBinding? = null
@@ -45,8 +45,8 @@ class ProfiloVolontarioFragment : Fragment() {
         )
     }
 
-    // stesso AuthViewModel condiviso di login/registrazione: garantisce che
-    // sia la stessa istanza, così il logout resetta lo stato osservato altrove.
+    // stesso AuthViewModel di login e registrazione, così il logout resetta lo
+    // stato osservato altrove
     private val authViewModel: AuthViewModel by activityViewModels {
         AuthViewModelFactory(
             AuthRepositoryImpl(),
@@ -71,7 +71,7 @@ class ProfiloVolontarioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // padding in basso pari all'altezza della tastiera, così il campo bio può salire sopra.
+        // padding in basso pari all'altezza della tastiera, così il campo bio può salire sopra
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val tastiera = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             v.updatePadding(bottom = tastiera)
@@ -106,14 +106,14 @@ class ProfiloVolontarioFragment : Fragment() {
         }
     }
 
-    // la bio è un campo editabile: viene scritta nell'EditText una sola volta, al caricamento.
+    // la bio è un campo editabile, viene scritta nell'EditText una sola volta al caricamento
     private fun preRiempiBio() {
         viewModel.bioIniziale.observe(viewLifecycleOwner) { bio ->
             binding.bioEditText.setText(bio)
         }
     }
 
-    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un Toast.
+    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un toast
     private fun osservaErrori() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -127,7 +127,7 @@ class ProfiloVolontarioFragment : Fragment() {
         }
     }
 
-    // funzione per osservare la conferma di salvataggio della bio e mostrare un Toast.
+    // funzione per osservare la conferma di salvataggio della bio e mostrare un toast
     private fun osservaBioSalvata() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -150,7 +150,7 @@ class ProfiloVolontarioFragment : Fragment() {
             .show()
     }
 
-    // funzione che esegue il logout e riporta l'utente al flusso di autenticazione.
+    // funzione che esegue il logout e riporta l'utente al flusso di autenticazione
     private fun eseguiLogout() {
         authViewModel.logout()
 

@@ -3,18 +3,17 @@ package com.careconnect.repository
 import com.careconnect.model.AuthUser
 import kotlinx.coroutines.flow.Flow
 
-// interfaccia che definisce le operazioni di autenticazione disponibili,
-// indipendentemente dal provider usato (Firebase, nell'implementazione).
+// interfaccia che definisce quali sono le operazioni di autenticazione disponibili
 interface AuthRepository {
 
     // stato di autenticazione in tempo reale: emette null quando non c'è
-    // utente loggato (es. dopo logout). usato per il check di sessione all'avvio dell'app
+    // utente loggato (es. dopo logout); usato per il check di sessione all'avvio dell'app
     fun osservaStatoAutenticazione(): Flow<AuthUser?>
 
     // funzione per leggere l'utente correntemente autenticato, se presente
     fun utenteCorrente(): AuthUser?
 
-    // funzione per creare una nuova credenziale Firebase Auth. non salva nulla su Firestore
+    // funzione per creare una nuova credenziale Firebase Auth ( non salva nulla su Firestore)
     suspend fun registraConEmail(email: String, password: String): Result<AuthUser>
 
     // funzione per autenticare un utente già registrato con email e password

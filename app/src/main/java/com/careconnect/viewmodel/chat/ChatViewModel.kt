@@ -25,25 +25,21 @@ class ChatViewModel(
     private val volontarioId: String
 ) : ViewModel() {
 
-    // uid dell'utente corrente: sara' l'anzianoId o il volontarioId.
+    // uid dell'utente corrente, sarà l'anzianoId o il volontarioId:
     // serve a marcare i messaggi come "miei" e a firmare quelli inviati
     val uidCorrente: String = authRepository.utenteCorrente()?.uid ?: ""
 
     private val _errore = MutableStateFlow<String?>(null)
     val errore: StateFlow<String?> = _errore.asStateFlow()
 
-    // chi sta guardando decide il filtro che soddisfa le security rules
-    // (le regole non sono filtri: la query deve vincolare il campo controllato):
-    // - volontario -> filtro volontarioId == proprio uid
-    // - anziano    -> filtro anzianoId == proprio uid (anzianoId == uidCorrente)
-    // - garante (ne' l'uno ne' l'altro) -> filtro anzianoId == anziano della
-    //   richiesta: e' la clausola che le rules concedono al familiare collegato
-    //   (msg.anzianoId == getAnzianoCollegato(uid)), in sola lettura
+    // chi sta guardando decide il filtro che soddisfa le security rules:
+    // - volontario: filtro volontarioId == proprio uid
+    // - anziano : filtro anzianoId == proprio uid (anzianoId == uidCorrente)
+    // - garante : filtro anzianoId == anziano della  richiesta
     private val campoUtente = if (uidCorrente == volontarioId) "volontarioId" else "anzianoId"
     private val valoreUtente = if (uidCorrente == volontarioId) volontarioId else anzianoId
 
-    // lista messaggi ordinata cronologicamente (query senza orderBy: ordino
-    // qui, stesso motivo del resto del codice)
+    // lista messaggi ordinata cronologicamente
     val messaggi: StateFlow<List<Message>> =
         messageRepository.osservaMessaggiPerRichiesta(requestId, campoUtente, valoreUtente)
             .map { lista -> lista.sortedBy { it.timestamp.seconds } }

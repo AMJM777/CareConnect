@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import com.careconnect.repository.UserRepositoryImpl
 
 // schermata "Richieste disponibili": lista in tempo reale di tutte le
-// richieste APERTA, con azione "Prendi in carico" su ciascuna riga.
+// richieste aperte, con azione "Prendi in carico" su ciascuna riga
 class RichiesteDisponibiliFragment : Fragment() {
 
     private var _binding: FragmentRichiesteDisponibiliBinding? = null
@@ -53,17 +53,13 @@ class RichiesteDisponibiliFragment : Fragment() {
 
         binding.richiesteRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.richiesteRecyclerView.adapter = adapter
-        // la query non ha orderBy (per non richiedere un indice composito): l'ordine
-        // dei documenti può cambiare da uno snapshot all'altro. Con l'item animator di
-        // default, notifyDataSetChanged() su una riga che "cambia posizione" scatena
-        // un'animazione di dissolvenza che la mostra vuota per un istante: la disabilitiamo.
         binding.richiesteRecyclerView.itemAnimator = null
 
         osservaRichieste()
         osservaErrori()
     }
 
-    // funzione per osservare la lista di richieste esposta dal ViewModel e aggiornare la RecyclerView.
+    // funzione per osservare la lista di richieste esposta dal ViewModel e aggiornare la RecyclerView
     private fun osservaRichieste() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -78,7 +74,7 @@ class RichiesteDisponibiliFragment : Fragment() {
         }
     }
 
-    // funzione per osservare eventuali errori nella presa in carico e mostrarli con un Toast.
+    // funzione per osservare eventuali errori nella presa in carico e mostrarli con un toast
     private fun osservaErrori() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

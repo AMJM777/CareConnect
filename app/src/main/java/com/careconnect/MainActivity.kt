@@ -18,13 +18,13 @@ import androidx.navigation.ui.setupWithNavController
 import com.careconnect.util.NotificationHelper
 
 // unica Activity dell'app (single-activity architecture): ospita il
-// NavHostFragment principale e la Toolbar delle schermate di autenticazione.
+// NavHostFragment principale e la Toolbar delle schermate di autenticazione
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     // registrato come proprietà (non dentro onCreate): l'API richiede che
-    // la registrazione avvenga prima che l'Activity sia avviata.
+    // la registrazione avvenga prima che l'Activity sia avviata
     private val richiediPermessoNotifiche =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
             // se l'utente rifiuta l'app continua a funzionare senza notifiche
@@ -50,13 +50,12 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // Splash e Login sono "di primo livello": niente freccia indietro
+        // Splash e Login sono "di primo livello", niente freccia indietro
         appBarConfiguration = AppBarConfiguration(setOf(R.id.splashFragment, R.id.loginFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
-        // la Toolbar dell'Activity serve solo alle schermate di
-        // autenticazione: dentro le sezioni di ruolo c'è una Toolbar per
-        // ruolo, quindi qui va nascosta per non averne due
+        // la Toolbar dell'Activity serve solo alle schermate di autenticazione,
+        // nelle sezioni di ruolo c'è una toolbar per ruolo, quindi qui la nascondo
         navController.addOnDestinationChangedListener { _, destination, _ ->
             toolbar.visibility = when (destination.id) {
                 R.id.homeAnzianoFragment,
@@ -80,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // gestisce il tasto freccia della Toolbar
+    // gestisce il tasto freccia della toolbar
     override fun onSupportNavigateUp(): Boolean {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.navHostFragment) as NavHostFragment

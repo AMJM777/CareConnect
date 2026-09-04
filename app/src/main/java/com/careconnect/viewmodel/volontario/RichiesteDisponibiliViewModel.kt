@@ -24,19 +24,9 @@ class RichiesteDisponibiliViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    // ordinate per data di creazione decrescente (più recente in cima): la query
-    // Firestore non ha orderBy (per non richiedere un indice composito), quindi
-    // l'ordinamento va fatto qui lato app, altrimenti l'ordine non è garantito
-    // e può cambiare a ogni snapshot.
-    //
-    // Il filtro su tipo.isNotBlank() scarta eventuali snapshot transitori/
-    // incompleti: questa query osserva TUTTE le richieste aperte di TUTTI gli
-    // anziani (a differenza, es., di quella del familiare che ne guarda uno
-    // solo), quindi è la più esposta a un raro snapshot intermedio del
-    // listener realtime durante una risincronizzazione. Una richiesta creata
-    // dal form ha sempre tipo non vuoto (validato prima dell'invio): se
-    // arriva un elemento con tipo vuoto non è mai una richiesta vera, va
-    // ignorato finché non arriva la versione completa.
+    // ordinate per data decrescente, la più recente in cima.
+    // il filtro su tipo.isNotBlank() scarta gli snapshot intermedi incompleti
+    // del listener realtime, che non sono mai richieste vere
     val richieste: StateFlow<List<Request>> = requestRepository.osservaRichiesteAperte()
         .map { lista ->
             lista.filter { it.tipo.isNotBlank() }

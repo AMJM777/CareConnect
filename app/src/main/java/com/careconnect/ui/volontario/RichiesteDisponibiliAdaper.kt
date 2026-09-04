@@ -10,14 +10,10 @@ import com.careconnect.ui.common.RichiestaDiffCallback
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-// adapter della lista "Richieste disponibili": solo tipo/descrizione/data
-// e il bottone "Prendi in carico". niente autoreNome/autoreIndirizzo: sono
-// visibili a tutti i volontari prima dell'accettazione, mostrarli sarebbe
-// un problema di privacy.
-// ListAdapter + DiffUtil (RichiestaDiffCallback) invece di
-// RecyclerView.Adapter + notifyDataSetChanged(): così RecyclerView anima
-// solo le righe davvero aggiunte/rimosse/spostate, invece di ridisegnare
-// tutto a ogni snapshot (causa delle righe che apparivano vuote).
+// adapter della lista "Richieste disponibili": mostra solo tipo, descrizione,
+// data e il bottone "Prendi in carico". niente nome o indirizzo dell'anziano,
+// che qui sarebbero visibili a tutti i volontari prima dell'accettazione (è un
+// problema di privacy)
 class RichiesteDisponibiliAdapter(
     private val onPrendiInCaricoClick: (Request) -> Unit
 ) : ListAdapter<Request, RichiesteDisponibiliAdapter.RichiestaViewHolder>(RichiestaDiffCallback) {

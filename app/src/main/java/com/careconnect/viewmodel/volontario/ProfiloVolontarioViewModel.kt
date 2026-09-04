@@ -37,7 +37,7 @@ class ProfiloVolontarioViewModel(
     private val _nome = MutableLiveData("")
     val nome: LiveData<String> = _nome
 
-    // descrizione vocale delle stelle per lo screen reader (es. "Valutazione 4,5 su 5")
+    // descrizione vocale delle stelle per lo screen reader
     private val _valutazione = MutableLiveData("")
     val valutazione: LiveData<String> = _valutazione
 
@@ -45,11 +45,11 @@ class ProfiloVolontarioViewModel(
     private val _ratingStelle = MutableLiveData(0f)
     val ratingStelle: LiveData<Float> = _ratingStelle
 
-    // media come numero grande accanto alle stelle (es. "4,9")
+    // media come numero accanto alle stelle
     private val _ratingNumero = MutableLiveData("")
     val ratingNumero: LiveData<String> = _ratingNumero
 
-    // conteggio delle valutazioni (es. "su 24 valutazioni")
+    // conteggio del numero delle valutazioni
     private val _numeroValutazioni = MutableLiveData("")
     val numeroValutazioni: LiveData<String> = _numeroValutazioni
 
@@ -121,8 +121,7 @@ class ProfiloVolontarioViewModel(
             val conCommento = tutte.filter { !it.commento.isNullOrBlank() }
             _recensioni.value = conCommento.map { rating ->
                 // nome e tipo dalla RICHIESTA (autoreNome è denormalizzato ed è leggibile
-                // dal volontario che l'ha servita): evita di leggere il documento utente del
-                // valutatore, che le regole non gli consentono → niente "Anonimo"
+                // dal volontario che l'ha servita)
                 val richiesta = requestRepository.getRichiesta(rating.requestId).getOrNull()
                 RecensioneUi(
                     commento = rating.commento ?: "",

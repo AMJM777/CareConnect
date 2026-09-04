@@ -27,7 +27,7 @@ import androidx.navigation.fragment.findNavController
 import com.careconnect.ui.auth.navigaAllaHomePerRuolo
 import com.careconnect.util.SessionCache
 
-//schermata di login (email/password + Google).
+//schermata di login (email/password + Google)
 
 class LoginFragment : Fragment() {
 
@@ -92,7 +92,7 @@ class LoginFragment : Fragment() {
                 viewModel.loginConGoogle(googleIdTokenCredential.idToken)
 
             } catch (e: GetCredentialCancellationException) {
-                // utente che chiude il selettore senza scegliere: non è un errore
+                // utente che chiude il selettore senza scegliere, non è un errore
 
             } catch (e: Exception) {
                 binding.errorText.text = e.message ?: getString(R.string.login_generic_error)
@@ -101,7 +101,7 @@ class LoginFragment : Fragment() {
         }
     }
 
-    // funzione per osservare lo stato del ViewModel e aggiornare la UI di conseguenza.
+    // funzione per osservare lo stato del ViewModel e aggiornare la UI di conseguenza
     private fun osservaStatoAutenticazione() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

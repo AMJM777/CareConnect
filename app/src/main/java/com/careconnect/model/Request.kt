@@ -7,9 +7,8 @@ import com.google.firebase.firestore.GeoPoint
  * rappresenta una richiesta di aiuto creata dall'anziano
  * tre campi sono duplicati dal profilo utente per rendere
  * la richiesta leggibile a chi non è il volontario, senza query aggiuntive:
- * - autoreNome/autoreIndirizzo: chi è l'anziano e dove si trova, letti dal
- *   suo profilo al momento della creazione
- * - volontarioNome: chi ha accettato la richiesta, scritto quando cambia volontarioId
+ * - autoreNome/autoreIndirizzo: chi è l'anziano e dove si trova
+ * - volontarioNome: chi ha accettato la richiesta
  * NOTA: se utente cambia nome o indirizzo dopo aver creato le richiese queste non si aggiornano
  */
 data class Request(

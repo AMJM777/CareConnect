@@ -35,7 +35,7 @@ import com.careconnect.ui.common.nascondiBottomNavQuandoTastieraAperta
 /**
  * home del familiare. se l'utente non è ancora collegato a un anziano,
  * mostra il form per il codice invito. una volta collegato, aggancia a
- * runtime il NavHost annidato (Attività/Profilo), la toolbar e la bottomnav.
+ * runtime il NavHost annidato (Attività/Profilo), la toolbar e la bottomnav
  */
 class HomeFamiliareFragment : Fragment() {
 
@@ -67,8 +67,8 @@ class HomeFamiliareFragment : Fragment() {
             homeViewModel.collegati(binding.codiceInvitoEditText.text.toString())
         }
 
-        // inset alto sulla RADICE (non sulla toolbar), inset basso sulla bottom nav.
-        // la radice non è gestita da NavigationUI → barra alta uguale su ogni schermata
+        // inset alto sulla radice, non sulla toolbar, e inset basso sulla bottom nav,
+        // così la barra in alto resta uguale su ogni schermata
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val barre = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(top = barre.top)
@@ -129,17 +129,17 @@ class HomeFamiliareFragment : Fragment() {
         WorkScheduler.pianificaControlloConfermePeriodico(requireContext())
     }
 
-    // Collega la Toolbar del ruolo al grafo annidato del Familiare
+    // collega la toolbar del ruolo al grafo annidato del familiare
     private fun collegaToolbar(navController: NavController) {
         val toolbar = binding.familiareToolbar
 
-        // Solo Attività è "di primo livello": lì la freccia NON compare.
-        // Su Profilo la freccia compare e riporta ad Attività.
+        // solo Attività è di primo livello, lì la freccia non compare, su Profilo
+        // invece compare e riporta ad Attività
         appBarConfiguration = AppBarConfiguration(setOf(R.id.attivitaFamiliareFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
-        // scorciatoia solo per la presentazoine: long-press avvia subito il controllo
-        // delle richieste da confermare, senza aspettare i 15 minuti
+        /// scorciatoia da demo: il long-press avvia subito il controllo delle
+        // richieste da confermare senza aspettare i 15 minuti
         toolbar.setOnLongClickListener {
             WorkScheduler.eseguiControlloConfermeOraPerDemo(requireContext())
             Toast.makeText(requireContext(), "Controllo conferme avviato…", Toast.LENGTH_SHORT).show()
@@ -170,13 +170,13 @@ class HomeFamiliareFragment : Fragment() {
                 if (destination.id == R.id.chatFragment) View.GONE else View.VISIBLE
         }
     }
-    // funzione che gestisce il tasto Indietro di sistema in modo esplicito
+    // funzione che gestisce il tasto indietro di sistema in modo esplicito
     private fun gestisciTastoIndietro(navController: NavController) {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             val tornatoIndietro = navController.popBackStack()
             if (!tornatoIndietro) {
                 //  sulla home: disabilito questo callback e lascio agire il
-                // sistema. Non essendoci altro nello stack, l'app si chiude.
+                // sistema. Non essendoci altro nello stack, l'app si chiude
                 isEnabled = false
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }

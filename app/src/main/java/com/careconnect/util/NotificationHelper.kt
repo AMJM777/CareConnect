@@ -17,7 +17,7 @@ import com.careconnect.MainActivity
 
 // helper unico per mostrare le notifiche dell'app: usato sia dai task in
 // background (WorkManager) sia dalle notifiche push (FCM), così il
-// comportamento resta coerente in tutta l'app.
+// comportamento resta coerente in tutta l'app
 object NotificationHelper {
 
     // canale "generale": notifiche informative a importanza normale
@@ -51,7 +51,7 @@ object NotificationHelper {
             manager.createNotificationChannel(canaleGenerale)
 
             // alta importanza: canale separato così
-            // non può essere silenziato insieme alle notifiche ordinarie.
+            // non può essere silenziato insieme alle notifiche ordinarie
             val canaleSos = NotificationChannel(
                 CANALE_SOS_ID,
                 CANALE_SOS_NOME,
@@ -86,7 +86,7 @@ object NotificationHelper {
         testo: String,
         notificaId: Int
     ) {
-        // si assicura che il canale esista anche se l'app è appena partita in background.
+        // si assicura che il canale esista anche se l'app è appena partita in background
         creaCanali(context)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

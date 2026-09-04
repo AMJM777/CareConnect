@@ -6,7 +6,7 @@ import android.util.Log
 import java.util.Locale
 
 // Helper riusabile per la sintesi vocale (Text-To-Speech) in italiano
-// L'inizializzazione del motore TTS e' asincrona: finche' non e' pronto,
+// L'inizializzazione del motore TTS è asincrona: finchè non è pronto,
 // le frasi richieste vengono messe in coda e pronunciate appena possibile
 class TtsHelper(
     context: Context,
@@ -43,8 +43,8 @@ class TtsHelper(
         onPronto?.invoke()
     }
 
-    // pronuncia una frase. Se il motore non e' ancora pronto la mette in coda.
-    // svuotaCoda=true interrompe cio' che sta dicendo e parte subito (frase iniziale);
+    // pronuncia una frase. Se il motore non è ancora pronto la mette in coda.
+    // svuotaCoda=true interrompe ciò che sta dicendo e parte subito (frase iniziale);
     // false accoda dopo le frasi in corso (numeri del conteggio)
     fun parla(testo: String, svuotaCoda: Boolean = false) {
         if (!pronto) {
@@ -55,7 +55,7 @@ class TtsHelper(
         tts.speak(testo, modo, null, testo.hashCode().toString())
     }
 
-    // interrompe cio' che sta dicendo SENZA spegnere il motore (riusabile:
+    // interrompe ciò che sta dicendo senza spegnere il motore (riusabile:
     // serve a mettere in pausa la voce quando l'app va in background)
     fun interrompi() {
         tts.stop()

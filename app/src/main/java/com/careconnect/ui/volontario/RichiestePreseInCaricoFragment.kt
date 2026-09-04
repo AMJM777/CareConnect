@@ -23,9 +23,8 @@ import com.careconnect.viewmodel.volontario.RichiestePreseInCaricoViewModelFacto
 import kotlinx.coroutines.launch
 
 // schermata "Le mie richieste prese in carico": lista in tempo reale delle
-// richieste attive del volontario, con azioni "Segna come completata" e
-// "Rilascia" (quest'ultima con conferma, è un'azione che toglie la
-// richiesta al volontario stesso).
+// richieste attive del volontario, con "Segna come completata" e "Rilascia",
+// quest'ultima con conferma perché toglie la richiesta al volontario stesso
 class RichiestePreseInCaricoFragment : Fragment() {
 
     private var _binding: FragmentRichiestePreseInCaricoBinding? = null
@@ -63,9 +62,6 @@ class RichiestePreseInCaricoFragment : Fragment() {
 
         binding.richiesteRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.richiesteRecyclerView.adapter = adapter
-        // vedi commento in RichiesteDisponibiliFragment: query senza orderBy,
-        // disabilitiamo l'item animator per evitare righe che appaiono vuote
-        // durante il riordino tra uno snapshot e l'altro.
         binding.richiesteRecyclerView.itemAnimator = null
 
         osservaRichieste()
@@ -73,7 +69,7 @@ class RichiestePreseInCaricoFragment : Fragment() {
     }
 
     // chiede conferma prima di rilasciare: rimette la richiesta a disposizione
-    // di tutti, un tocco accidentale non deve far perdere l'incarico.
+    // di tutti, un tocco accidentale non deve far perdere l'incarico
     private fun mostraConfermaRilascio(requestId: String) {
         AlertDialog.Builder(requireContext())
             .setTitle("Rilasciare la richiesta?")
@@ -86,7 +82,7 @@ class RichiestePreseInCaricoFragment : Fragment() {
     }
 
     // apre la chat sulla richiesta. Se non è più presa in carico la chat
-    // è in sola lettura (storico), coerente con le security rules.
+    // è in sola lettura (storico), coerente con le security rules
     private fun apriChat(richiesta: com.careconnect.model.Request) {
         val soloLettura = richiesta.stato != com.careconnect.model.RequestStatus.PRESA_IN_CARICO
         val argomenti = androidx.core.os.bundleOf(
@@ -100,7 +96,7 @@ class RichiestePreseInCaricoFragment : Fragment() {
         findNavController().navigate(R.id.chatFragment, argomenti)
     }
 
-    // funzione per osservare la lista di richieste esposta dal ViewModel e aggiornare la RecyclerView.
+    // funzione per osservare la lista di richieste esposta dal ViewModel e aggiornare la RecyclerView
     private fun osservaRichieste() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -115,7 +111,7 @@ class RichiestePreseInCaricoFragment : Fragment() {
         }
     }
 
-    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un Toast.
+    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un tost
     private fun osservaErrori() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

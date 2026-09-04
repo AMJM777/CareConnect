@@ -112,6 +112,65 @@
         <item name="android:insetBottom">0dp</item>
     </style>
 
+    <!-- BOTTONI SOLO-ICONA (profili volontario/familiare, azioni chiare): icona centrata,
+         nessuna etichetta visibile ma contentDescription per lo screen reader. -->
+    <style name="CareConnect.IconButton.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/care_primary</item>
+        <item name="iconTint">@color/care_on_primary</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">@dimen/touch_target_min</item>
+        <item name="android:paddingStart">18dp</item>
+        <item name="android:paddingEnd">18dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="CareConnect.IconButton.Outline" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/care_outline_button</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="iconTint">@color/care_primary</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">@dimen/touch_target_min</item>
+        <item name="android:paddingStart">18dp</item>
+        <item name="android:paddingEnd">18dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="CareConnect.IconButton.Tonal" parent="Widget.Material3.Button.TonalButton">
+        <item name="backgroundTint">@color/care_primary_container</item>
+        <item name="iconTint">@color/care_primary</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">@dimen/touch_target_min</item>
+        <item name="android:paddingStart">18dp</item>
+        <item name="android:paddingEnd">18dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <!-- chip selettore anziano (familiare con più assistiti): selezionabile, coerente
+         coi bottoni (angoli arrotondati, prugna se selezionato). Nessuna icona di spunta. -->
+    <style name="CareConnect.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/option_toggle_bg</item>
+        <item name="android:textColor">@color/option_toggle_fg</item>
+        <item name="chipStrokeColor">@color/care_input_outline</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="chipCornerRadius">@dimen/button_corner_radius</item>
+        <item name="chipMinHeight">44dp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="chipIconVisible">false</item>
+    </style>
+
     <!-- tessera di scelta del tipo di aiuto: piena se selezionata, con bordo se no -->
     <style name="CareConnect.OptionToggle" parent="Widget.Material3.Button.OutlinedButton">
         <item name="backgroundTint">@color/option_toggle_bg</item>

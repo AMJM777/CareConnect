@@ -84,35 +84,38 @@
                 android:id="@+id/azioniContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_marginTop="@dimen/spacing_medium">
 
-                <!-- apre la chat con l'anziano della richiesta (azione primaria) -->
+                <!-- Chat: solo icona (azione chiara) -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/chatButton"
-                    style="@style/CareConnect.Button.Chat"
-                    android:layout_width="match_parent"
+                    style="@style/CareConnect.IconButton.Primary"
+                    android:layout_width="wrap_content"
                     android:layout_height="@dimen/button_height"
-                    android:text="Chat" />
+                    android:layout_marginEnd="@dimen/spacing_small"
+                    app:icon="@drawable/ic_chat"
+                    android:contentDescription="Apri chat" />
 
-                <!-- concludere positivamente l'attività: outline (coerente con la simulazione) -->
+                <!-- Completa: solo icona (spunta) -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/completaButton"
-                    style="@style/CareConnect.Button.Outline"
-                    android:layout_width="match_parent"
+                    style="@style/CareConnect.IconButton.Outline"
+                    android:layout_width="wrap_content"
                     android:layout_height="@dimen/button_height"
-                    android:layout_marginTop="@dimen/spacing_small"
-                    android:text="Completa"
-                    app:icon="@drawable/ic_spunta" />
+                    android:layout_marginEnd="@dimen/spacing_small"
+                    app:icon="@drawable/ic_spunta"
+                    android:contentDescription="Segna come completata" />
 
-                <!-- rinunciare all'incarico: outline neutro (niente rosso) -->
+                <!-- Rilascia: icona + parola (simbolo ambiguo, azione delicata) -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/rilasciaButton"
                     style="@style/CareConnect.Button.Outline"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="@dimen/button_height"
-                    android:layout_marginTop="@dimen/spacing_small"
-                    android:text="Rilascia" />
+                    android:text="Rilascia"
+                    app:icon="@drawable/ic_rilascia" />
 
             </LinearLayout>
 

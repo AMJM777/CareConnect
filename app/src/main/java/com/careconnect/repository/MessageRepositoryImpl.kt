@@ -23,10 +23,9 @@ class MessageRepositoryImpl(
         docRef.id
     }
 
-    // listener realtime filtrato per requestId E per il campo del partecipante
-    // corrente (anzianoId o volontarioId = proprio uid): il doppio filtro serve
-    // a soddisfare le security rules (le regole non sono filtri). Due filtri di
-    // uguaglianza non richiedono un indice composito.
+    // listener realtime filtrato per requestId e per il campo del partecipante
+    // corrente (anzianoId o volontarioId = proprio uid), il doppio filtro serve
+    // a soddisfare le security rules
     override fun osservaMessaggiPerRichiesta(
         requestId: String,
         campoUtente: String,

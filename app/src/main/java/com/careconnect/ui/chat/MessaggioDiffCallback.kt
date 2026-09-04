@@ -3,7 +3,7 @@ package com.careconnect.ui.chat
 import androidx.recyclerview.widget.DiffUtil
 import com.careconnect.model.Message
 
-// DiffUtil per la lista dei messaggi (stesso schema di RichiestaDiffCallback)
+// DiffUtil per la lista dei messaggi
 object MessaggioDiffCallback : DiffUtil.ItemCallback<Message>() {
     override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean =
         oldItem.id == newItem.id

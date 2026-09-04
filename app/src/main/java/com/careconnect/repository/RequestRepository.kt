@@ -7,15 +7,13 @@ import kotlinx.coroutines.flow.Flow
 //interfaccia per la gestione di richieste d'aiuto
 interface RequestRepository {
 
-    // funzione per creare una nuova richiesta su firestore. ritorna l'id generato in caso di successo
+    // funzione per creare una nuova richiesta su firestore. In caso di succcesso ritorna l'id generato
     suspend fun creaRichiesta(request: Request): Result<String>
 
     // funzione per leggere una singola richiesta per id
     suspend fun getRichiesta(requestId: String): Result<Request>
 
-    /**
-     * funzione per aggiornare lo stato di una richiesta (purchè valida)
-     */
+     // funzione per aggiornare lo stato di una richiesta
     suspend fun aggiornaStato(
         requestId: String,
         nuovoStato: RequestStatus,
@@ -23,47 +21,38 @@ interface RequestRepository {
         nuovoVolontarioNome: String? = null // viene scritto solo se nuovoVolontarioId è fornito
     ): Result<Unit>
 
-    /**
-     * Modifica tipo e descrizione di una richiesta esistente.
-     * Permesso solo se la richiesta è ancora APERTA
-     */
+
+     //Modifica tipo e descrizione di una richiesta esistente.
+     //Permesso solo se la richiesta è ancora APERTA
+
     suspend fun modificaRichiesta(
         requestId: String,
         nuovoTipo: String,
         nuovaDescrizione: String
     ): Result<Unit>
 
-    /**
-     * funzione per eliminare definitivamente una richiesta (vera Delete, non
-     * una transizione di stato). Permessa solo se la richiesta è ancora
-     * APERTA: se un volontario l'ha già presa in carico c'è storico da
-     * conservare, quindi si usa aggiornaStato(ANNULLATA) invece di questa.
-     * La vera barriera è la security rule Firestore, questo controllo è solo
-     * difesa aggiuntiva lato app.
-     */
+
+    // funzione per eliminare definitivamente una richiesta, permessa solo se la richiesta è ancora APERTA:
+    // se un volontario l'ha già presa in carico si usa aggiornaStato(ANNULLATA) invece di questa
+
     suspend fun eliminaRichiesta(requestId: String): Result<Unit>
 
-    /** Stream in tempo reale delle richieste con stato APERTA, per il volontario */
+    //Stream in tempo reale delle richieste con stato APERTA, per il volontario
     fun osservaRichiesteAperte(): Flow<List<Request>>
 
-    /**
-     * funzione per leggere una volta sola le richieste aperte (query singola,non realtime).
-     * serve al task periodico in background
-     */
+    //funzione per leggere una volta sola le richieste aperte (query singola,non realtime), serve al task periodico in background
+
     suspend fun getRichiesteAperte(): Result<List<Request>>
 
-    /** Stream in tempo reale delle richieste create da un anziano */
+    // Stream in tempo reale delle richieste create da un anziano
     fun osservaRichiestePerAnziano(anzianoId: String): Flow<List<Request>>
 
-    /**
-     * funzione per leggere una volta sola tutte le richieste di un anziano (query singola, non realtime). serve al worker del familiare, che poi
-     * e filtra quelle in attesa di conferma
-     */
+    // funzione per leggere una volta sola tutte le richieste di un anziano, serve al worker del familiare, che poi
+    // le filtra quelle in attesa di conferma
     suspend fun getRichiestePerAnziano(anzianoId: String): Result<List<Request>>
 
-    /**
-     * stream in tempo reale delle richieste "attive" di un volontario: PRESA_IN_CARICO o
-     * COMPLETATA_DAL_VOLONTARIO (in attesa di conferma del garante)
-     */
+    // stream in tempo reale delle richieste "attive" di un volontario:
+    // PRESA_IN_CARICO o COMPLETATA_DAL_VOLONTARIO (in attesa di conferma del garante)
+
     fun osservaRichiestePerVolontario(volontarioId: String): Flow<List<Request>>
 }

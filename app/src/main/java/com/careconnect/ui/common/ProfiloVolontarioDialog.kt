@@ -15,9 +15,8 @@ import com.careconnect.repository.UserRepositoryImpl
 import com.careconnect.util.RecensioneFormat
 import kotlinx.coroutines.launch
 
-// funzione di estensione su Fragment: mostra un dialog di sola lettura con
-// header (avatar + nome), valutazione, descrizione e recensioni di un volontario.
-// condivisa tra anziano e familiare
+// funzione di estensione sul Fragmentì che mostra un dialog di sola lettura
+// con le info del volontario affichè possano essere lette da anziano e familaire
 fun Fragment.mostraProfiloVolontario(volontarioId: String) {
     viewLifecycleOwner.lifecycleScope.launch {
         val volontario = UserRepositoryImpl().getUtente(volontarioId).getOrNull() ?: return@launch
@@ -29,10 +28,10 @@ fun Fragment.mostraProfiloVolontario(volontarioId: String) {
         vistaDialog.findViewById<TextView>(R.id.profiloBioText).text =
             volontario.bio?.takeIf { it.isNotBlank() } ?: "Nessuna descrizione"
 
-        // tutte le valutazioni: servono per il conteggio e per le recensioni con testo
+        // tutte le valutazioni, servono per il conteggio e per le recensioni con testo
         val tutte = RatingRepositoryImpl().getRatingsPerVolontario(volontarioId).getOrNull() ?: emptyList()
 
-        // valutazione: con un voto -> numero grande + stelle + conteggio; senza -> testo
+        // con almeno un voto mostro numero, stelle e conteggio; altrimenti solo un testo
         val media = volontario.ratingMedio
         val ratingText = vistaDialog.findViewById<TextView>(R.id.profiloRatingText)
         val ratingRow = vistaDialog.findViewById<View>(R.id.ratingRow)
@@ -70,7 +69,7 @@ fun Fragment.mostraProfiloVolontario(volontarioId: String) {
             }
         }
 
-        // dialog senza titolo/pulsanti di default: header e "Chiudi" sono nel layout
+        // dialog senza titolo/pulsanti di default, header e "Chiudi" sono nel layout
         val dialog = AlertDialog.Builder(requireContext())
             .setView(vistaDialog)
             .create()

@@ -16,10 +16,9 @@ import com.careconnect.ui.common.RichiestaDiffCallback
 import com.careconnect.ui.common.StatoRichiestaColori
 
 /**
- * adapter della lista "Le mie richieste prese in carico". due azioni per
- * riga ("Segna come completata" e "Rilascia"), entrambe passate come lambda
- * dal Fragment: l'Adapter non parla mai con ViewModel/Repository.
- * ListAdapter + DiffUtil (vedi RichiesteDisponibiliAdapter per il motivo).
+ * adapter della lista "Le mie richieste prese in carico": due azioni per riga,
+ * "Segna come completata" e "Rilascia", più la chat, tutte passate come lambda
+ * dal Fragment, così l'adapter non parla mai con ViewModel o Repository
  */
 class RichiestePreseInCaricoAdapter(
     private val onCompletaClick: (Request) -> Unit,
@@ -37,7 +36,7 @@ class RichiestePreseInCaricoAdapter(
         return RichiestaViewHolder(binding)
     }
 
-    // funzione che collega i dati di una richiesta alla riga corrispondente della lista.
+    // funzione che collega i dati di una richiesta alla riga corrispondente della lista
     override fun onBindViewHolder(holder: RichiestaViewHolder, position: Int) {
         val richiesta = getItem(position)
 
@@ -46,7 +45,7 @@ class RichiestePreseInCaricoAdapter(
         holder.binding.autoreNomeText.text = "Da: ${richiesta.autoreNome}"
         holder.binding.autoreIndirizzoText.text = richiesta.autoreIndirizzo
         holder.binding.statoText.text = etichettaStato(richiesta.stato)
-        // colora la pillola in base allo stato (sfondo tenue + testo intenso).
+        // colora la pillola in base allo stato
         val ctxStato = holder.binding.statoText.context
         holder.binding.statoText.backgroundTintList =
             ContextCompat.getColorStateList(ctxStato, StatoRichiestaColori.sfondo(richiesta.stato))
@@ -57,15 +56,14 @@ class RichiestePreseInCaricoAdapter(
             ContextCompat.getColorStateList(ctxStato, StatoRichiestaColori.pallino(richiesta.stato)))
         holder.binding.dataText.text = formattaData(richiesta.timestampCreazione.toDate())
 
-        // entrambi i bottoni hanno senso solo mentre la richiesta è ancora
-        // PRESA_IN_CARICO: una volta COMPLETATA_DAL_VOLONTARIO, tocca al
-        // garante confermare, il volontario non agisce più su di essa.
+        // i due bottoni servono solo finché la richiesta è presa in carico: una volta
+        // completata tocca al garante confermare e il volontario non agisce più
         val puoAgire = richiesta.stato == RequestStatus.PRESA_IN_CARICO
         holder.binding.completaButton.visibility = if (puoAgire) View.VISIBLE else View.GONE
         holder.binding.rilasciaButton.visibility = if (puoAgire) View.VISIBLE else View.GONE
 
         // la chat è raggiungibile mentre la richiesta è presa in carico
-        // (si scrive) e anche dopo, completata, in sola lettura (storico).
+        // (si scrive) e anche dopo, completata, in sola lettura ( come storico)
         val mostraChat = richiesta.stato == RequestStatus.PRESA_IN_CARICO ||
             richiesta.stato == RequestStatus.COMPLETATA_DAL_VOLONTARIO
         holder.binding.chatButton.visibility = if (mostraChat) View.VISIBLE else View.GONE
@@ -81,7 +79,7 @@ class RichiestePreseInCaricoAdapter(
         submitList(nuovaLista)
     }
 
-    // funzione per tradurre lo stato della richiesta in un'etichetta leggibile per l'utente.
+    // funzione per tradurre lo stato della richiesta in un'etichetta leggibile per l'utente
     private fun etichettaStato(stato: RequestStatus): String = when (stato) {
         RequestStatus.APERTA -> "Aperta"
         RequestStatus.PRESA_IN_CARICO -> "Presa in carico"
@@ -90,7 +88,7 @@ class RichiestePreseInCaricoAdapter(
         RequestStatus.ANNULLATA -> "Annullata"
     }
 
-    // funzione per formattare una data nel formato gg/mm/aaaa hh:mm.
+    // funzione per formattare una data nel formato gg/mm/aaaa hh:mm
     private fun formattaData(data: java.util.Date): String {
         val formato = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALY)
         return formato.format(data)

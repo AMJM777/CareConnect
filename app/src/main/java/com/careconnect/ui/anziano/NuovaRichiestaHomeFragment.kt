@@ -36,7 +36,7 @@ import com.careconnect.viewmodel.anziano.NuovaRichiestaHomeViewModelFactory
 import com.careconnect.viewmodel.anziano.NuovaRichiestaUiState
 import kotlinx.coroutines.launch
 
-// Home dell'Anziano: form per CREARE una richiesta + banner "richiesta in corso" + SOS
+// Home dell'anziano: form per creare una richiesta + banner "richiesta in corso" + SOS
 class NuovaRichiestaHomeFragment : Fragment() {
 
     private var _binding: FragmentNuovaRichiestaHomeBinding? = null
@@ -51,10 +51,10 @@ class NuovaRichiestaHomeFragment : Fragment() {
         )
     }
 
-    // rilevatore di scuotimento: secondo trigger dell'SOS, oltre al bottone
+    // rilevatore di scuotimento, è il secondo trigger dell'SOS, oltre al bottone
     private lateinit var shakeDetector: ShakeDetector
 
-    // preferenza opt-out della protezione SOS in background (T4)
+    // preferenza opt-out della protezione SOS in background
     private val protezionePrefs by lazy { ProtezioneSosPrefs(requireContext()) }
 
     // le quattro pillole del tipo di aiuto: selezione singola gestita a mano
@@ -94,7 +94,7 @@ class NuovaRichiestaHomeFragment : Fragment() {
         binding.inviaButton.setOnClickListener { onInviaClick() }
         binding.sosButton.setOnClickListener { avviaFlussoSos() }
 
-        // secondo trigger: lo scuotimento apre lo STESSO overlay di conferma
+        // secondo trigger: lo scuotimento apre lo stesso overlay di conferma
         shakeDetector = ShakeDetector(requireContext()) { avviaFlussoSos() }
 
         // riceve l'esito dell'overlay: se confermato (fine countdown), fa partire l'SOS
@@ -120,8 +120,8 @@ class NuovaRichiestaHomeFragment : Fragment() {
         osservaSos()
 
         // se la protezione in background e' attiva (default), assicura che il
-        // Foreground Service sia in esecuzione e chiedi (una volta sola) il
-        // permesso che fa aprire la conferma direttamente, senza notifica da toccare.
+        // Foreground Service sia in esecuzione e chiede (una volta sola) il
+        // permesso che fa aprire la conferma direttamente, senza notifica da toccare
         if (protezionePrefs.isAttiva()) {
             SosShakeService.avvia(requireContext())
             chiediPermessoFullScreenUnaVolta()
@@ -130,7 +130,7 @@ class NuovaRichiestaHomeFragment : Fragment() {
 
     // Se manca il permesso "Compari sopra le altre app", lo chiede UNA sola volta
     // portando l'utente alle impostazioni. Con il permesso, lo scuotimento apre
-    // subito l'overlay in ogni situazione, senza notifica intermedia da toccare.
+    // subito l'overlay in ogni situazione, senza notifica intermedia da toccare
     private fun chiediPermessoFullScreenUnaVolta() {
         if (OverlaySosPermesso.concesso(requireContext())) return
         if (protezionePrefs.permessoFullScreenGiaChiesto()) return
@@ -154,10 +154,8 @@ class NuovaRichiestaHomeFragment : Fragment() {
             .show()
     }
 
-    // Coordinamento anti-doppia-rilevazione: se la protezione in background e'
-    // attiva, il rilevatore vive nel Service (che copre anche l'app aperta),
-    // quindi qui NON ne avviamo un secondo. Se e' disattivata, la Home usa il
-    // proprio rilevatore come in T2 (solo ad app aperta).
+    //se la protezione in background e' attiva, il rilevatore vive nel Service
+    //se e' disattivata, la Home usa il proprio rilevatore ad app aperta
     override fun onResume() {
         super.onResume()
         if (!protezionePrefs.isAttiva()) {
@@ -240,7 +238,7 @@ class NuovaRichiestaHomeFragment : Fragment() {
         binding.errorText.visibility = View.GONE
     }
 
-    // stato della CREAZIONE richiesta
+    // stato della creazione richiesta
     private fun osservaCreazione() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -269,7 +267,7 @@ class NuovaRichiestaHomeFragment : Fragment() {
         }
     }
 
-    // banner "richiesta in corso": acceso solo se c'è almeno una richiesta attiva
+    // banner "richiesta in corso", vi è l'acceso solo se c'è almeno una richiesta attiva
     private fun osservaBanner() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -314,14 +312,14 @@ class NuovaRichiestaHomeFragment : Fragment() {
         }
     }
 
-    // apre l'overlay di conferma (countdown + voce). Stesso percorso per bottone
-    // e scuotimento. Guardia: non apre due overlay contemporaneamente.
+    // apre l'overlay di conferma (countdown + voce)
+    // Stesso percorso per bottone e scuotimento
     private fun avviaFlussoSos() {
         if (childFragmentManager.findFragmentByTag(TAG_CONFERMA_SOS) != null) return
         ConfermaSosDialogFragment.nuova().show(childFragmentManager, TAG_CONFERMA_SOS)
     }
 
-    // eseguito SOLO a fine countdown: avvisa i familiari (-> push automatica) e
+    // eseguito a fine countdown: avvisa i familiari e
     // apre il compositore telefonico verso il 112
     private fun eseguiSos() {
         viewModel.inviaSos()

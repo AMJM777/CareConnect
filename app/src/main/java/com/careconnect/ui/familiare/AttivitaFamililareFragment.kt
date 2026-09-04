@@ -55,8 +55,8 @@ class AttivitaFamiliareFragment : Fragment() {
         onChatClick = { richiesta -> apriChat(richiesta) }
     )
 
-    // apre la chat dell'assistito in SOLA LETTURA (safeguarding): il garante
-    // legge la conversazione tra il suo assistito e il volontario, non scrive.
+    // apre la chat dell'assistito in sola lettura, il garante
+    // legge la conversazione tra il suo assistito e il volontario, non scrive
     private fun apriChat(richiesta: Request) {
         val argomenti = androidx.core.os.bundleOf(
             com.careconnect.ui.chat.ChatFragment.ARG_REQUEST_ID to richiesta.id,
@@ -86,9 +86,8 @@ class AttivitaFamiliareFragment : Fragment() {
 
         binding.richiesteRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.richiesteRecyclerView.adapter = adapter
-        // vedi commento in RichiesteDisponibiliFragment: query senza orderBy,
-        // disabilitiamo l'item animator per evitare righe che appaiono vuote
-        // durante il riordino tra uno snapshot e l'altro.
+        // query senza orderBy, spengo l'item animator per evitare righe che
+        // appaiono vuote durante il riordino tra uno snapshot e l'altro
         binding.richiesteRecyclerView.itemAnimator = null
 
         osservaAnziani()
@@ -97,7 +96,7 @@ class AttivitaFamiliareFragment : Fragment() {
         osservaSos()
     }
 
-    // costruisce il selettore degli anziani seguiti (visibile solo con più di uno)
+    // costruisce il selettore degli anziani seguiti, visibile solo con più di uno
     private fun osservaAnziani() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -110,8 +109,10 @@ class AttivitaFamiliareFragment : Fragment() {
 
     private fun popolaSelettore(anziani: List<User>) {
         val gruppo = binding.anzianiChipGroup
-        binding.selettoreAnziani.visibility = if (anziani.size > 1) View.VISIBLE else View.GONE
-        // evito di ricostruire (e resettare la scelta) se è già popolato
+        val mostraSelettore = if (anziani.size > 1) View.VISIBLE else View.GONE
+        binding.selettoreTitolo.visibility = mostraSelettore
+        binding.selettoreAnziani.visibility = mostraSelettore
+        // evito di ricostruire, e resettare la scelta, se è già popolato
         if (gruppo.childCount == anziani.size) return
         gruppo.removeAllViews()
         val inflater = LayoutInflater.from(requireContext())

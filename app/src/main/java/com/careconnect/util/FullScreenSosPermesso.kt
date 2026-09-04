@@ -5,20 +5,17 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 
-// Gestisce il permesso "Compari sopra le altre app" (SYSTEM_ALERT_WINDOW).
-// Con questo permesso la protezione SOS (T4) puo' aprire l'overlay di conferma
-// DIRETTAMENTE in ogni situazione (app aperta, home del telefono, schermo
-// bloccato), senza una notifica intermedia da toccare: il permesso autorizza
-// l'avvio di una Activity dal background, altrimenti bloccato su Android moderno.
-//
-// NB: file ancora chiamato FullScreenSosPermesso.kt per un limite tecnico di
-// questa sessione; rinominarlo in OverlaySosPermesso.kt in Android Studio.
+// gestisce il permesso "Compari sopra le altre app" (SYSTEM_ALERT_WINDOW);
+// con questo permesso la protezione SOS può aprire l'overlay di conferma
+// direttamente in ogni situazione (app aperta, home, schermo bloccato) senza
+// una notifica intermedia, perché autorizza l'avvio di una Activity dal
+// background, altrimenti bloccato su Android moderno
 object OverlaySosPermesso {
 
     // true se possiamo aprire l'overlay senza tap dell'utente (permesso concesso)
     fun concesso(context: Context): Boolean = Settings.canDrawOverlays(context)
 
-    // porta l'utente alla schermata di sistema dove concedere il permesso, una volta
+    // porta l'utente alla schermata di sistema dove concedere il permesso
     fun intentImpostazioni(context: Context): Intent =
         Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,

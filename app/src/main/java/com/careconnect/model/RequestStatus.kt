@@ -1,7 +1,7 @@
 package com.careconnect.model
 
 /**
- * rappresenta lo stato del ciclo di vita di una richiesta di aiuto.
+ * rappresenta lo stato del ciclo di vita di una richiesta di aiuto
  * il valore firestoreValue è quello effettivamente salvato su Firestore
  */
 enum class RequestStatus(val firestoreValue: String) {

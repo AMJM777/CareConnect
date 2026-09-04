@@ -59,9 +59,6 @@ class NuovaRichiestaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // padding in basso pari all'altezza della tastiera: senza questo,
-        // in edge-to-edge la tastiera coprirebbe i campi
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val tastiera = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             v.updatePadding(bottom = tastiera)

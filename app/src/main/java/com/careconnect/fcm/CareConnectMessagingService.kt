@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
  */
 class CareConnectMessagingService : FirebaseMessagingService() {
 
-    // Chiamato da Firebase quando genera o rinnova il token di questo dispositivo.
-    // Il token è salvato sul profilo utente per ricevere le push in futuro.
+    // Chiamato da Firebase quando genera o rinnova il token del dispositivo
+    // Il token viene inoltre salvato sul profilo utente per ricevere le push in futuro
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -37,7 +37,7 @@ class CareConnectMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(messaggio)
 
         // Un messaggio FCM può contenere titolo/testo pronti ("notification")
-        // oppure dati grezzi decisi da noi ("data"): diamo priorità ai dati.
+        // oppure dati grezzi ("data"); la priorità viene data ai dati
         val dati = messaggio.data
         val titolo = dati["titolo"] ?: messaggio.notification?.title ?: "CareConnect"
         val testo = dati["testo"] ?: messaggio.notification?.body ?: "Hai una nuova notifica"

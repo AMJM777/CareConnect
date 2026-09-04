@@ -3,8 +3,8 @@ package com.careconnect.model
 import com.google.firebase.Timestamp
 
 /**
- * un messaggio della chat tra anziano e volontario, legato a una richiesta;
- * anzianoId e volontarioId sono copiati dalla richiesta al momento dell'invio:
+ * un messaggio della chat tra anziano e volontario, questo è legato a una richiesta;
+ * anzianoId e volontarioId sono copiati dalla richiesta al momento dell'invio
  */
 data class Message(
     val id: String = "",

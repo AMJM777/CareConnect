@@ -15,14 +15,13 @@ import com.careconnect.util.NotificationHelper
 import com.careconnect.util.ShakeDetector
 import android.app.PendingIntent
 
-// Foreground Service che tiene attivo l'accelerometro anche ad app chiusa
-// Usa lo ShakeDetector e alla rilevazione di uno scuotimento apre la
-// conferma SOS
+// servizio che lavora in background per tenere attivo il sensore di movimento
+// se il telefono viene scosso apre la schermata per confermare l'sos
 class SosShakeService : Service() {
 
     private lateinit var shakeDetector: ShakeDetector
 
-    // evita di registrare due volte il sensore se arrivano più START
+    // serve a non attivare il sensore due volte per errore
     private var attivo = false
 
     override fun onCreate() {
@@ -32,8 +31,7 @@ class SosShakeService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // un intent null arriva quando il sistema riavvia il service (START_STICKY):
-        // in quel caso vogliamo comunque riattivare la protezione -> ramo "else"
+        //controlla quale comando è arrivato dall'esterno
         when (intent?.action) {
             ACTION_STOP -> {
                 fermaService()
@@ -46,7 +44,6 @@ class SosShakeService : Service() {
     }
 
     // porta il service in foreground (notifica permanente) e attiva il sensore
-    // Il tipo del foreground service ("specialUse") viene preso dal manifest
     private fun avviaService() {
         if (attivo) return
         val notifica = NotificationHelper.costruisciNotificaServizio(this)
@@ -55,6 +52,7 @@ class SosShakeService : Service() {
         attivo = true
     }
 
+    //spegne il sensore e rimuove la notifica fissa
     private fun fermaService() {
         shakeDetector.ferma()
         attivo = false
@@ -62,21 +60,18 @@ class SosShakeService : Service() {
         stopSelf()
     }
 
-    // scuotimento rilevato. Apro sempre l'overlay direttamente quando posso:
-    // - app in primo piano: un'app in foreground puo' lanciare Activity liberamente;
-    // - permesso "compari sopra le altre app" concesso: autorizza l'avvio di Activity
-    //   dal background, quindi l'overlay si apre anche sulla home del telefono.
-    // Solo se NON ho nessuna delle due, ripiego sulla notifica full-screen (che
-    // Android apre da sola a schermo bloccato).
+    // funzione che decide come viene mostrato l'allarme quando il telefono viene scosso
     private fun onScuotimentoRilevato() {
+        // app aperta o ha permessi speciallii -> apre la schermata
         if (CareConnectApp.inPrimoPiano || Settings.canDrawOverlays(this)) {
             apriConfermaDiretta()
         } else {
+            //altrimenti usa una notifica gigante a schermo intero
             mostraConfermaFullScreen()
         }
     }
 
-    // apertura diretta dell'overlay di conferma
+    // apertura diretta dell'overlay di conferma di aiuto
     private fun apriConfermaDiretta() {
         val intent = Intent(this, ConfermaSosActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -113,20 +108,21 @@ class SosShakeService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        // fa pulizia e spegne il sensore quando il servizio viene distrutto
         shakeDetector.ferma()
         attivo = false
     }
 
-    // non è un bound service
     override fun onBind(intent: Intent?): IBinder? = null
 
+    // comandi rapidi per accendere o spegnere questo servizio da altre schermate
     companion object {
         private const val ID_NOTIFICA_SERVIZIO = 4201
 
         const val ACTION_START = "com.careconnect.sos.START"
         const val ACTION_STOP = "com.careconnect.sos.STOP"
 
-        // avvia il service in foreground (dal Profilo o all'apertura dell'app)
+        // avvia il service in foreground (dal profilo o all'apertura dell'app)
         fun avvia(context: Context) {
             val intent = Intent(context, SosShakeService::class.java).apply {
                 action = ACTION_START
@@ -134,7 +130,7 @@ class SosShakeService : Service() {
             ContextCompat.startForegroundService(context, intent)
         }
 
-        // ferma il service (toggle "disattiva" nel Profilo)
+        // ferma il service (toggle "disattiva" presente nel profilo)
         fun ferma(context: Context) {
             val intent = Intent(context, SosShakeService::class.java).apply {
                 action = ACTION_STOP

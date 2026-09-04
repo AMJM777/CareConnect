@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.careconnect.fcm.FcmTokenManager
 
-// stato della schermata di autenticazione: Login e Registrazione lo condividono
+// stato della schermata di autenticazione: login e registrazione lo condividono
 sealed class AuthUiState {
     object Idle : AuthUiState()
     object Loading : AuthUiState()
@@ -41,7 +41,7 @@ class AuthViewModel(
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    // funzione per il login con email e password: il ruolo va letto dal profilo Firestore già esistente
+    // funzione per il login con email e password; il ruolo va letto dal profilo Firestore già esistente
     fun loginConEmail(email: String, password: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
@@ -52,7 +52,7 @@ class AuthViewModel(
         }
     }
 
-    // funzione per registrare un nuovo utente: crea la credenziale Firebase, poi salva il profilo su Firestore
+    // funzione per registrare un nuovo utente: crea la credenziale firebase, poi salva il profilo su Firestore
     fun registraConEmail(nome: String, email: String, password: String, ruolo: UserRole) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
@@ -63,8 +63,8 @@ class AuthViewModel(
         }
     }
 
-    // funzione per login/registrazione con Google: Firebase le gestisce come
-    // un'unica operazione, si distingue poi in base al profilo Firestore
+    // funzione per login/registrazione con google: firebase le gestisce come
+    // un'unica operazione, si distingue poi in base al profilo firestore
     fun loginConGoogle(idToken: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading

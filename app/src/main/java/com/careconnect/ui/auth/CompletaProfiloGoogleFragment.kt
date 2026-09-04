@@ -24,8 +24,8 @@ import com.careconnect.util.SessionCache
 
 /**
  * schermata mostrata solo al primo accesso con Google, quando Firebase Auth
- * ha già le credenziali ma il profilo Firestore non esiste ancora.
- * raccoglie nome e ruolo, poi chiama AuthViewModel.completaRegistrazioneGoogle() per salvarli.
+ * ha già le credenziali ma il profilo Firestore non esiste ancora
+ * raccoglie nome e ruolo, poi chiama AuthViewModel.completaRegistrazioneGoogle() per salvarli
  */
 class CompletaProfiloGoogleFragment : Fragment() {
 

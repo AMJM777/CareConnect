@@ -18,7 +18,7 @@ sealed class NuovaRichiestaUiState {
     data class Errore(val eccezione: Throwable) : NuovaRichiestaUiState()
 }
 
-// ViewModel della schermata di MODIFICA di una richiesta esistente
+// ViewModel della schermata di modfica di una richiesta esistente
 class NuovaRichiestaViewModel (
     private val requestRepository: RequestRepository
 ) : ViewModel() {
@@ -26,7 +26,7 @@ class NuovaRichiestaViewModel (
     private val _uiState = MutableStateFlow<NuovaRichiestaUiState>(NuovaRichiestaUiState.Idle)
     val uiState: StateFlow<NuovaRichiestaUiState> = _uiState.asStateFlow()
 
-    // modifica tipo e descrizione di una richiesta esistente (permesso solo se APERTA)
+    // modifica tipo e descrizione di una richiesta esistente (permesso solo se la richiesta è aperta)
     fun modificaRichiesta(requestId: String, tipo: String, descrizione: String) {
         viewModelScope.launch {
             _uiState.value = NuovaRichiestaUiState.Loading

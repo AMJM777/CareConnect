@@ -2,11 +2,11 @@ package com.careconnect.util
 
 import android.content.Context
 
-// Preferenza locale (SharedPreferences) per la protezione SOS in background (T4).
-// Modello "opt-out": di default e' ATTIVA. L'anziano puo' disattivarla dal Profilo.
+// preferenza locale (SharedPreferences) per la protezione SOS in background.
+// modello opt-out: di default è attiva, l'anziano può disattivarla dal profilo
 class ProtezioneSosPrefs(context: Context) {
 
-    // applicationContext: non trattiene Activity/Fragment (evita memory leak)
+    // applicationContext così non trattengo Activity o Fragment ed evito memory leak
     private val prefs = context.applicationContext
         .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
@@ -16,8 +16,8 @@ class ProtezioneSosPrefs(context: Context) {
         prefs.edit().putBoolean(CHIAVE_ATTIVA, attiva).apply()
     }
 
-    // ricorda se abbiamo già mandato l'utente a concedere il permesso full-screen:
-    // così non glielo chiediamo a ogni apertura della Home (lo chiediamo una volta).
+    // ricorda se abbiamo già mandato l'utente a concedere il permesso overlay,
+    // così lo chiediamo una volta sola e non a ogni apertura della home
     fun permessoFullScreenGiaChiesto(): Boolean =
         prefs.getBoolean(CHIAVE_PERMESSO_CHIESTO, false)
 

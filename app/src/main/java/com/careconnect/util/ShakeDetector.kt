@@ -7,7 +7,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import kotlin.math.sqrt
 
-// Rileva lo scuotimento del telefono tramite l'accelerometro ,il sensore lavora solo quando la schermata e' visibile.
+// Rileva lo scuotimento del telefono tramite l'accelerometro ,il sensore lavora solo quando la schermata è visibile
 class ShakeDetector(
     context: Context,
     private val onShake: () -> Unit

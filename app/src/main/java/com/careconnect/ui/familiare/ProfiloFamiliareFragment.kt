@@ -27,7 +27,7 @@ import com.careconnect.viewmodel.familiare.ProfiloFamiliareViewModel
 import com.careconnect.viewmodel.familiare.ProfiloFamiliareViewModelFactory
 import kotlinx.coroutines.launch
 
-// profilo del familiare: nome proprio e dell'anziano seguito, più logout.
+// profilo del familiare: nome proprio e dell'anziano seguito, più logout
 // entrambe le TextView sono legate dall'XML con data binding
 class ProfiloFamiliareFragment : Fragment() {
 
@@ -48,8 +48,8 @@ class ProfiloFamiliareFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profilo_familiare, container, false)
-        // Colleghiamo il ViewModel al layout e diamo il proprietario del
-        // ciclo di vita: le due TextView legate si aggiornano da sole.
+        // collego il ViewModel al layout e passo il lifecycle owner, così le
+        // TextView legate si aggiornano da sole
         binding.viewModel = profiloViewModel
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
@@ -68,7 +68,7 @@ class ProfiloFamiliareFragment : Fragment() {
         osservaCollegamento()
     }
 
-    // mostra la lista degli anziani seguiti; se vuota, l'invito a collegarne uno
+    // mostra la lista degli anziani seguiti; se vuota mostra l'invito a collegarne uno
     private fun osservaAnziani() {
         profiloViewModel.anzianiSeguiti.observe(viewLifecycleOwner) { anziani ->
             val container = binding.anzianiContainer
@@ -102,7 +102,7 @@ class ProfiloFamiliareFragment : Fragment() {
         }
     }
 
-    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un Toast
+    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un toast
     private fun osservaErrori() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

@@ -205,6 +205,10 @@ Ordine e stime (target, con margine). Le date sono indicative, il vincolo fermo 
   splash resta sobrio (scelta confermata, brandizzazione scartata).
 - ✅ **Bibliografia font (Lexend)** aggiunta in `Grafica_Design_e_Skill.md` §2.
 
+> 🎨 **Punto aperto grafica (da valutare, non bloccante):** rivedere meglio il **pesca** dei
+> pulsanti dei profili (attuale `care_accent_soft #F5D9C6`, testo prugna): decidere il tono
+> definitivo (più tenue verso il crema `#F4E2D6` o un filo più carico). Il resto del restyle va bene.
+
 ### 2 · Pulizia del codice puro (2 – 4 set, 3 gg — oggi compreso) 🟡 IN CORSO
 - **Pulizia generale del codice:** codice morto, TODO/commenti di servizio, import e log di debug
   inutilizzati, e le **scorciatoie "solo demo"** (es. il long-press sulla Toolbar che lancia subito il

@@ -56,7 +56,7 @@ class ProfiloAnzianoFragment : Fragment() {
         ProfiloAnzianoViewModelFactory(UserRepositoryImpl(), AuthRepositoryImpl())
     }
 
-    // preferenza opt-out della protezione SOS in background (T4)
+    // preferenza opt-out della protezione SOS in background
     private val protezionePrefs by lazy { ProtezioneSosPrefs(requireContext()) }
 
     override fun onCreateView(
@@ -65,7 +65,6 @@ class ProfiloAnzianoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profilo_anziano, container, false)
-        // collega il ViewModel al layout: da qui le View legate a LiveData si aggiornano da sole
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
@@ -73,9 +72,6 @@ class ProfiloAnzianoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // padding in basso pari all'altezza della tastiera, così il campo
-        // indirizzo può salire sopra di essa.
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val tastiera = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             v.updatePadding(bottom = tastiera)
@@ -95,7 +91,7 @@ class ProfiloAnzianoFragment : Fragment() {
         configuraProtezioneSwitch()
     }
 
-    // mostra i familiari collegati: una riga per nome, o un messaggio se la lista è vuota
+    // mostra i familiari collegati, una riga per nome (mostra un messaggio se la lista è vuota)
     private fun osservaGaranti() {
         viewModel.garanti.observe(viewLifecycleOwner) { nomi ->
             val container = binding.garantiContainer
@@ -111,8 +107,7 @@ class ProfiloAnzianoFragment : Fragment() {
         }
     }
 
-    // interruttore della protezione SOS in background (T4): stato iniziale dalla
-    // preferenza (default acceso) e, a ogni cambio, avvia/ferma il Foreground Service.
+    // interruttore della protezione SOS in background, a ogni cambio, avvia/ferma il Foreground Service.
     private fun configuraProtezioneSwitch() {
         binding.protezioneSosSwitch.isChecked = protezionePrefs.isAttiva()
         binding.protezioneSosSwitch.setOnCheckedChangeListener { _, attiva ->
@@ -133,8 +128,7 @@ class ProfiloAnzianoFragment : Fragment() {
     }
 
     // Se manca il permesso "Compari sopra le altre app", porta l'utente alle
-    // impostazioni per concederlo. Con il permesso, lo scuotimento apre subito
-    // l'overlay in ogni situazione, senza una notifica intermedia da toccare.
+    // impostazioni. Con il permesso, lo scuotimento apre subito l'overlay dell'SOS
     private fun chiediPermessoFullScreenSeManca() {
         if (OverlaySosPermesso.concesso(requireContext())) return
 
@@ -156,7 +150,7 @@ class ProfiloAnzianoFragment : Fragment() {
             .show()
     }
 
-    // l'indirizzo è un campo editabile: viene scritto nell'EditText una sola volta, al caricamento
+    // l'indirizzo è un campo editabile, viene scritto nell'EditText una sola volta, al caricamento
     private fun preRiempiIndirizzo() {
         viewModel.indirizzoIniziale.observe(viewLifecycleOwner) { indirizzo ->
             if (binding.indirizzoEditText.text.isNullOrBlank()) {
@@ -165,7 +159,7 @@ class ProfiloAnzianoFragment : Fragment() {
         }
     }
 
-    // funzione per osservare eventuali errori esposti dal ViewModel e mostrarli con un Toast.
+    // funzione per osservare eventuali errori esposti dal viewmodel e mostrarli con un toast
     private fun osservaErrori() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -179,7 +173,7 @@ class ProfiloAnzianoFragment : Fragment() {
         }
     }
 
-    // funzione per osservare la conferma di salvataggio dell'indirizzo e mostrare un Toast.
+    // funzione per osservare la conferma di salvataggio dell'indirizzo e mostrare un toast
     private fun osservaIndirizzoSalvato() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -212,11 +206,10 @@ class ProfiloAnzianoFragment : Fragment() {
     }
     // funzione che esegue il logout e riporta l'utente al flusso di autenticazione
     private fun eseguiLogout() {
-        // uscendo dall'account si ferma anche la protezione SOS in background:
-        // non ha senso tenere attivo il sensore per un utente non più loggato.
+        // uscendo dall'account si ferma anche la protezione SOS in background
         SosShakeService.ferma(requireContext())
 
-        // passa dal condiviso AuthViewModel: resetta anche sessionCache e AuthUiState.
+        // resetta anche sessionCache e AuthUiState
         authViewModel.logout()
 
         val navHostFragmentPrincipale = requireActivity().supportFragmentManager

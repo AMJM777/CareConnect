@@ -14,8 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 /**
  * task in background per il familiare: avvisa quando c'è almeno una
  * richiesta del suo assistito completata dal volontario e in attesa di
- * conferma. a differenza del Worker del volontario, l'evento qui è un
- * cambio di stato (non una creazione), quindi si tiene l'insieme degli ID
+ * conferma. L'evento è un cambio di stato, quindi tiene l'insieme degli ID
  * già notificati invece di un timestamp
  */
 class ControlloConfermeFamiliareWorker(
@@ -67,7 +66,7 @@ class ControlloConfermeFamiliareWorker(
         }
 
         // aggiorna l'insieme salvato: le richieste confermate spariscono da
-        // sole, quelle già viste non vengono rinotificate.
+        // sole, quelle già viste non vengono rinotificate
         salvaIdNotificati(daConfermare)
 
         return Result.success()

@@ -31,8 +31,7 @@ class RichiestePreseInCaricoViewModel(
             emptyFlow()
         }
 
-        // ordinate per data di creazione decrescente: vedi commento in
-        // RichiesteDisponibiliViewModel, stesso motivo (query senza orderBy).
+        // ordinate per data di creazione decrescente
         flowRichieste
             .map { lista -> lista.sortedByDescending { it.timestampCreazione.seconds } }
             .stateIn(

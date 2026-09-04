@@ -15,21 +15,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
 
-// Overlay di conferma dell'SOS: countdown 5-4-3-2-1 con voce (TTS) e ANNULLA enorme.
-// Non contiene la logica dell'SOS: alla fine del countdown comunica alla Home
-// (via Fragment Result) l'esito CONFERMATO, e la Home fa partire allarme + chiamata.
+// Overlay di conferma dell'SOS: countdown 5-4-3-2-1 con voce e pulsarte ANNULLA
 class ConfermaSosDialogFragment : DialogFragment() {
 
     private lateinit var tts: TtsHelper
     private var secondiRimasti = SECONDI_INIZIALI
     private var conclusa = false   // evita doppi esiti (annulla + fine countdown)
-    private var countdownJob: Job? = null   // il conteggio in corso, cosi' lo posso fermare
+    private var countdownJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // tema translucido a tutto schermo definito in styles.xml
         setStyle(STYLE_NO_FRAME, R.style.CareConnect_Dialog_Sos)
-        // non si chiude toccando fuori o col tasto Indietro: si esce solo con ANNULLA
+        // non si chiude toccando fuori o col tasto indietro: si esce solo con il pulsante ANNULLA
         isCancelable = false
         // dopo una rotazione riprende il conteggio invece di ripartire da 5
         savedInstanceState?.let { secondiRimasti = it.getInt(KEY_SECONDI, SECONDI_INIZIALI) }
@@ -51,12 +48,11 @@ class ConfermaSosDialogFragment : DialogFragment() {
         tts.parla("Sto per chiamare aiuto", svuotaCoda = true)
 
         annullaButton.setOnClickListener { annulla() }
-        // il countdown NON parte qui: parte in onStart(), cosi' e' legato alla visibilita'
     }
 
-    // onStart/onStop sono i callback affidabili di visibilita': il countdown
+    // onStart/onStop sono i callback affidabili di visibilità: il countdown
     // vive solo mentre l'overlay e' davvero a schermo. Uscendo dall'app si ferma,
-    // rientrando riprende dal numero rimasto (niente conteggio/chiamata in background).
+    // rientrando riprende dal numero rimasto
     override fun onStart() {
         super.onStart()
         avviaCountdown()
@@ -69,7 +65,6 @@ class ConfermaSosDialogFragment : DialogFragment() {
     }
 
     // conta 5->0: aggiorna il numero, lo pronuncia, e a 0 conferma l'SOS
-    // Il conteggio avanza SOLO mentre l'overlay e' in primo piano
     private fun avviaCountdown() {
         if (conclusa) return
         countdownJob?.cancel()   // evita due conteggi paralleli
@@ -85,14 +80,14 @@ class ConfermaSosDialogFragment : DialogFragment() {
         }
     }
 
-    // ANNULLA: non fa partire nulla (nessun allarme e' stato inviato)
+    // ANNULLA: fa asi che non parta nessun allarme
     private fun annulla() {
         if (conclusa) return
         conclusa = true
         dismiss()
     }
 
-    // fine countdown: avvisa la Home che deve far partire allarme + chiamata
+    // fine countdown, avvisa la home che deve far partire allarme + chiamata
     private fun conferma() {
         if (conclusa) return
         conclusa = true

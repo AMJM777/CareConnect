@@ -64,11 +64,11 @@ class SplashFragment : Fragment() {
     private fun reagisciAStato(stato: SplashUiState) {
         when (stato) {
             is SplashUiState.Verifica -> {
-                // controllo ancora in corso: si aspetta, la ProgressBar resta visibile
+                // controllo ancora in corso, si aspetta, la ProgressBar resta visibile
             }
 
             is SplashUiState.VaiAlLogin -> {
-                // rimuove la Splash dallo stack: da qui il tasto Indietro non deve tornarci
+                // rimuove la Splash dallo stack, da qui il tasto indietro non deve tornarci
                 val opzioni = navOptions {
                     popUpTo(R.id.splashFragment) { inclusive = true }
                 }

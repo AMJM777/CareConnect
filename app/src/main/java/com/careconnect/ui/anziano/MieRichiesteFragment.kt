@@ -23,7 +23,7 @@ import androidx.navigation.fragment.findNavController
 import com.careconnect.ui.common.mostraProfiloVolontario
 import com.careconnect.model.RequestStatus
 
-// schermata "Le mie richieste": lista in tempo reale + azioni "Modifica"
+// schermata "Le mie richieste", è una lista in tempo reale delle richieste con le azioni "Modifica"
 // (solo se APERTA) e "Annulla" (APERTA o PRESA_IN_CARICO)
 class MieRichiesteFragment : Fragment() {
 
@@ -67,20 +67,16 @@ class MieRichiesteFragment : Fragment() {
 
         binding.richiesteRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.richiesteRecyclerView.adapter = adapter
-        // vedi commento in RichiesteDisponibiliFragment: query senza orderBy,
-        // disabilitiamo l'item animator per evitare righe che appaiono vuote
-        // durante il riordino tra uno snapshot e l'altro.
         binding.richiesteRecyclerView.itemAnimator = null
 
         osservaRichieste()
         osservaErroriAnnullamento()
     }
 
-    // chiede conferma prima di annullare/eliminare: azione irreversibile, un
-    // tap accidentale non deve far perdere la richiesta senza accorgersene.
+    // chiede conferma prima di annullare/eliminare
     // Se è ancora APERTA nessun volontario l'ha mai vista: si elimina
     // davvero (Delete). Se è già PRESA_IN_CARICO si preserva lo storico
-    // passando ad ANNULLATA (Update), perché un volontario è coinvolto.
+    // passando ad ANNULLATA (Update)
     private fun mostraConfermaAnnullamento(requestId: String, stato: RequestStatus) {
         val eliminaDavvero = stato == RequestStatus.APERTA
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
@@ -100,9 +96,8 @@ class MieRichiesteFragment : Fragment() {
             .show()
     }
 
-    // apre la chat con il volontario della richiesta. Lato anziano la lettura
-    // vocale (TTS) è attiva. Se la richiesta non è più presa in carico, la
-    // chat è in sola lettura (storico), coerente con le security rules.
+    // apre la chat con il volontario della richiesta. Lato anziano è disponibile la lettura
+    // vocale. Se la richiesta non è più presa in carico, la chat è in sola lettura
     private fun apriChat(richiesta: com.careconnect.model.Request) {
         val soloLettura = richiesta.stato != RequestStatus.PRESA_IN_CARICO
         val argomenti = androidx.core.os.bundleOf(
@@ -131,7 +126,7 @@ class MieRichiesteFragment : Fragment() {
         }
     }
 
-    // funzione per osservare eventuali errori durante l'annullamento e mostrarli con un Toast
+    // funzione per osservare eventuali errori durante l'annullamento e mostrarli con un toast
     private fun osservaErroriAnnullamento() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

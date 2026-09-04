@@ -32,8 +32,7 @@ class MieRichiesteViewModel(
             emptyFlow()
         }
 
-        // ordinate per data di creazione decrescente: vedi commento in
-        // RichiesteDisponibiliViewModel, stesso motivo (query senza orderBy).
+        // ordinate per data di creazione decrescente
         flowRichieste
             .map { lista -> lista.sortedByDescending { it.timestampCreazione.seconds } }
             .stateIn(
@@ -43,13 +42,12 @@ class MieRichiesteViewModel(
             )
     }
 
-    // null = nessun errore da mostrare. il Fragment lo resetta dopo averlo mostrato
+    // null = nessun errore da mostrare. Il Fragment lo resetta dopo averlo mostrato
     private val _erroreAnnullamento = MutableStateFlow<String?>(null)
     val erroreAnnullamento: StateFlow<String?> = _erroreAnnullamento.asStateFlow()
 
-    // funzione per annullare una richiesta già presa in carico: transizione di
-    // stato (Update), NON una Delete. Si conserva lo storico perché un
-    // volontario è già coinvolto.
+    // funzione per annullare una richiesta già presa in carico(transizione di
+    // stato (Update) ) Si conserva lo storico perché un volontario è già coinvolto
     fun annullaRichiesta(requestId: String) {
         viewModelScope.launch {
             requestRepository.aggiornaStato(requestId, RequestStatus.ANNULLATA).fold(
@@ -61,9 +59,8 @@ class MieRichiesteViewModel(
         }
     }
 
-    // funzione per eliminare definitivamente una richiesta ancora APERTA (vera
-    // Delete): nessun volontario l'ha mai vista/accettata, quindi non c'è
-    // storico da preservare.
+    // funzione per eliminare definitivamente una richiesta ancora aperta (vera
+    // Delete)
     fun eliminaRichiesta(requestId: String) {
         viewModelScope.launch {
             requestRepository.eliminaRichiesta(requestId).fold(

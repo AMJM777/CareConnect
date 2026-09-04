@@ -25,7 +25,7 @@ class UserRepositoryImpl(
             ?: throw NoSuchElementException("Utente non trovato: $uid")
     }
 
-    // segnala che un candidato è già in uso, così il ciclo riprova con un altro
+    // segnala che un codice candidato è già in uso così se ne cerca un altro
     private class CodiceOccupatoException : Exception()
 
     override suspend fun ottieniOCreaCodiceInvito(anzianoId: String): Result<String> = runCatching {
@@ -95,7 +95,7 @@ class UserRepositoryImpl(
         val anzianoDocRef = collection.document(anzianoId)
         val familiareDocRef = collection.document(familiareId)
 
-        // Controllo che i ruoli siano giusti e che non sia già collegato a questo anziano
+        // controllo che i ruoli siano giusti e che non sia già collegato a questo anziano
         val anziano = anzianoDocRef.get().await().toUser()
             ?: throw NoSuchElementException("Anziano non trovato: $anzianoId")
         val familiare = familiareDocRef.get().await().toUser()
@@ -111,8 +111,6 @@ class UserRepositoryImpl(
             throw IllegalStateException("Segui già questa persona")
         }
 
-        // includo anche gli anziani già seguiti (il mapper li migra dal vecchio
-        // campo singolo): così il primo collegamento non fa perdere lo storico
         val anzianiDaScrivere: List<Any> = (familiare.anzianiCollegatiIds + anzianoId).distinct()
 
         // WriteBatch: le due scritture vanno a buon fine insieme o falliscono
@@ -146,14 +144,13 @@ class UserRepositoryImpl(
     }
 
 
-    // Alfabeto senza 0/O/1/I: caratteri facili da confondere
+    // Alfabeto senza 0/O/1/I  (caratteri facili da confondere)
     private fun generaCodiceCasuale(): String {
         val alfabeto = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
         return (1..6).map { alfabeto.random() }.joinToString("")
     }
 
     // funzione di mapping
-
     private fun DocumentSnapshot.toUser(): User? {
         if (!exists()) return null
         val ruoloRaw = getString("ruolo") ?: return null

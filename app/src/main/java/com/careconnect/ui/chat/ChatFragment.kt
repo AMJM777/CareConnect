@@ -23,17 +23,17 @@ import com.careconnect.viewmodel.chat.ChatViewModelFactory
 import kotlinx.coroutines.launch
 
 /**
- * schermata chat di una richiesta, condivisa da Anziano e Volontario.
- * riceve per argomento gli id della richiesta e dei due partecipanti, il
- * nome dell'altra persona, un flag per la lettura vocale (solo Anziano) e
- * un flag "sola lettura" (chat chiusa: si legge lo storico ma non si scrive).
+ * schermata chat associata ad una richiesta che è condivisa da anziano e volontario.
+ * Riceve per argomento gli id della richiesta e dei due partecipanti, il
+ * nome dell'altra persona, un flag per la lettura vocale (per l'anziano) e
+ * un flag "sola lettura"
  */
 class ChatFragment : Fragment() {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
-    // TTS creato solo se richiesto (lato Anziano); resta null lato Volontario
+    // creato solo dove serve la voce (lato anziano), altrove resta null
     private var tts: TtsHelper? = null
 
     private val requestId get() = arguments?.getString(ARG_REQUEST_ID) ?: ""
@@ -67,10 +67,10 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // intestazione: nome e ruolo dell'interlocutore (o titolo, per il garante)
+        // header con nome e ruolo dell'interlocutore oppure solo "Chat" per il garante
         val sonoGarante = viewModel.uidCorrente != anzianoId && viewModel.uidCorrente != volontarioId
         if (sonoGarante) {
-            // vista garante: solo "Chat" (i nomi sono già etichettati in ogni bolla)
+            // vista garante con solo "Chat"
             binding.avatarInterlocutore.visibility = View.GONE
             binding.ruoloInterlocutore.visibility = View.GONE
             binding.nomeInterlocutore.text = "Chat"
@@ -82,12 +82,12 @@ class ChatFragment : Fragment() {
                 if (viewModel.uidCorrente == anzianoId) "Volontario" else "Anziano"
         }
 
-        // barra di invio nascosta quando la chat e' chiusa (storico) o quando
-        // chi guarda e' il garante (sola lettura); al suo posto il promemoria
+        // barra di invio nascosta quando la chat e' chiusa o quando
+        // chi guarda e' il garante (sola lettura)
         binding.barraInvio.visibility = if (soloLettura) View.GONE else View.VISIBLE
         binding.readOnlyHint.visibility = if (soloLettura) View.VISIBLE else View.GONE
 
-        // avviso di trasparenza: lo vedono i due partecipanti (anziano/volontario), non il garante
+        // avviso di trasparenza che vedono i due partecipanti della chat (anziano/volontario), non il garante
         binding.avvisoTrasparenza.visibility = if (sonoGarante) View.GONE else View.VISIBLE
 
         // TTS solo lato Anziano
@@ -106,12 +106,12 @@ class ChatFragment : Fragment() {
             onAscolta = { testo -> tts?.parla(testo, svuotaCoda = true) }
         )
 
-        // stackFromEnd: gli ultimi messaggi restano in basso, come in una chat
+        // stackFromEnd tiene gli ultimi messaggi restano in basso
         binding.messaggiRecyclerView.layoutManager =
             LinearLayoutManager(requireContext()).apply { stackFromEnd = true }
         binding.messaggiRecyclerView.adapter = adapter
 
-        // la chat ha un header proprio (la toolbar del ruolo è nascosta): freccia indietro
+        // la chat ha un header proprio e la freccia indietro viene qui gestirA
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
 
         binding.inviaButton.setOnClickListener {
@@ -129,7 +129,6 @@ class ChatFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.messaggi.collect { lista ->
                     adapter.aggiornaLista(lista)
-                    // in sola lettura non ha senso invitare a scrivere
                     binding.emptyStateText.text =
                         if (soloLettura) "Nessun messaggio" else "Nessun messaggio. Scrivi per iniziare."
                     binding.emptyStateText.visibility =
@@ -158,7 +157,7 @@ class ChatFragment : Fragment() {
         }
     }
 
-    // interrompe la voce quando la schermata va in background (coerente con T2)
+    // interrompe la voce quando la schermata va in background
     override fun onStop() {
         super.onStop()
         tts?.interrompi()

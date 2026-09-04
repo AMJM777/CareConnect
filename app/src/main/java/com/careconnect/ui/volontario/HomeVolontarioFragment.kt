@@ -19,8 +19,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.careconnect.ui.common.nascondiBottomNavQuandoTastieraAperta
 
-// contenitore della sezione Volontario: Toolbar del ruolo + NavHost annidato
-// (nav_graph_volontario) + BottomNavigationView. Stesso schema di HomeAnzianoFragment.
+// contenitore della sezione Volontario: toolbar del ruolo + NavHost annidato
+// (nav_graph_volontario) + BottomNavigationView. Stesso schema di HomeAnzianoFragment
 class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -44,8 +44,7 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
             v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
             insets
         }
-        // inset alto applicato alla RADICE (prugna), non alla toolbar: la radice non è
-        // gestita da NavigationUI, quindi la barra resta alta uguale su ogni schermata
+        // inset alto applicato alla radicee
         ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
             v.updatePadding(top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top)
             insets
@@ -55,20 +54,20 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
         collegaToolbar(view, navController)
         collegaBottomNav(view, navController)
         gestisciTastoIndietro(navController)
-        // pianifica il controllo periodico delle nuove richieste (KEEP: nessun doppione se già attivo).
+        // pianifica il controllo periodico delle nuove richieste (KEEP: nessun doppione se già attivo)
         WorkScheduler.pianificaControlloPeriodico(requireContext())
     }
 
-    // funzione per collegare la Toolbar del ruolo al grafo di navigazione annidato.
+    // funzione per collegare la toolbar del ruolo al grafo di navigazione annidato
     private fun collegaToolbar(view: View, navController: NavController) {
         val toolbar = view.findViewById<Toolbar>(R.id.volontarioToolbar)
 
-        // solo la home (Richieste disponibili) è "di primo livello": lì la freccia non compare.
+        // solo la home (richieste disponibili) è "di primo livello", quindi lì la freccia non compare
         appBarConfiguration = AppBarConfiguration(setOf(R.id.richiesteDisponibiliFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
 
         // scorciatoia solo per la demo: long-press avvia subito il Worker,
-        // senza aspettare i 15 minuti. non è per l'utente finale.
+        // senza aspettare i 15 minuti. non è per l'utente finale
         toolbar.setOnLongClickListener {
             WorkScheduler.eseguiOraPerDemo(requireContext())
             Toast.makeText(requireContext(), "Controllo richieste avviato…", Toast.LENGTH_SHORT).show()
@@ -76,7 +75,7 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
         }
     }
 
-    // funzione per collegare la BottomNavigationView al grafo di navigazione annidato.
+    // funzione per collegare la BottomNavigationView al grafo di navigazione annidato
     private fun collegaBottomNav(view: View, navController: NavController) {
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.volontarioBottomNav)
 
@@ -94,14 +93,14 @@ class HomeVolontarioFragment : Fragment(R.layout.fragment_home_volontario) {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomNav.menu.findItem(destination.id)?.isChecked = true
-            // la chat ha un header proprio: nascondo la toolbar del ruolo lì
+            // la chat ha un header proprio, nascondo la toolbar del ruolo lì
             view.findViewById<View>(R.id.volontarioToolbar).visibility =
                 if (destination.id == R.id.chatFragment) View.GONE else View.VISIBLE
             ViewCompat.requestApplyInsets(view)
         }
     }
 
-    // funzione che gestisce il tasto Indietro di sistema in modo esplicito e prevedibile.
+    // funzione che gestisce il tasto indietro di sistema in modo esplicito
     private fun gestisciTastoIndietro(navController: NavController) {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             val tornatoIndietro = navController.popBackStack()

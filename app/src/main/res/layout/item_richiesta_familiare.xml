@@ -69,26 +69,34 @@
                 android:textColor="@color/care_on_surface_variant"
                 tools:text="04/07/2026 10:15" />
 
-            <!-- apre in sola lettura la chat tra l'anziano e il volontario (safeguarding):
-                 azione morbida (tonale), meno forte del pieno prugna -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/chatButton"
-                style="@style/CareConnect.Button.Tonal"
+            <!-- azioni su una riga: Vedi chat (solo icona) + Conferma e valuta (icona + parola) -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/button_height"
-                android:layout_marginTop="@dimen/spacing_medium"
-                android:text="Vedi chat"
-                app:icon="@drawable/ic_chat" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/spacing_medium">
 
-            <!-- confermare la chiusura e valutare: azione primaria prugna (tema coerente) -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/confermaButton"
-                style="@style/CareConnect.Button.Primary"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/button_height"
-                android:layout_marginTop="@dimen/spacing_small"
-                android:text="Conferma e valuta"
-                app:icon="@drawable/ic_spunta" />
+                <!-- sola lettura della chat (safeguarding): solo icona, tonale -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/chatButton"
+                    style="@style/CareConnect.IconButton.Tonal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_marginEnd="@dimen/spacing_small"
+                    app:icon="@drawable/ic_chat"
+                    android:contentDescription="Vedi chat" />
+
+                <!-- confermare la chiusura e valutare: azione importante -> icona + parola -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/confermaButton"
+                    style="@style/CareConnect.Button.Primary"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="@dimen/button_height"
+                    android:text="Conferma e valuta"
+                    app:icon="@drawable/ic_spunta" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

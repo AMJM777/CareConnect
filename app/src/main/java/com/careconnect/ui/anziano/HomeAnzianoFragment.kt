@@ -30,21 +30,20 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
             .findFragmentById(R.id.anzianoNavHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // nasconde la bottom nav mentre la tastiera è aperta, altrimenti "salta" sopra di essa
+        // nasconde la bottom nav mentre la tastiera è aperta
         nascondiBottomNavQuandoTastieraAperta(
             view,
             view.findViewById(R.id.anzianoBottomNav),
             viewLifecycleOwner
         )
-        // bottom nav: nascosta con la tastiera aperta (isVisible(ime()), non l'altezza,
-        // che con la finestra ridimensionata risulterebbe 0) + inset basso della barra di sistema
+
         val bottomNav = view.findViewById<View>(R.id.anzianoBottomNav)
         ViewCompat.setOnApplyWindowInsetsListener(bottomNav) { v, insets ->
             v.visibility = if (insets.isVisible(WindowInsetsCompat.Type.ime())) View.GONE else View.VISIBLE
             v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
             insets
         }
-        // inset alto applicato alla RADICE (prugna), non alla toolbar: la radice non è
+        // inset alto applicato alla radice e non alla toolbar, la radice non è
         // gestita da NavigationUI, quindi la barra resta alta uguale su ogni schermata
         ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
             v.updatePadding(top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top)
@@ -61,7 +60,7 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
     private fun collegaToolbar(view: View, navController: NavController) {
         val toolbar = view.findViewById<Toolbar>(R.id.anzianoToolbar)
 
-        // solo la Home è "di primo livello": lì la freccia non compare
+        // solo la Home è "di primo livello" (lì la freccia non c'è)
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nuovaRichiestaHomeFragment))
         toolbar.setupWithNavController(navController, appBarConfiguration)
     }
@@ -71,12 +70,11 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.anzianoBottomNav)
 
         bottomNav.setOnItemSelectedListener { item ->
-            // Se tocco il tab su cui sono già, non faccio nulla.
+            // se tocco il tab su cui sono già, non faccio nulla
             if (item.itemId == navController.currentDestination?.id) {
                 return@setOnItemSelectedListener true
             }
-            // popUpTo(start) senza inclusive: lo stack resta [Home, tab scelto],
-            // così l'Indietro da un tab secondario riporta sempre alla Home.
+            // l'indietro da un tab secondario riporta sempre alla home
             val opzioni = navOptions {
                 popUpTo(navController.graph.startDestinationId)
                 launchSingleTop = true
@@ -95,13 +93,13 @@ class HomeAnzianoFragment : Fragment(R.layout.fragment_home_anziano) {
         }
     }
 
-    // funzione che gestisce il tasto Indietro di sistema in modo esplicito e prevedibile
+    // funzione che gestisce il tasto indietro di sistema in modo esplicito e prevedibile
     private fun gestisciTastoIndietro(navController: NavController) {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            // popBackStack() restituisce false se non c'è più nulla da togliere.
+            // popBackStack() restituisce false se non c'è più nulla da togliere
             val tornatoIndietro = navController.popBackStack()
             if (!tornatoIndietro) {
-                // si è sulla Home: si lascia agire il sistema, l'app si chiude
+                // si è sulla home, si lascia agire il sistema, l'app si chiude
                 isEnabled = false
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }

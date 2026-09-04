@@ -7,7 +7,7 @@ enum class UserRole(val firestoreValue: String) {
     FAMILIARE("familiare");
 
     companion object {
-        // funzione per ottenere il ruolo a partire dal valore salvato su Firestore.
+        // funzione per ottenere il ruolo a partire dal valore salvato su Firestore
 
         fun fromFirestoreValue(value: String): UserRole =
             entries.firstOrNull { it.firestoreValue == value }
