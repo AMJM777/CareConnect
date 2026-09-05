@@ -35,7 +35,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/care_on_primary" />
 
-            <!-- conferma presa visione: outline chiaro sul banner rosso (vero bottone) -->
+            <!-- conferma presa visione-->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/chiudiSosButton"
                 style="@style/Widget.Material3.Button.OutlinedButton"

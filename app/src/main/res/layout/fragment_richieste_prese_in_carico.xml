@@ -29,7 +29,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- lista scorrevole delle richieste in carico, il padding scorre con gli elementi per un effetto pulito -->
+        <!-- lista scorrevole delle richieste in carico, il padding scorre con gli elementi -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/richiesteRecyclerView"
             android:layout_width="match_parent"

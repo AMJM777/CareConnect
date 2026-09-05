@@ -9,7 +9,7 @@
     android:background="@drawable/bg_dialog_card"
     android:clipToOutline="true">
 
-    <!-- HEADER prugna: avatar + "Profilo volontario" + nome + chiusura -->
+    <!-- header prugna: avatar + "Profilo volontario" + nome + chiusura -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

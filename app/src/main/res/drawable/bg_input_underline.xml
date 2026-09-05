@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Campo di input sottolineato: solo la linea in basso (le altre sono spinte
-     fuori dalla vista con inset negativi). Prugna spessa a fuoco, neutra a riposo. -->
+<!-- Campo di input sottolineato: solo la linea in basso -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_focused="true">
         <layer-list>

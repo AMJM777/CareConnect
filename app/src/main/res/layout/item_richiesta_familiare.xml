@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- card della singola richiesta vista dal familiare con margini di distanziamento -->
+    <!-- card della singola richiesta vista dal familiare -->
     <com.google.android.material.card.MaterialCardView
         style="@style/CareConnect.Card"
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="Ho bisogno di aiuto per fare la spesa settimanale" />
 
-            <!-- indicatore a pillola: pallino (tinta da adapter) + testo -->
+            <!-- indicatore a pillola -->
             <TextView
                 android:id="@+id/statoText"
                 style="@style/CareConnect.StatusChip"

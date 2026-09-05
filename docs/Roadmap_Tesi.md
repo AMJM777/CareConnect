@@ -203,7 +203,7 @@ Ordine e stime (target, con margine). Le date sono indicative, il vincolo fermo 
   `#F26522` rimosso da tutto il progetto.
 - ✅ **Logo:** il cuore ricolorato è il marchio definitivo. Nessun logo in-app/splash separato — lo
   splash resta sobrio (scelta confermata, brandizzazione scartata).
-- ✅ **Bibliografia font (Lexend)** aggiunta in `Grafica_Design_e_Skill.md` §2.
+- ✅ **Motivazione font (Atkinson Hyperlegible)** in `Design_Reference_CareConnect.md` §1.
 
 > 🎨 **Punto aperto grafica (da valutare, non bloccante):** rivedere meglio il **pesca** dei
 > pulsanti dei profili (attuale `care_accent_soft #F5D9C6`, testo prugna): decidere il tono
@@ -219,13 +219,24 @@ Ordine e stime (target, con margine). Le date sono indicative, il vincolo fermo 
 - Al termine: verificare **build pulita** e che l'app compili/funzioni dopo le rimozioni.
 
 ### 3 · Rimozione tracce di tooling (5 set, 1 gg)
-- **Rimuovere `.claude/` e le skill** dal progetto; rimuovere i file **`CLAUDE.md`** (radice e `app/`).
-- Rimuovere **riferimenti a Claude / AI / strumenti** in commenti, nomi e documenti interni non
-  pertinenti al progetto Android da consegnare. Valutare quali file `docs/` tenere: alcuni servono alla
-  tesi (fonti, design reference), altri sono note di lavoro da togliere dall'archivio di consegna.
-- Verificare che l'app compili dopo le rimozioni (`.claude/skills`, `CLAUDE.md` e `docs/` non sono
-  compilati né finiscono nell'APK → rimozione sicura). Preparare l'**archivio di consegna**
-  (progetto pulito, eventuale README di consegna).
+
+**Checklist completa di cosa eliminare** (verificato: il codice in `app/src/` e `functions/index.js`
+è già pulito, nessun riferimento a tooling nei sorgenti consegnabili). Niente di quanto segue è
+compilato o finisce nell'APK → rimozione sicura:
+
+- [ ] `.claude/` — **intera cartella** (agents + skills)
+- [ ] `CLAUDE.md` — nella radice del progetto
+- [ ] `app/CLAUDE.md`
+- [ ] `docs/` — **intera cartella** (materiale di lavoro; contiene i riferimenti a Claude/Code/Cowork/
+      skill/modelli. Nota: eliminando `docs/` sparisce anche questa roadmap, che è l'ultima cosa da fare)
+
+Dopo le rimozioni:
+- [ ] Controllare che `.gitignore` non citi più `.claude/` o `docs/` (cosmetico)
+- [ ] Verificare che l'app **compili e giri** (build pulita)
+- [ ] Preparare l'**archivio di consegna** (progetto pulito, eventuale README di consegna)
+
+> Da tenere (NON sono tooling): `google-services.json`, `.idea/`, i file Gradle,
+> `functions/package-lock.json`.
 
 ### 4 · Slide + screenshot (6 – 9 set, 4 gg)
 - Costruire le slide (gestite dall'utente) e produrre gli **screenshot per la tesi** (schermate chiave
@@ -248,11 +259,11 @@ Ordine e stime (target, con margine). Le date sono indicative, il vincolo fermo 
 
 ### Fase GRAFICA — ✅ CHIUSA (31 ago)
 > **Fatto:** restyle completo dell'app. Palette ricolorata su **Prugna**, colore definitivo confermato
-> su una **prugna più scura** (`#4A2140` + pesca), font **Lexend** ovunque, componenti e schermate
+> su una **prugna più scura** (`#4A2140` + pesca), font **Atkinson Hyperlegible** ovunque, componenti e schermate
 > allineati (Home Anziano, liste, Profilo, Chat, Auth con etichette flottanti), bottom nav bianca,
 > inset edge-to-edge rivisti, **icona launcher ricolorata**. **Riferimento/direttiva:**
-> `Design_Reference_CareConnect.md`; fonti HCI: `README_HCI_Colori_Anziani.md`; bibliografia font in
-> `Grafica_Design_e_Skill.md` §2. Dettaglio in `Project_State` §0bis.
+> `Design_Reference_CareConnect.md` (motivazione font in §1); fonti HCI: `README_HCI_Colori_Anziani.md`.
+> Dettaglio in `Project_State` §0bis.
 > **Nessun punto aperto:** colore e icona chiusi il 31 ago; splash lasciato sobrio (brandizzazione scartata).
 >
 > Punti storici della fase (tutti coperti):

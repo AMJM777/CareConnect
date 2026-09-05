@@ -3,7 +3,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- vista scorrevole: evita che la tastiera copra i campi in edge-to-edge -->
+    <!-- vista scorrevole -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -86,8 +86,7 @@
                         android:textStyle="bold"
                         android:textColor="@color/care_primary" />
 
-                    <!-- scelta del tipo di aiuto: pillole SEPARATE (non un toggle-group
-                         unito). La selezione singola è gestita nel Fragment. -->
+                    <!-- scelta del tipo di aiuto -->
                     <LinearLayout
                         android:id="@+id/tipoContainer"
                         android:layout_width="match_parent"
@@ -271,7 +270,7 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- suggerimento: lo scuotimento e' il secondo modo per lanciare l'sos -->
+            <!-- suggerimento: lo scuotimento è il secondo modo per lanciare l'sos -->
             <TextView
                 android:id="@+id/scuotiHintText"
                 android:layout_width="0dp"

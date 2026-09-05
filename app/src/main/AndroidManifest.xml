@@ -4,7 +4,7 @@
 
     <!-- permesso per mostrare notifiche tramite workmanager e fcm, da richiedere a runtime per android 13+ -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Foreground Service per lo scuotimento SOS anche ad app chiusa (T4) -->
+    <!-- Foreground Service per lo scuotimento SOS anche ad app chiusa -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- tipo "specialUse", è obbligatorio su targetSdk 34+ per dichiarare a cosa serve il service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
@@ -63,7 +63,7 @@
 
         <!-- Schermata di conferma SOS aperta dal service via full-screen-intent
              showWhenLocked/turnScreenOn: appare anche a telefono bloccato/schermo spento
-             excludeFromRecents + singleInstance: non resta nei recenti e non se ne aprono due. -->
+             excludeFromRecents + singleInstance: non resta nei recenti e non se ne aprono due -->
         <activity
             android:name=".ui.anziano.ConfermaSosActivity"
             android:exported="false"

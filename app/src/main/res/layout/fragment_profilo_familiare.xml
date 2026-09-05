@@ -24,7 +24,7 @@
             android:orientation="vertical"
             android:padding="@dimen/screen_padding">
 
-            <!-- immagine di profilo standard arrotondata per il familiare -->
+            <!-- immagine di profilo per il familiare -->
             <ImageView
                 android:layout_width="104dp"
                 android:layout_height="104dp"

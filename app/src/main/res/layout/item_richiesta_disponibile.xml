@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- card della singola richiesta disponibile per il volontario con margini di distanziamento -->
+    <!-- card della singola richiesta disponibile per il volontario -->
     <com.google.android.material.card.MaterialCardView
         style="@style/CareConnect.Card"
         android:layout_width="match_parent"
@@ -46,7 +46,7 @@
                 android:textColor="@color/care_on_surface"
                 tools:text="04/07/2026 10:15" />
 
-            <!-- accettare e prendere in carico: azione primaria morbida (viola chiaro) -->
+            <!-- accettare e prendere in carico: azione primaria morbida-->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/prendiInCaricoButton"
                 style="@style/CareConnect.Button.Tonal"

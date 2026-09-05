@@ -31,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- scelta del tipo di aiuto: pillole SEPARATE (selezione singola nel Fragment) -->
+                    <!-- scelta del tipo di aiuto -->
                     <LinearLayout
                         android:id="@+id/tipoContainer"
                         android:layout_width="match_parent"

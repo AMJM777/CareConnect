@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Famiglia Atkinson Hyperlegible: font pensato per l'ipovisione (Braille Institute).
-     Ha solo due pesi (Regular 400, Bold 700); i pesi intermedi (500/600) vengono
-     risolti dal sistema al più vicino. Namespace app: (AppCompat) per retrocompatibilità. -->
+<!-- famiglia Atkinson Hyperlegible, font ad alta leggibilità pensato per
+     l'ipovisione (Braille Institute). ha solo due pesi, Regular 400 e Bold 700,
+     il namespace app: (AppCompat) serve per retrocompatibilità -->
 <font-family xmlns:app="http://schemas.android.com/apk/res-auto">
     <font app:fontStyle="normal" app:fontWeight="400" app:font="@font/atkinson_regular" />
     <!-- Atkinson ha solo Regular e Bold: i pesi medium/semibold (500/600) usati

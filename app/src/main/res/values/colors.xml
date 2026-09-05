@@ -10,26 +10,24 @@
     <color name="care_on_primary">#FFFFFFFF</color>
 
     <!-- pesca: accento caldo per i bottoni secondari.
-         NB: tono chiaro -> il testo SOPRA la pesca e' PRUGNA (care_on_accent).
-         Schiarita a #EBB093 per un contrasto piu' comodo: prugna su pesca = 5,96:1 (AA). -->
+         NB: tono chiaro -> il testo sopra la pesca è prugna
+         (contrasto prugna su pesca = 5,96:1 (AA)) -->
     <color name="care_accent">#EBB093</color>
     <color name="care_accent_soft">#FFF5D9C6</color>    <!-- pesca tenue: pulsanti secondari nei profili -->
     <color name="care_accent_variant">#FF9A4A2E</color>
     <color name="care_accent_container">#FFF4E2D6</color>   <!-- pesca tenue: solo sfondo avatar -->
     <color name="care_on_accent">#FF5A2A4D</color>
 
-    <!-- pulsante chat: dalla revisione diventa PRIMARIO (fill prugna, testo bianco).
-         Token legacy tenuti per compatibilita' finche' gli item non sono aggiornati. -->
+    <!-- token legacy del pulsante chat, tenuti finché gli item non usano lo
+         stile primario (fill prugna, testo bianco) -->
     <color name="care_chat">#FFF6DDD0</color>
     <color name="care_on_chat">#FF9A4A2E</color>
 
-    <!-- rosso acceso riservato ESCLUSIVAMENTE all'emergenza (banner e bottone SOS) -->
+    <!-- rosso acceso riservato all'emergenza (banner e bottone SOS) -->
     <color name="care_sos">#FFD32029</color>
     <color name="care_on_sos">#FFFFFFFF</color>
 
     <!-- sfondi caldi (carta grigio-lilla), card e gerarchie di testo -->
-    <!-- sfondo schermata: grigio-lilla piu' profondo di #F3F1F3, cosi' le card
-         bianche staccano nettamente per colore (non per ombra) -->
     <color name="care_background">#FFE9E7EC</color>
     <color name="care_surface">#FFFFFFFF</color>
     <color name="care_on_surface">#FF2A1E28</color>

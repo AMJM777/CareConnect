@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         android:background="@color/care_background">
 
-        <!-- intestazione unica (prugna): freccia indietro + avatar + nome e ruolo -->
+        <!-- intestazione: freccia indietro + avatar + nome e ruolo -->
         <LinearLayout
             android:id="@+id/headerChat"
             android:layout_width="0dp"

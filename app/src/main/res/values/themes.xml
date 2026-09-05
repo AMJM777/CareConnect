@@ -23,7 +23,7 @@
         <item name="android:fontFamily">@font/atkinson</item>
         <item name="fontFamily">@font/atkinson</item>
 
-        <!-- FONT sui componenti Material: cambia solo il font, non la dimensione -->
+        <!-- FONT sui componenti material -->
         <item name="textAppearanceBodyLarge">@style/TextAppearance.CareConnect.BodyLarge</item>
         <item name="textAppearanceBodyMedium">@style/TextAppearance.CareConnect.BodyMedium</item>
         <item name="textAppearanceLabelLarge">@style/TextAppearance.CareConnect.LabelLarge</item>
@@ -65,15 +65,14 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <!-- Titoletto di sezione dentro le card: prugna, 17sp, grassetto (spec redesign).
-         Cambiando qui, cambiano tutti i titoletti delle card. -->
+    <!-- Titoletto di sezione dentro le card: prugna, 17sp, grassetto  -->
     <style name="CareConnect.SectionLabel" parent="">
         <item name="android:textSize">@dimen/text_size_card_title</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/care_primary</item>
     </style>
 
-    <!-- AZIONE PRIMARIA: fill prugna, testo bianco. Es: "Accedi", "Prendi in carico". -->
+    <!-- AZIONE PRIMARIA: fill prugna, testo bianco -->
     <style name="CareConnect.Button.Primary" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/care_primary</item>
         <item name="android:textColor">@color/care_on_primary</item>

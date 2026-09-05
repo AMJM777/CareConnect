@@ -1,6 +1,6 @@
 # Project State — CareConnect
 
-**Ultimo aggiornamento:** 29 agosto 2026 (TESI — **Fase grafica completata (restyle "Prugna")**: palette ricolorata su Prugna (`#5A2A4D` + pesca `#E39B7B`), font **Lexend** su tutta l'app, componenti (card/tessere/chip/campi/pulsante Chat) e schermate (Home Anziano, liste, Profilo, Chat, Auth con **etichette flottanti**) allineati; **bottom nav bianca** con indicatore attivo pesca; gestione inset edge-to-edge rivista (inset alto sulla **radice**, non sulla toolbar). **Colore definitivo da confermare** — bozze e direttiva operativa in `Design_Reference_CareConnect.md`. T7 accantonato (vedi §8/§9). Dettaglio in §0bis.)
+**Ultimo aggiornamento:** 29 agosto 2026 (TESI — **Fase grafica completata (restyle "Prugna")**: palette ricolorata su Prugna (`#5A2A4D` + pesca `#E39B7B`), font **Atkinson Hyperlegible** su tutta l'app, componenti (card/tessere/chip/campi/pulsante Chat) e schermate (Home Anziano, liste, Profilo, Chat, Auth con **etichette flottanti**) allineati; **bottom nav bianca** con indicatore attivo pesca; gestione inset edge-to-edge rivista (inset alto sulla **radice**, non sulla toolbar). **Colore definitivo da confermare** — bozze e direttiva operativa in `Design_Reference_CareConnect.md`. T7 accantonato (vedi §8/§9). Dettaglio in §0bis.)
 > **Precedente:** 22 agosto 2026 (TESI — **T6 "Vista i miei garanti collegati (Anziano)" completato**: nuova card "I tuoi familiari collegati" nel profilo Anziano con l'elenco (sola lettura) dei familiari collegati al codice invito, o messaggio guida se vuota; `ProfiloAnzianoViewModel` espone `garanti` e ne recupera i nomi da `familiariCollegatiIds` (solo nome: l'email non è su Firestore); UI con container `LinearLayout` + `item_garante_collegato.xml`. **Bug security rules risolto:** l'`allow read` di `users` non permetteva all'anziano di leggere il documento di un familiare → aggiunta clausola simmetrica `ruolo=='familiare' && anzianoCollegatoId==request.auth.uid` (solo rules, nessuna modifica app). Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
 > **Precedente:** 22 agosto 2026 (TESI — **T5 "Stelle nel profilo Volontario" completato**: il `ratingMedio` (già calcolato in Fase 9) è ora mostrato come **stelline** (`RatingBar` in modalità indicatore, `stepSize=0.5`, colore `care_accent`) al posto del placeholder testuale, in **entrambi** i punti in cui appare il rating — profilo proprio del volontario (data binding: nuovi LiveData `ratingStelle`/`haValutazione`) e dialog pubblico di sola lettura (popolato a mano). Su decisione dell'utente la parte numerica è stata **rimossa**: restano le **sole stelle** (con `contentDescription` che conserva il valore per lo screen reader); caso "non ancora valutato" → nessuna stella, solo testo. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
 > **Precedente:** 21 agosto 2026 (TESI — **T4 "Scuotimento SOS in background" completato**: nuovo `SosShakeService` (Foreground Service `specialUse`) che tiene attivo l'accelerometro anche ad app chiusa; `ShakeDetector` ora usa il sensore accelerometro **wake-up** (con fallback) → niente wake lock, funziona a schermo spento; la conferma diventa una `ConfermaSosActivity` a tutto schermo (riusa layout + countdown/TTS + `inviaSos()` di T2, **logica SOS non duplicata**); lo scuotimento apre l'overlay **direttamente** grazie al permesso **"Compari sopra le altre app"** (`SYSTEM_ALERT_WINDOW`, richiesto una volta), con la notifica full-screen come solo fallback; protezione **sempre attiva di default (opt-out)** via toggle nel Profilo, con coordinamento anti-doppia-rilevazione tra Service e Home. Testato su device. Dettaglio in §0bis e in `Roadmap_Tesi.md`.)
@@ -229,9 +229,10 @@
 - **Metodo:** consultate le skill di design in `.claude/skills/` (`ui-ux-pro-max`, `design-system`)
   per ancorare palette/tipografia/contrasto a dati, non all'intuito. Ogni scelta cromatica ha i
   **contrasti verificati** a mano (script) prima dell'applicazione.
-- **Tipografia:** introdotto **Lexend** (font incluso, non scaricabile a runtime — scelta motivata
-  per la demo offline) su tutta l'app via `themes.xml` (fontFamily + text appearance Material). Legato
-  alla leggibilità/HCI. Applicato anche agli overlay SOS (solo tema, logica intatta).
+- **Tipografia:** introdotto **Atkinson Hyperlegible** (font incluso, non scaricabile a runtime —
+  scelta motivata per la demo offline) su tutta l'app via `themes.xml` (fontFamily + text appearance
+  Material). Font ad alta leggibilità del Braille Institute, pensato per l'ipovisione. Applicato anche
+  agli overlay SOS (solo tema, logica intatta). Lexend, valutato in precedenza, è stato scartato.
 - **Palette:** ricolorata su **Prugna**, colore definitivo **confermato il 31 ago** su una **prugna
   più scura** (`care_primary #4A2140`, variant `#3A1A33`, `stato_aperta_fg #4A2140`; accento pesca
   `#E39B7B`, carta `#F7F1F3`, ink `#2A1E28`). Contrasti verificati (bianco su primario ~13:1). Solo
@@ -258,7 +259,7 @@
   bug "barra corta della Home" diagnosticato misurando i fotogrammi: 245px vs 324px). Aggiorna §10.
 - **Chiusi il 31 ago:** colore definitivo **confermato** (prugna scura `#4A2140`); **icona launcher**
   ricolorata (sfondo prugna `#4A2140`, cuore bianco + pesca `#E39B7B`, arancione `#F26522` rimosso ovunque);
-  bibliografia del **font Lexend** aggiunta in `Grafica_Design_e_Skill.md`; bottone "Prendi in carico"
+  motivazione del **font Atkinson Hyperlegible** in `Design_Reference_CareConnect.md` §1; bottone "Prendi in carico"
   del volontario ammorbidito a **tonale**. Splash brandizzato **scartato** (resta sobrio). Fase grafica **chiusa**.
 - **Accantonato** (vedi §9): **T7** (servizi sanitari) rimandato.
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Pallino della pillola di stato: cerchio pieno, tinta impostata a runtime
-     (StatoRichiestaColori.pallino). Serve a non affidare lo stato al solo colore. -->
+     (StatoRichiestaColori.pallino). Serve a non affidare lo stato al solo colore -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <size android:width="10dp" android:height="10dp" />

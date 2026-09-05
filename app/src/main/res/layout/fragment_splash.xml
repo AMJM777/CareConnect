@@ -3,7 +3,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Schermata Splash: nessun contenuto testuale, solo un indicatore di
+    <!-- Sshermata Splash: nessun contenuto testuale, solo un indicatore di
          caricamento mentre SplashViewModel decide dove navigare -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

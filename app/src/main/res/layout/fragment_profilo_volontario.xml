@@ -26,7 +26,7 @@
             android:orientation="vertical"
             android:padding="@dimen/screen_padding">
 
-            <!-- immagine di profilo standard arrotondata per il volontario -->
+            <!-- immagine di profilo standard  per il volontario -->
             <ImageView
                 android:layout_width="104dp"
                 android:layout_height="104dp"

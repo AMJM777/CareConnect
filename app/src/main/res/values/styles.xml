@@ -17,8 +17,7 @@
         <item name="contentPadding">@dimen/spacing_medium</item>
     </style>
 
-    <!-- etichetta di stato a pillola: sfondo + testo + PALLINO (drawableStart) impostati
-         dinamicamente da StatoRichiestaColori. Il pallino garantisce "mai solo colore". -->
+    <!-- etichetta di stato a pillola -->
     <style name="CareConnect.StatusChip" parent="">
         <item name="android:background">@drawable/bg_status_chip</item>
         <item name="android:backgroundTint">@color/care_primary_container</item>
@@ -61,7 +60,7 @@
         <item name="android:insetBottom">0dp</item>
     </style>
 
-    <!-- SOS: rosso emergenza, testo bianco, più grande (64dp). Rosso riservato SOLO qui. -->
+    <!-- SOS: rosso emergenza, testo bianco, più grande (64dp) -->
     <style name="CareConnect.Button.Sos" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/care_sos</item>
         <item name="android:textColor">@color/care_on_sos</item>
@@ -83,8 +82,7 @@
         <item name="boxCornerRadiusBottomEnd">@dimen/button_corner_radius</item>
     </style>
 
-    <!-- AZIONE PRIMARIA CHAT: fill prugna pieno con testo bianco e icona (redesign).
-         Reso più riconoscibile rispetto agli altri bottoni della card. -->
+    <!-- AZIONE PRIMARIA CHAT: fill prugna pieno con testo bianco e icona  -->
     <style name="CareConnect.Button.Chat" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/care_primary</item>
         <item name="android:textColor">@color/care_on_primary</item>
@@ -99,8 +97,8 @@
         <item name="android:insetBottom">0dp</item>
     </style>
 
-    <!-- AZIONE PRIMARIA MORBIDA: viola chiaro (lavanda) con testo prugna.
-         Meno "pesante" del primario pieno. Es: "Prendi in carico". -->
+    <!-- AZIONE PRIMARIA MORBIDA: viola chiaro (lavanda) con testo prugna
+         Meno "pesante" del primario pieno -->
     <style name="CareConnect.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
         <item name="backgroundTint">@color/care_primary_container</item>
         <item name="android:textColor">@color/care_primary</item>
@@ -113,7 +111,7 @@
     </style>
 
     <!-- BOTTONI SOLO-ICONA (profili volontario/familiare, azioni chiare): icona centrata,
-         nessuna etichetta visibile ma contentDescription per lo screen reader. -->
+         nessuna etichetta visibile ma contentDescription per lo screen reader -->
     <style name="CareConnect.IconButton.Primary" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/care_primary</item>
         <item name="iconTint">@color/care_on_primary</item>
@@ -157,8 +155,7 @@
         <item name="android:insetBottom">0dp</item>
     </style>
 
-    <!-- chip selettore anziano (familiare con più assistiti): selezionabile, coerente
-         coi bottoni (angoli arrotondati, prugna se selezionato). Nessuna icona di spunta. -->
+    <!-- chip selettore anziano (familiare con più assistiti) -->
     <style name="CareConnect.Chip" parent="Widget.Material3.Chip.Filter">
         <item name="chipBackgroundColor">@color/option_toggle_bg</item>
         <item name="android:textColor">@color/option_toggle_fg</item>

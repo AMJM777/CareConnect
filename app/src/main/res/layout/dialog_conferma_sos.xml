@@ -52,7 +52,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- tasto ANNULLA enorme, facile da centrare in un momento di panico -->
+    <!-- tasto ANNULLA enorme, facile da centrare  -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/annullaButton"
         android:layout_width="0dp"
